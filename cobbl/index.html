@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>cobbl · Custom builds and automation for small businesses</title>
+<meta name="description" content="cobbl builds custom software and automation for small businesses, using AI where it helps. A force multiplier for the underdog." />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;700;800;900&family=Onest:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bone:#f2efe9;
+    --bone-2:#e9e5db;
+    --ink:#11100d;
+    --ink-soft:#2a2823;
+    --tang:#ff5b1e;
+    --tang-deep:#d8430c;
+    --acid:#f2e205;
+    --paper-line:rgba(17,16,13,0.12);
+    --nav-h:74px;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    font-family:"Onest",system-ui,sans-serif;
+    background:var(--bone);
+    color:var(--ink);
+    line-height:1.55;
+    overflow-x:hidden;
+    font-size:18px;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--tang);color:var(--bone)}
+  a{color:inherit;text-decoration:none}
+  img,svg{display:block}
+  .mono{font-family:"DM Mono",monospace;text-transform:uppercase;letter-spacing:.14em}
+  .display{font-family:"Unbounded",sans-serif;line-height:.92;letter-spacing:-.02em;font-weight:800}
+  .wrap{width:min(1440px,100% - 2.5rem);margin-inline:auto}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+
+  /* ---------- focus ---------- */
+  a:focus-visible,button:focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:2px}
+
+  /* ---------- nav ---------- */
+  header.nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;height:var(--nav-h);
+    display:flex;align-items:center;
+    background:rgba(242,239,233,0.82);
+    backdrop-filter:saturate(140%) blur(12px);
+    -webkit-backdrop-filter:saturate(140%) blur(12px);
+    border-bottom:2px solid var(--ink);
+    transition:transform .45s var(--ease);
+  }
+  header.nav.hidden{transform:translateY(-110%)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;width:100%}
+  .brand{display:flex;align-items:center;gap:.6rem;font-family:"Unbounded";font-weight:700;font-size:1.4rem;letter-spacing:-.02em}
+  .brand svg{width:30px;height:30px;flex:none}
+  .nav-links{display:flex;align-items:center;gap:1.6rem}
+  .nav-links a.lnk{font-weight:600;font-size:.96rem;position:relative;padding:.2rem 0}
+  .nav-links a.lnk::after{content:"";position:absolute;left:0;bottom:-2px;height:2px;width:0;background:var(--tang);transition:width .35s var(--ease)}
+  .nav-links a.lnk:hover::after,.nav-links a.lnk:focus-visible::after{width:100%}
+  .btn{
+    display:inline-flex;align-items:center;gap:.5rem;font-family:"Onest";font-weight:700;
+    font-size:1rem;padding:.78rem 1.5rem;border-radius:100px;border:2px solid var(--ink);
+    background:var(--ink);color:var(--bone);cursor:pointer;
+    transition:transform .25s var(--ease),background .25s var(--ease),color .25s var(--ease);
+    will-change:transform;white-space:nowrap;
+  }
+  .btn .arr{transition:transform .3s var(--ease)}
+  .btn:hover{background:var(--tang);border-color:var(--tang);color:var(--ink)}
+  .btn:hover .arr{transform:translateX(4px)}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.ghost:hover{background:var(--ink);color:var(--bone);border-color:var(--ink)}
+  .btn.tang{background:var(--tang);border-color:var(--tang);color:var(--ink)}
+  .btn.tang:hover{background:var(--ink);border-color:var(--ink);color:var(--bone)}
+
+  .menu-toggle{display:none;background:none;border:2px solid var(--ink);border-radius:10px;width:48px;height:44px;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px}
+  .menu-toggle span{display:block;width:22px;height:2.5px;background:var(--ink);transition:transform .3s var(--ease),opacity .3s var(--ease)}
+  body.menu-open .menu-toggle span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+  body.menu-open .menu-toggle span:nth-child(2){opacity:0}
+  body.menu-open .menu-toggle span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+  /* menu open = dark overlay: flip the toggle and logo to light so they stay visible */
+  body.menu-open .menu-toggle{border-color:var(--bone)}
+  body.menu-open .menu-toggle span{background:var(--bone)}
+  body.menu-open .brand{color:var(--bone)}
+  body.menu-open .brand svg rect[fill="#11100d"]{fill:var(--bone)}
+
+  .mobile-menu{
+    position:fixed;inset:0;z-index:99;background:var(--ink);color:var(--bone);
+    display:flex;flex-direction:column;justify-content:center;gap:.3rem;padding:7rem 2rem 2rem;
+    transform:translateY(-100%);transition:transform .5s var(--ease);pointer-events:none;
+  }
+  body.menu-open .mobile-menu{transform:translateY(0);pointer-events:auto}
+  .mobile-menu a{font-family:"Unbounded";font-weight:700;font-size:clamp(2rem,9vw,3.4rem);line-height:1.05;padding:.3rem 0;color:var(--bone)}
+  .mobile-menu a:hover{color:var(--tang)}
+  .mobile-menu .mm-cta{margin-top:1.8rem;font-family:"Onest",sans-serif;font-size:1.05rem;font-weight:700;line-height:1;align-self:flex-start;width:auto}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding:calc(var(--nav-h) + 3.2rem) 0 2.4rem;overflow:hidden}
+  .hero-tag{display:flex;align-items:center;gap:.8rem;font-size:.82rem;margin-bottom:1.6rem;color:var(--ink-soft)}
+  .hero-tag .dot{width:9px;height:9px;border-radius:50%;background:var(--tang);flex:none;animation:pulse 2.4s infinite}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
+
+  .hero-head{font-size:clamp(3.1rem,12.4vw,11.5rem);font-weight:900}
+  .hero-head .line{display:block;overflow:hidden;padding-bottom:.2em;margin-bottom:-.2em}
+  .hero-head .line span{display:inline-block;will-change:transform}
+  .hero-head .ol{color:transparent;-webkit-text-stroke:2px var(--ink)}
+  .hero-head em{font-style:normal;color:var(--tang)}
+  .hero-head .underdog{position:relative;display:inline-block}
+  .hero-head .underdog svg{position:absolute;left:-2%;bottom:-.06em;width:104%;height:.36em;overflow:visible}
+  .hero-head .underdog svg path{fill:none;stroke:var(--tang);stroke-width:11;stroke-linecap:round;stroke-dasharray:1400;stroke-dashoffset:1400;transition:stroke-dashoffset 1.1s var(--ease) .55s}
+  .hero-head.in .underdog svg path{stroke-dashoffset:0}
+
+  .hero-lower{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:2rem;margin-top:2.4rem}
+  .hero-sub{max-width:34ch;font-size:clamp(1.05rem,1.7vw,1.32rem);font-weight:500;color:var(--ink-soft);line-height:1.5}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:.9rem}
+
+  /* hero marquee ticker */
+  .ticker{
+    margin-top:2.6rem;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);
+    background:var(--ink);color:var(--bone);overflow:hidden;white-space:nowrap;position:relative;
+  }
+  .ticker::before,.ticker::after{content:"";position:absolute;top:0;bottom:0;width:13%;max-width:90px;z-index:2;pointer-events:none}
+  .ticker::before{left:0;background:linear-gradient(90deg,var(--ink),transparent)}
+  .ticker::after{right:0;background:linear-gradient(270deg,var(--ink),transparent)}
+  .ticker-track{display:inline-flex;align-items:center;gap:0;will-change:transform;animation:ticker-scroll 45s linear infinite}
+  @keyframes ticker-scroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+  .ticker:hover .ticker-track{animation-play-state:paused}
+  .ticker-track .item{display:inline-flex;align-items:center;font-family:"Unbounded";font-weight:700;font-size:clamp(1.1rem,2.6vw,2rem);padding:.55rem 0;text-transform:uppercase;letter-spacing:-.01em}
+  .ticker-track .item .star{color:var(--tang);margin:0 1.4rem;font-size:.7em}
+
+  /* ---------- generic section heads ---------- */
+  .section{padding:6.4rem 0;position:relative}
+  .kicker{display:inline-flex;align-items:center;gap:.7rem;font-size:.8rem;margin-bottom:1.4rem;color:var(--tang-deep)}
+  .kicker .ix{font-family:"Unbounded";font-weight:700;color:var(--ink)}
+  .sec-head{font-size:clamp(2.3rem,6.5vw,5.4rem);font-weight:800;line-height:.96;max-width:16ch}
+  .sec-head em{font-style:normal;color:var(--tang)}
+
+  /* ---------- what we build (horizontal pin) ---------- */
+  #build{padding:0;background:var(--ink);color:var(--bone)}
+  .build-pin{position:relative}
+  .build-sticky{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+  .build-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1.5rem;padding:clamp(1.4rem,4vh,2.6rem) 0 1.1rem}
+  .build-top .sec-head{color:var(--bone)}
+  .build-top .kicker{color:var(--acid)}
+  .build-top .kicker .ix{color:var(--bone)}
+  .build-lead{margin-top:.9rem;max-width:52ch;font-size:.96rem;font-weight:500;color:rgba(242,239,233,.62);line-height:1.45}
+  .build-progress{flex:none;width:min(220px,30vw);align-self:flex-end;margin-bottom:.7rem}
+  .build-progress .bar{height:5px;background:rgba(242,239,233,0.2);border-radius:99px;overflow:hidden}
+  .build-progress .bar i{display:block;height:100%;width:15%;background:var(--tang);border-radius:99px;transition:width .1s linear}
+  .build-progress .lab{font-size:.72rem;color:rgba(242,239,233,.6);margin-top:.5rem;display:flex;justify-content:space-between}
+
+  .build-row{flex:1;display:flex;align-items:center;gap:1.8rem;will-change:transform;padding-bottom:clamp(1rem,4vh,2rem)}
+  .tier-card{
+    flex:none;width:min(78vw,440px);height:min(64vh,560px);border-radius:26px;
+    background:var(--bone);color:var(--ink);padding:2.2rem 2.1rem;display:flex;flex-direction:column;
+    border:2px solid var(--bone);position:relative;overflow:hidden;
+    will-change:transform,opacity;
+  }
+  .tier-card[data-accent="tang"]{background:var(--tang);border-color:var(--tang)}
+  .tier-card[data-accent="acid"]{background:var(--acid);border-color:var(--acid)}
+  .tier-card[data-accent="ink"]{background:var(--ink-soft);color:var(--bone);border-color:var(--ink-soft)}
+  .tier-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;border-bottom:2px solid currentColor;padding-bottom:1rem;margin-bottom:1.3rem}
+  .tier-num{font-family:"Unbounded";font-weight:900;font-size:2.4rem;line-height:1}
+  .tier-name{font-family:"Unbounded";font-weight:800;font-size:1.5rem;text-align:right;line-height:1}
+  .tier-blurb{font-size:.92rem;font-weight:500;opacity:.86;margin-bottom:1.4rem;line-height:1.45}
+  .tier-list{list-style:none;display:flex;flex-direction:column;gap:1.05rem;margin-top:auto}
+  .tier-list li{display:flex;gap:.85rem}
+  .tier-list .lnum{font-family:"DM Mono",monospace;font-size:.78rem;font-weight:500;opacity:.6;flex:none;padding-top:.18rem}
+  .tier-list h4{font-family:"Onest";font-weight:700;font-size:1.12rem;line-height:1.15;margin-bottom:.18rem}
+  .tier-list p{font-size:.86rem;font-weight:500;opacity:.82;line-height:1.4}
+  .tier-card .corner{position:absolute;top:1.4rem;left:2.1rem;font-size:.72rem;font-weight:500;opacity:.7}
+  .tier-eg{margin-top:auto}
+  .tier-eg-label{display:block;font-size:.7rem;opacity:.55;margin-bottom:.85rem}
+  .tier-tags{display:flex;flex-wrap:wrap;gap:.5rem}
+  .tier-tag{font-family:"DM Mono",monospace;font-size:.78rem;font-weight:500;border:1.5px solid currentColor;border-radius:99px;padding:.4rem .8rem;opacity:.82;white-space:nowrap}
+
+  .build-hint{position:absolute;left:0;right:0;bottom:1.1rem;text-align:center;font-size:.72rem;color:rgba(242,239,233,.55);pointer-events:none}
+  .build-hint span{display:inline-flex;align-items:center;gap:.5rem}
+
+  .build-desktop{flex:1;display:flex;min-width:0}
+  /* mobile build fallback */
+  .build-mobile{display:none}
+
+  /* ---------- signature: leak picker ---------- */
+  #leak{background:var(--bone)}
+  .leak-lead{font-size:clamp(1.05rem,1.7vw,1.32rem);font-weight:500;color:var(--ink-soft);max-width:46ch;margin-top:1.4rem}
+  .leak-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:2.2rem;align-items:stretch;margin-top:2.8rem}
+  .leak-chips{display:flex;flex-direction:column;gap:1rem}
+  .leak-chip{
+    text-align:left;font-family:"Unbounded",sans-serif;font-weight:700;
+    font-size:clamp(1.05rem,2.3vw,1.6rem);line-height:1.07;letter-spacing:-.01em;
+    background:transparent;color:var(--ink);border:2px solid var(--ink);border-radius:18px;
+    padding:1.05rem 3rem 1.05rem 1.3rem;cursor:pointer;position:relative;width:100%;
+    transition:background .25s var(--ease),color .25s var(--ease),transform .25s var(--ease);
+  }
+  .leak-chip:hover{transform:translateX(6px)}
+  .leak-chip.is-active{background:var(--ink);color:var(--bone)}
+  .leak-chip::after{content:"→";position:absolute;right:1.2rem;top:50%;transform:translateY(-50%);color:var(--tang);opacity:0;transition:opacity .25s var(--ease)}
+  .leak-chip.is-active::after{opacity:1}
+  .leak-panel{
+    background:var(--ink);color:var(--bone);border-radius:26px;padding:clamp(1.8rem,3vw,2.8rem);
+    display:flex;flex-direction:column;justify-content:center;min-height:340px;position:relative;overflow:hidden;
+    transition:opacity .3s var(--ease),transform .3s var(--ease);
+  }
+  .leak-panel.swap{opacity:0;transform:translateY(12px)}
+  .leak-tag{font-size:.76rem;color:var(--acid);margin-bottom:1.1rem}
+  .leak-fix{font-family:"Unbounded",sans-serif;font-weight:800;font-size:clamp(1.7rem,3.6vw,2.8rem);line-height:1;color:var(--tang);letter-spacing:-.02em;margin-bottom:1.2rem}
+  .leak-desc{font-size:clamp(1rem,1.5vw,1.16rem);font-weight:500;color:rgba(242,239,233,.82);max-width:42ch;margin-bottom:1.6rem;line-height:1.5}
+  .leak-step{font-size:.74rem;color:rgba(242,239,233,.6);border:1px solid rgba(242,239,233,.25);border-radius:99px;padding:.45rem .9rem;align-self:flex-start}
+
+  /* ---------- thesis band ---------- */
+  #thesis{background:var(--tang);color:var(--ink)}
+  #thesis .kicker{color:var(--ink-soft)}
+  #thesis .kicker .ix{color:var(--ink)}
+  .thesis-head{font-family:"Unbounded",sans-serif;font-weight:800;font-size:clamp(2rem,5.4vw,4.4rem);line-height:.99;letter-spacing:-.02em;max-width:20ch}
+  .thesis-head em{font-style:normal;background:var(--ink);color:var(--tang);padding:0 .14em;border-radius:.08em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+  .thesis-sub{font-size:clamp(1.05rem,1.7vw,1.36rem);font-weight:500;max-width:48ch;margin-top:1.8rem;color:var(--ink-soft)}
+
+  /* ---------- how it works ---------- */
+  #how{background:var(--bone)}
+  .steps{margin-top:3.4rem;border-top:2px solid var(--ink)}
+  .step{display:grid;grid-template-columns:auto 1fr auto;gap:2rem;align-items:center;padding:2.2rem 0;border-bottom:2px solid var(--ink);position:relative;cursor:default}
+  .step .snum{font-family:"Unbounded";font-weight:900;font-size:clamp(1.4rem,2.4vw,2rem);width:2.6em;color:var(--paper-line)}
+  .step .stitle{font-family:"Unbounded";font-weight:800;font-size:clamp(1.8rem,5.4vw,4.2rem);line-height:.95;transition:transform .4s var(--ease),color .3s var(--ease)}
+  .step .sdesc{font-size:.98rem;font-weight:500;color:var(--ink-soft);max-width:30ch;justify-self:end;text-align:right}
+  .step:hover .stitle{transform:translateX(1.2rem);color:var(--tang)}
+  .step:hover .snum{color:var(--tang)}
+  .payback-banner{margin-top:3rem;background:var(--ink);color:var(--bone);border-radius:26px;padding:clamp(2rem,5vw,3.6rem);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.6rem}
+  .payback-banner .pbt{font-family:"Unbounded";font-weight:800;font-size:clamp(1.6rem,4vw,3rem);line-height:1;max-width:18ch}
+  .payback-banner .pbt em{font-style:normal;color:var(--tang)}
+  .payback-banner .pbn{font-size:.95rem;font-weight:500;color:rgba(242,239,233,.7);max-width:30ch}
+
+  /* ---------- final cta ---------- */
+  #cta{background:var(--ink);color:var(--bone);text-align:center;overflow:hidden}
+  .cta-eyebrow{font-size:.82rem;color:var(--acid);margin-bottom:1.8rem}
+  .cta-head{font-family:"Unbounded";font-weight:900;font-size:clamp(3rem,13vw,11rem);line-height:.86;letter-spacing:-.02em}
+  .cta-head em{font-style:normal;color:var(--tang)}
+  .cta-head .ol2{color:transparent;-webkit-text-stroke:1.6px var(--bone)}
+  .cta-sub{max-width:42ch;margin:2rem auto 2.4rem;font-size:clamp(1.05rem,1.7vw,1.3rem);font-weight:500;color:rgba(242,239,233,.78)}
+  .cta-actions{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center}
+  #cta .btn{border-color:var(--bone);background:var(--bone);color:var(--ink)}
+  #cta .btn:hover{background:var(--tang);border-color:var(--tang);color:var(--ink)}
+  #cta .btn.ghost{background:transparent;color:var(--bone)}
+  #cta .btn.ghost:hover{background:var(--bone);color:var(--ink)}
+
+  /* ---------- contact form ---------- */
+  .contact-form{max-width:640px;margin:2.8rem auto 0;text-align:left;display:grid;gap:1.2rem}
+  .cf-row{display:grid;gap:1.2rem}
+  .cf-field{display:flex;flex-direction:column;gap:.5rem}
+  .cf-field label{font-family:"DM Mono",monospace;text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;color:rgba(242,239,233,.72)}
+  .cf-field label .req{color:var(--tang)}
+  .cf-field label .opt{color:rgba(242,239,233,.4);font-weight:400;letter-spacing:.04em}
+  .cf-field input,.cf-field textarea{
+    font-family:"Onest",sans-serif;font-size:1rem;color:var(--bone);
+    background:rgba(242,239,233,.04);border:2px solid rgba(242,239,233,.22);border-radius:14px;
+    padding:.9rem 1rem;width:100%;transition:border-color .2s var(--ease),background .2s var(--ease);
+  }
+  .cf-field textarea{min-height:128px;resize:vertical;line-height:1.5}
+  .cf-field input::placeholder,.cf-field textarea::placeholder{color:rgba(242,239,233,.35)}
+  .cf-field input:focus,.cf-field textarea:focus{outline:none;border-color:var(--tang);background:rgba(242,239,233,.07)}
+  .cf-field.invalid input,.cf-field.invalid textarea{border-color:var(--tang)}
+  .cf-error{font-size:.78rem;color:var(--tang);font-weight:600;display:none}
+  .cf-field.invalid .cf-error{display:block}
+  .cf-actions{display:flex;flex-wrap:wrap;align-items:center;gap:1.1rem;margin-top:.3rem}
+  #cta .contact-form .btn{background:var(--tang);border-color:var(--tang);color:var(--ink)}
+  #cta .contact-form .btn:hover{background:var(--bone);border-color:var(--bone);color:var(--ink)}
+  #cta .contact-form .btn:disabled{opacity:.6;cursor:default}
+  .cf-alt{font-size:.88rem;color:rgba(242,239,233,.6)}
+  .cf-alt a{color:var(--bone);text-decoration:underline;text-underline-offset:3px}
+  .cf-alt a:hover{color:var(--tang)}
+  .cf-success{display:none;max-width:640px;margin:2.8rem auto 0;text-align:left;border:2px solid var(--tang);border-radius:20px;padding:2rem 2.2rem;background:rgba(255,91,30,.08)}
+  .cf-success.show{display:block}
+  .contact-form.sent{display:none}
+  .cf-success h3{font-family:"Unbounded",sans-serif;font-weight:800;font-size:clamp(1.4rem,3vw,2rem);line-height:1;margin-bottom:.7rem}
+  .cf-success p{color:rgba(242,239,233,.78);font-size:1.02rem}
+  @media (min-width:620px){ .cf-row.two{grid-template-columns:1fr 1fr} }
+
+  /* ---------- footer ---------- */
+  footer{background:var(--ink);color:var(--bone);border-top:2px solid rgba(242,239,233,.2);padding:4.4rem 0 2.4rem}
+  .foot-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2.4rem;padding-bottom:3rem;border-bottom:1px solid rgba(242,239,233,.18)}
+  .foot-brand{max-width:30ch}
+  .foot-brand .brand{color:var(--bone);margin-bottom:1.1rem}
+  .foot-brand p{font-size:1.05rem;font-weight:500;color:rgba(242,239,233,.74)}
+  .foot-brand .underline{color:var(--tang)}
+  .foot-cols{display:flex;gap:4rem;flex-wrap:wrap}
+  .foot-col h5{font-size:.74rem;color:rgba(242,239,233,.5);margin-bottom:1.1rem}
+  .foot-col a,.foot-col span{display:block;font-size:1rem;font-weight:500;padding:.32rem 0;color:rgba(242,239,233,.86)}
+  .foot-col a:hover{color:var(--tang)}
+  .foot-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding-top:1.8rem;font-size:.78rem;color:rgba(242,239,233,.5)}
+  .foot-bottom .mark{color:var(--tang)}
+
+  /* ---------- reveal ---------- */
+  .reveal{opacity:0;transform:translateY(34px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- cursor ---------- */
+  .cursor-dot{position:fixed;top:0;left:0;width:46px;height:46px;border:2px solid var(--ink);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:200;mix-blend-mode:difference;transition:width .25s var(--ease),height .25s var(--ease),background .25s var(--ease);will-change:transform}
+  .cursor-dot.big{width:84px;height:84px;background:var(--bone)}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:760px){
+    .leak-grid{grid-template-columns:1fr;gap:1.5rem}
+  }
+  /* nav collapses to hamburger a bit early so the 4-link bar never crowds */
+  @media (max-width:840px){
+    .nav-links{display:none}
+    .menu-toggle{display:flex}
+  }
+  @media (max-width:760px){
+    body{font-size:17px}
+    .hero-head{font-size:clamp(1.95rem,9.5vw,3.3rem)}
+    .cursor-dot{display:none}
+    .hero-lower{flex-direction:column;align-items:flex-start;gap:1.6rem}
+    .step{grid-template-columns:1fr;gap:.5rem;text-align:left}
+    .step .snum{font-size:1.1rem}
+    .step .sdesc{justify-self:start;text-align:left;max-width:38ch}
+    .step:hover .stitle{transform:none}
+    .leak-panel{min-height:0}
+    /* horizontal build -> vertical native */
+    #build{padding:4.6rem 0}
+    .build-pin{height:auto !important}
+    .build-sticky{position:static;height:auto;display:block}
+    .build-top{flex-direction:column;align-items:flex-start;gap:1rem;padding:0 0 1.8rem}
+    .build-progress{display:none}
+    .build-desktop{display:none}
+    .build-mobile{display:flex;flex-direction:column;gap:1.4rem}
+    .build-mobile .tier-card{width:100%;height:auto;min-height:0}
+    .build-hint{display:none}
+    .payback-banner{text-align:left}
+  }
+  @media (max-width:420px){
+    .wrap{width:min(1280px,100% - 1.6rem)}
+    .btn{font-size:.92rem;padding:.7rem 1.2rem}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important;scroll-behavior:auto !important}
+    .ticker-track{transform:none !important}
+    .reveal{opacity:1 !important;transform:none !important}
+    .hero-head .line span{transform:none !important}
+    .cursor-dot{display:none}
+    .build-row{transform:none !important}
+    .hero-head .underdog svg path{stroke-dashoffset:0 !important;transition:none}
+  }
+</style>
+</head>
+<body>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<!-- ===================== NAV ===================== -->
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a href="#top" class="brand" aria-label="cobbl home">
+      <svg viewBox="0 0 26 26" aria-hidden="true">
+        <rect x="1" y="9" width="9" height="9" rx="2" fill="#11100d"/>
+        <rect x="11" y="14" width="9" height="9" rx="2" fill="#ff5b1e" opacity="0.55"/>
+        <rect x="11" y="3" width="9" height="9" rx="2" fill="#ff5b1e" opacity="0.85"/>
+      </svg>
+      <span>cobbl</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="lnk" href="#build">What we build</a>
+      <a class="lnk" href="#leak">Where to start</a>
+      <a class="lnk" href="#how">How it works</a>
+      <a class="lnk" href="/work.html">Work</a>
+      <a class="btn tang" href="#cta">Find your first win <span class="arr" aria-hidden="true">→</span></a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
+  <a href="#build">What we build</a>
+  <a href="#leak">Where to start</a>
+  <a href="#how">How it works</a>
+  <a href="/work.html">Work</a>
+  <a class="btn tang mm-cta" href="#cta">Find your first win →</a>
+</nav>
+
+<main id="top">
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="hero">
+  <div class="wrap">
+    <p class="hero-tag mono"><span class="dot" aria-hidden="true"></span>Custom builds and automation for small businesses</p>
+
+    <h1 class="hero-head display" id="heroHead">
+      <span class="line"><span data-d="0">A force</span></span>
+      <span class="line"><span data-d="1">multiplier for</span></span>
+      <span class="line"><span data-d="2">the <span class="underdog">under<em>dog</em><svg viewBox="0 0 600 40" preserveAspectRatio="none" aria-hidden="true"><path d="M6 26 C 120 12, 300 12, 420 24 C 500 32, 560 28, 594 16"/></svg></span>.</span></span>
+    </h1>
+
+    <div class="hero-lower">
+      <p class="hero-sub">
+        cobbl builds the systems that used to need a big company's budget and an IT team. We land one fast win that pays for itself, then stay on as your technical partner.
+      </p>
+      <div class="hero-cta">
+        <a class="btn magnet" href="#cta">Find your first win <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn ghost magnet" href="#build">See what we build</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- signature kinetic ticker -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="ticker">
+      <span class="item">WEBSITES<span class="star">✦</span>LANDING PAGES<span class="star">✦</span>BOOKING &amp; FORMS<span class="star">✦</span>INTERNAL TOOLS<span class="star">✦</span>JOB TRACKING<span class="star">✦</span>DASHBOARDS<span class="star">✦</span>INTEGRATIONS<span class="star">✦</span>CUSTOM APPS<span class="star">✦</span></span>
+      <span class="item">WEBSITES<span class="star">✦</span>LANDING PAGES<span class="star">✦</span>BOOKING &amp; FORMS<span class="star">✦</span>INTERNAL TOOLS<span class="star">✦</span>JOB TRACKING<span class="star">✦</span>DASHBOARDS<span class="star">✦</span>INTEGRATIONS<span class="star">✦</span>CUSTOM APPS<span class="star">✦</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WHAT WE BUILD ===================== -->
+<section id="build" aria-label="What we build">
+  <div class="build-pin" id="buildPin">
+    <div class="build-sticky">
+      <div class="wrap build-top">
+        <div>
+          <span class="kicker mono"><span class="ix">01</span> / What we build</span>
+          <h2 class="sec-head">A few things <em>we build.</em></h2>
+          <p class="build-lead">Examples, not a menu. If a job is eating your week, we build the thing that fixes it.</p>
+        </div>
+        <div class="build-progress" aria-hidden="true">
+          <div class="bar"><i id="buildBar"></i></div>
+          <div class="lab mono"><span>Drag / scroll</span><span id="buildPct">01/03</span></div>
+        </div>
+      </div>
+
+      <!-- desktop horizontal row -->
+      <div class="wrap build-desktop">
+        <div class="build-row" id="buildRow">
+
+          <article class="tier-card" data-accent="tang">
+            <span class="corner mono">Start here</span>
+            <div class="tier-head">
+              <span class="tier-num">01</span>
+              <span class="tier-name">Quick<br>wins</span>
+            </div>
+            <p class="tier-blurb">Fast, visible wins that get you set up and online. No big project to commit to.</p>
+            <div class="tier-eg">
+              <span class="tier-eg-label mono">For example</span>
+              <div class="tier-tags">
+                <span class="tier-tag">Websites</span>
+                <span class="tier-tag">Landing pages</span>
+                <span class="tier-tag">Booking &amp; forms</span>
+                <span class="tier-tag">Small automations</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="tier-card" data-accent="ink">
+            <span class="corner mono">The day to day</span>
+            <div class="tier-head">
+              <span class="tier-num">02</span>
+              <span class="tier-name">Core<br>builds</span>
+            </div>
+            <p class="tier-blurb">The tools that run your day to day, so less of it lives on paper or in your head.</p>
+            <div class="tier-eg">
+              <span class="tier-eg-label mono">For example</span>
+              <div class="tier-tags">
+                <span class="tier-tag">Internal tools</span>
+                <span class="tier-tag">Customer &amp; job tracking</span>
+                <span class="tier-tag">Quoting &amp; admin</span>
+                <span class="tier-tag">Dashboards</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="tier-card" data-accent="acid">
+            <span class="corner mono">Bespoke</span>
+            <div class="tier-head">
+              <span class="tier-num">03</span>
+              <span class="tier-name">Scale</span>
+            </div>
+            <p class="tier-blurb">Custom software built around exactly how you work, end to end.</p>
+            <div class="tier-eg">
+              <span class="tier-eg-label mono">For example</span>
+              <div class="tier-tags">
+                <span class="tier-tag">Custom apps</span>
+                <span class="tier-tag">Integrations</span>
+                <span class="tier-tag">Bespoke builds</span>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+
+      <div class="build-hint" aria-hidden="true"><span>Scroll to move the gallery sideways →</span></div>
+    </div>
+  </div>
+
+  <!-- mobile stacked fallback -->
+  <div class="wrap build-mobile" aria-hidden="false">
+    <article class="tier-card" data-accent="tang">
+      <span class="corner mono">Start here</span>
+      <div class="tier-head"><span class="tier-num">01</span><span class="tier-name">Quick wins</span></div>
+      <p class="tier-blurb">Fast, visible wins that get you set up and online. No big project to commit to.</p>
+      <div class="tier-eg">
+        <span class="tier-eg-label mono">For example</span>
+        <div class="tier-tags">
+          <span class="tier-tag">Websites</span><span class="tier-tag">Landing pages</span><span class="tier-tag">Booking &amp; forms</span><span class="tier-tag">Small automations</span>
+        </div>
+      </div>
+    </article>
+    <article class="tier-card" data-accent="ink">
+      <span class="corner mono">The day to day</span>
+      <div class="tier-head"><span class="tier-num">02</span><span class="tier-name">Core builds</span></div>
+      <p class="tier-blurb">The tools that run your day to day, so less of it lives on paper or in your head.</p>
+      <div class="tier-eg">
+        <span class="tier-eg-label mono">For example</span>
+        <div class="tier-tags">
+          <span class="tier-tag">Internal tools</span><span class="tier-tag">Customer &amp; job tracking</span><span class="tier-tag">Quoting &amp; admin</span><span class="tier-tag">Dashboards</span>
+        </div>
+      </div>
+    </article>
+    <article class="tier-card" data-accent="acid">
+      <span class="corner mono">Bespoke</span>
+      <div class="tier-head"><span class="tier-num">03</span><span class="tier-name">Scale</span></div>
+      <p class="tier-blurb">Custom software built around exactly how you work, end to end.</p>
+      <div class="tier-eg">
+        <span class="tier-eg-label mono">For example</span>
+        <div class="tier-tags">
+          <span class="tier-tag">Custom apps</span><span class="tier-tag">Integrations</span><span class="tier-tag">Bespoke builds</span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===================== SIGNATURE: LEAK PICKER ===================== -->
+<section class="section" id="leak" aria-label="Where to start">
+  <div class="wrap">
+    <span class="kicker mono reveal"><span class="ix">02</span> / Where to start</span>
+    <h2 class="sec-head reveal">Where should we <em>start?</em></h2>
+    <p class="leak-lead reveal">Pick what sounds like your business. We will point at the build worth shipping first.</p>
+
+    <div class="leak-grid">
+      <div class="leak-chips reveal" aria-label="Common problems">
+        <button class="leak-chip is-active" type="button" aria-pressed="true" data-fix="0">You barely have a website</button>
+        <button class="leak-chip" type="button" aria-pressed="false" data-fix="1">Customers can't easily book or reach you</button>
+        <button class="leak-chip" type="button" aria-pressed="false" data-fix="2">It all lives on paper and in your head</button>
+        <button class="leak-chip" type="button" aria-pressed="false" data-fix="3">Admin and quoting eat your evenings</button>
+        <button class="leak-chip" type="button" aria-pressed="false" data-fix="4">Off-the-shelf software doesn't fit</button>
+      </div>
+
+      <div class="leak-panel reveal" id="leakPanel" aria-live="polite">
+        <span class="leak-tag mono">What we'd build</span>
+        <h3 class="leak-fix" id="leakName">A website that works</h3>
+        <p class="leak-desc" id="leakDesc">A clean, fast site that brings in work instead of just sitting there. The first thing people check, done properly and looked after for you.</p>
+        <span class="leak-step mono" id="leakWhere">Quick win</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== THESIS BAND ===================== -->
+<section class="section" id="thesis" aria-label="The idea">
+  <div class="wrap">
+    <span class="kicker mono reveal"><span class="ix">✦</span> The idea</span>
+    <h2 class="thesis-head reveal">The capability a big company pays an <em>IT team</em> for. We build it, run it, keep it improving. Never yours to maintain.</h2>
+    <p class="thesis-sub reveal">No enterprise budget and no year-long rollout. Just the systems that quietly do the work, pointed at the one thing slowing you down right now. We build them with AI where it earns its place, not for the sake of it.</p>
+  </div>
+</section>
+
+<!-- ===================== HOW IT WORKS ===================== -->
+<section class="section" id="how" aria-label="How it works">
+  <div class="wrap">
+    <span class="kicker mono reveal"><span class="ix">03</span> / How it works</span>
+    <h2 class="sec-head reveal">Four steps. No big-bang project.</h2>
+
+    <div class="steps">
+      <div class="step reveal"><span class="snum">01</span><span class="stitle">Find the pain</span><span class="sdesc">We look at where the day actually leaks. The ringing phone, the retyping, the quotes that sit.</span></div>
+      <div class="step reveal"><span class="snum">02</span><span class="stitle">Ship a win</span><span class="sdesc">One packaged offer goes live fast. Version one is done, working and earning.</span></div>
+      <div class="step reveal"><span class="snum">03</span><span class="stitle">Measure payback</span><span class="sdesc">We track what it recovered so the value is plain, not a leap of faith.</span></div>
+      <div class="step reveal"><span class="snum">04</span><span class="stitle">Grow together</span><span class="sdesc">We stay on as your technical partner and build the next system when you are ready.</span></div>
+    </div>
+
+    <div class="payback-banner reveal magnet-soft">
+      <p class="pbt">What you're really buying is <em>payback speed.</em></p>
+      <p class="pbn">Setup fee plus a monthly retainer. Packaged offers with a clear finish line.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FINAL CTA ===================== -->
+<section class="section" id="cta">
+  <div class="wrap">
+    <p class="cta-eyebrow mono reveal">Find your first win</p>
+    <h2 class="cta-head reveal">Let's <em>cobble</em><br><span class="ol2">something</span> real.</h2>
+    <p class="cta-sub reveal">Tell us what's slowing you down. We will point at the build worth shipping first. No pitch, no pressure.</p>
+
+    <form class="contact-form reveal" id="contactForm" novalidate data-endpoint="https://api.web3forms.com/submit">
+      <!-- SETUP: get a free access key at https://web3forms.com (use hello@cobbl.io), then replace the value below.
+           Until you do, the form safely falls back to opening the visitor's email app. -->
+      <input type="hidden" name="access_key" value="REPLACE_WITH_YOUR_WEB3FORMS_ACCESS_KEY" />
+      <input type="hidden" name="subject" value="New lead from cobbl.io" />
+      <input type="hidden" name="from_name" value="cobbl website" />
+      <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0" />
+      <div class="cf-row two">
+        <div class="cf-field">
+          <label for="cfName">Your name <span class="req">*</span></label>
+          <input id="cfName" name="name" type="text" autocomplete="name" placeholder="Jordan Vega" required />
+          <span class="cf-error">Add your name so we know who we are talking to.</span>
+        </div>
+        <div class="cf-field">
+          <label for="cfEmail">Email <span class="req">*</span></label>
+          <input id="cfEmail" name="email" type="email" autocomplete="email" placeholder="you@business.com" required />
+          <span class="cf-error">Add a valid email so we can reply.</span>
+        </div>
+      </div>
+      <div class="cf-field">
+        <label for="cfBiz">Business <span class="opt">(optional)</span></label>
+        <input id="cfBiz" name="business" type="text" autocomplete="organization" placeholder="What you do and where" />
+      </div>
+      <div class="cf-field">
+        <label for="cfMsg">What's slowing you down? <span class="req">*</span></label>
+        <textarea id="cfMsg" name="message" placeholder="We need a proper website, our tools don't talk to each other, too much still lives on paper..." required></textarea>
+        <span class="cf-error">Tell us a little about what is slowing your business down.</span>
+      </div>
+      <div class="cf-actions">
+        <button class="btn" type="submit">Send it <span class="arr" aria-hidden="true">→</span></button>
+        <span class="cf-alt">Or email <a href="mailto:hello@cobbl.io">hello@cobbl.io</a> · <a href="/work.html">see the work</a></span>
+      </div>
+    </form>
+
+    <div class="cf-success" id="contactSuccess" role="status" aria-live="polite">
+      <h3>Got it. Talk soon.</h3>
+      <p id="cfSuccessMsg">Your message is on its way. We will get back to you within a day.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a href="#top" class="brand" aria-label="cobbl home">
+          <svg viewBox="0 0 26 26" aria-hidden="true">
+            <rect x="1" y="9" width="9" height="9" rx="2" fill="#f2efe9"/>
+            <rect x="11" y="14" width="9" height="9" rx="2" fill="#ff5b1e" opacity="0.55"/>
+            <rect x="11" y="3" width="9" height="9" rx="2" fill="#ff5b1e" opacity="0.85"/>
+          </svg>
+          <span>cobbl</span>
+        </a>
+        <p>A force multiplier for the <span class="underline">underdog.</span> Custom builds and automation for small businesses.</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h5 class="mono">Explore</h5>
+          <a href="#build">What we build</a>
+          <a href="#leak">Where to start</a>
+          <a href="#how">How it works</a>
+          <a href="/work.html">Work</a>
+        </div>
+        <div class="foot-col">
+          <h5 class="mono">What we build</h5>
+          <span>Websites</span>
+          <span>Internal tools</span>
+          <span>Custom apps</span>
+          <span>Integrations</span>
+        </div>
+        <div class="foot-col">
+          <h5 class="mono">Get in touch</h5>
+          <a href="mailto:hello@cobbl.io">hello@cobbl.io</a>
+          <a href="#cta">Find your first win</a>
+          <a href="mailto:hello@cobbl.io">Start a conversation</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 cobbl. Built for small businesses.</span>
+      <span class="mono"><span class="mark">✦</span> Cobble together. Ship the win.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- mobile menu ---------- */
+  var toggle = document.getElementById("menuToggle");
+  var menu = document.getElementById("mobileMenu");
+  function setMenu(open){
+    document.body.classList.toggle("menu-open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  }
+  toggle.addEventListener("click", function(){ setMenu(!document.body.classList.contains("menu-open")); });
+  menu.querySelectorAll("a").forEach(function(a){ a.addEventListener("click", function(){ setMenu(false); }); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") setMenu(false); });
+
+  /* ---------- nav hide on scroll down ---------- */
+  var nav = document.getElementById("nav");
+  var lastY = window.scrollY;
+  window.addEventListener("scroll", function(){
+    var y = window.scrollY;
+    if(document.body.classList.contains("menu-open")){ lastY = y; return; }
+    if(y > lastY && y > 220){ nav.classList.add("hidden"); }
+    else { nav.classList.remove("hidden"); }
+    lastY = y;
+  }, {passive:true});
+
+  /* ---------- hero intro ---------- */
+  var heroHead = document.getElementById("heroHead");
+  if(!reduce){
+    var spans = heroHead.querySelectorAll(".line span[data-d]");
+    spans.forEach(function(s){ s.style.transform = "translateY(110%)"; s.style.transition = "transform .9s cubic-bezier(.16,1,.3,1)"; });
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        spans.forEach(function(s){
+          s.style.transitionDelay = (0.08 + parseFloat(s.getAttribute("data-d")) * 0.11) + "s";
+          s.style.transform = "translateY(0%)";
+        });
+        heroHead.classList.add("in");
+      });
+    });
+  } else {
+    heroHead.classList.add("in");
+  }
+
+  /* ---------- ticker marquee: handled by a seamless CSS animation (no JS, no jitter) ---------- */
+
+  /* ---------- reveal observer ---------- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
+    });
+  }, {threshold:0.16, rootMargin:"0px 0px -8% 0px"});
+  document.querySelectorAll(".reveal").forEach(function(el){ io.observe(el); });
+
+  /* ---------- leak picker ---------- */
+  var leakData = [
+    {n:"A website that works", d:"A clean, fast site that brings in work instead of just sitting there. The first thing people check, done properly and looked after for you.", w:"Quick win"},
+    {n:"Booking and enquiry flows", d:"A simple way for customers to book time or send an enquiry, so the work comes to you without the endless back and forth.", w:"Quick win"},
+    {n:"An internal tool", d:"One lightweight place that holds your customers, jobs and notes, instead of being scattered across paper, your phone and your memory.", w:"Core build"},
+    {n:"Quoting and admin tools", d:"The repetitive admin handled for you, so quotes, invoices and follow-ups stop eating your evenings.", w:"Core build"},
+    {n:"A custom app", d:"When off-the-shelf software does not fit how you work, we build the exact tool your business needs, end to end.", w:"Scale"}
+  ];
+  var leakChips = Array.prototype.slice.call(document.querySelectorAll(".leak-chip"));
+  var leakPanel = document.getElementById("leakPanel");
+  var leakName = document.getElementById("leakName");
+  var leakDesc = document.getElementById("leakDesc");
+  var leakWhere = document.getElementById("leakWhere");
+  function selectLeak(i){
+    var d = leakData[i];
+    if(!d) return;
+    leakChips.forEach(function(c, idx){
+      var on = idx === i;
+      c.classList.toggle("is-active", on);
+      c.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    if(leakPanel && !reduce) leakPanel.classList.add("swap");
+    setTimeout(function(){
+      if(leakName) leakName.textContent = d.n;
+      if(leakDesc) leakDesc.textContent = d.d;
+      if(leakWhere) leakWhere.textContent = d.w;
+      if(leakPanel) leakPanel.classList.remove("swap");
+    }, reduce ? 0 : 150);
+  }
+  leakChips.forEach(function(c, i){
+    c.addEventListener("click", function(){ selectLeak(i); });
+    c.addEventListener("keydown", function(e){
+      var j = -1;
+      if(e.key === "ArrowDown" || e.key === "ArrowRight") j = (i + 1) % leakChips.length;
+      else if(e.key === "ArrowUp" || e.key === "ArrowLeft") j = (i - 1 + leakChips.length) % leakChips.length;
+      if(j > -1){ e.preventDefault(); selectLeak(j); leakChips[j].focus(); }
+    });
+  });
+
+  /* ---------- horizontal pinned build gallery ---------- */
+  var pin = document.getElementById("buildPin");
+  var row = document.getElementById("buildRow");
+  var bar = document.getElementById("buildBar");
+  var pct = document.getElementById("buildPct");
+  function isDesktop(){ return window.matchMedia("(min-width:761px)").matches; }
+
+  function setupPin(){
+    if(!pin || !row) return;
+    if(!isDesktop() || reduce){
+      pin.style.height = ""; row.style.transform = ""; row.style.paddingLeft = ""; row.style.paddingRight = ""; pin._dist = 0;
+      [].forEach.call(row.children, function(c){ c.style.transform = ""; c.style.opacity = ""; });
+      return;
+    }
+    var firstCard = row.querySelector(".tier-card");
+    var viewport = row.parentElement.getBoundingClientRect().width;
+    var cardW = firstCard ? firstCard.offsetWidth : 0;
+    // pad the rail so the first and last cards can sit dead-center
+    var pad = Math.max((viewport - cardW) / 2, 0);
+    row.style.paddingLeft = pad + "px";
+    row.style.paddingRight = pad + "px";
+    pin._cardW = cardW;
+    var dist = Math.max(row.scrollWidth - viewport, 0);
+    pin.style.height = (window.innerHeight + dist) + "px";
+    pin._dist = dist;
+  }
+  function emphasize(){
+    var mid = window.innerWidth / 2, cw = pin._cardW || 1;
+    [].forEach.call(row.children, function(card){
+      var r = card.getBoundingClientRect();
+      var center = r.left + r.width / 2;
+      var k = Math.max(0, 1 - Math.abs(center - mid) / cw); // 1 at center, 0 a card-width away
+      card.style.transform = "scale(" + (0.9 + 0.1 * k).toFixed(3) + ")";
+      card.style.opacity = (0.5 + 0.5 * k).toFixed(3);
+    });
+  }
+  function onScrollPin(){
+    if(!pin || !row || !isDesktop() || reduce) return;
+    var rect = pin.getBoundingClientRect();
+    var total = pin.offsetHeight - window.innerHeight;
+    if(total <= 0) return;
+    var p = Math.min(Math.max(-rect.top / total, 0), 1);
+    var dist = pin._dist || 0;
+    row.style.transform = "translate3d(" + (-p * dist) + "px,0,0)";
+    if(bar) bar.style.width = (15 + p * 85) + "%";
+    if(pct){ var idx = Math.min(3, Math.floor(p * 3) + 1); pct.textContent = "0" + idx + "/03"; }
+    emphasize();
+  }
+  if(pin && row && !reduce){
+    setupPin();
+    window.addEventListener("scroll", onScrollPin, {passive:true});
+    window.addEventListener("resize", function(){ setupPin(); onScrollPin(); });
+    onScrollPin();
+  }
+
+  /* ---------- magnetic buttons + cursor ---------- */
+  var cursor = document.querySelector(".cursor-dot");
+  var fine = window.matchMedia("(pointer:fine)").matches;
+  if(cursor && fine && !reduce){
+    var cx = window.innerWidth/2, cy = window.innerHeight/2, tx2 = cx, ty2 = cy;
+    document.addEventListener("mousemove", function(e){ tx2 = e.clientX; ty2 = e.clientY; });
+    (function curLoop(){
+      cx += (tx2 - cx) * 0.18; cy += (ty2 - cy) * 0.18;
+      cursor.style.transform = "translate(" + cx + "px," + cy + "px) translate(-50%,-50%)";
+      requestAnimationFrame(curLoop);
+    })();
+    document.querySelectorAll("a,button,input[type=range]").forEach(function(el){
+      el.addEventListener("mouseenter", function(){ cursor.classList.add("big"); });
+      el.addEventListener("mouseleave", function(){ cursor.classList.remove("big"); });
+    });
+
+    document.querySelectorAll(".magnet").forEach(function(el){
+      el.addEventListener("mousemove", function(e){
+        var r = el.getBoundingClientRect();
+        var mx = e.clientX - (r.left + r.width/2);
+        var my = e.clientY - (r.top + r.height/2);
+        el.style.transform = "translate(" + (mx*0.28) + "px," + (my*0.4) + "px)";
+      });
+      el.addEventListener("mouseleave", function(){ el.style.transform = ""; });
+    });
+  } else if(cursor){
+    cursor.style.display = "none";
+  }
+
+  /* ---------- contact form ---------- */
+  var cform = document.getElementById("contactForm");
+  if(cform){
+    var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var checks = [
+      {el:document.getElementById("cfName"),  ok:function(v){ return v.trim().length > 0; }},
+      {el:document.getElementById("cfEmail"), ok:function(v){ return emailRe.test(v.trim()); }},
+      {el:document.getElementById("cfMsg"),   ok:function(v){ return v.trim().length > 0; }}
+    ];
+    function validate(c){
+      var wrap = c.el.closest(".cf-field");
+      var good = c.ok(c.el.value);
+      wrap.classList.toggle("invalid", !good);
+      c.el.setAttribute("aria-invalid", good ? "false" : "true");
+      return good;
+    }
+    checks.forEach(function(c){
+      c.el.addEventListener("input", function(){
+        if(c.el.closest(".cf-field").classList.contains("invalid")) validate(c);
+      });
+    });
+
+    function showSuccess(text){
+      var success = document.getElementById("contactSuccess");
+      var sMsg = document.getElementById("cfSuccessMsg");
+      if(sMsg && text) sMsg.textContent = text;
+      cform.classList.add("sent");
+      if(success){ success.classList.add("show"); success.focus && success.focus(); }
+    }
+    function mailtoFallback(name, email, biz, msg){
+      var subject = "New enquiry from " + name + (biz ? " (" + biz + ")" : "");
+      var lines = ["Name: " + name, "Email: " + email];
+      if(biz) lines.push("Business: " + biz);
+      lines.push("", "What's slowing them down:", msg);
+      window.location.href = "mailto:hello@cobbl.io?subject=" +
+        encodeURIComponent(subject) + "&body=" + encodeURIComponent(lines.join("\n"));
+      showSuccess("We opened your email app with the message ready to send. If nothing popped up, write to hello@cobbl.io.");
+    }
+
+    cform.addEventListener("submit", function(e){
+      e.preventDefault();
+      var allGood = true, firstBad = null;
+      checks.forEach(function(c){
+        var good = validate(c);
+        if(!good){ allGood = false; if(!firstBad) firstBad = c.el; }
+      });
+      if(!allGood){ if(firstBad) firstBad.focus(); return; }
+
+      var name  = document.getElementById("cfName").value.trim();
+      var email = document.getElementById("cfEmail").value.trim();
+      var biz   = document.getElementById("cfBiz").value.trim();
+      var msg   = document.getElementById("cfMsg").value.trim();
+      var endpoint = cform.getAttribute("data-endpoint");
+      var keyEl = cform.querySelector("input[name=access_key]");
+      var hasKey = !!(keyEl && keyEl.value && keyEl.value.indexOf("REPLACE") === -1);
+
+      if(endpoint && hasKey){
+        var btn = cform.querySelector("button[type=submit]");
+        var btnHtml = btn ? btn.innerHTML : "";
+        function restore(){ if(btn){ btn.disabled = false; btn.innerHTML = btnHtml; } }
+        if(btn){ btn.disabled = true; btn.textContent = "Sending..."; }
+        fetch(endpoint, { method:"POST", headers:{ "Accept":"application/json" }, body:new FormData(cform) })
+          .then(function(r){ return r.json().catch(function(){ return {}; }); })
+          .then(function(data){
+            if(data && data.success){ showSuccess("Your message is on its way. We will get back to you within a day."); }
+            else { restore(); mailtoFallback(name, email, biz, msg); }
+          })
+          .catch(function(){ restore(); mailtoFallback(name, email, biz, msg); });
+      } else {
+        mailtoFallback(name, email, biz, msg);
+      }
+    });
+  }
+
+})();
+</script>
+</body>
+</html>

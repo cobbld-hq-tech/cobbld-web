@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>cobbl · custom AI automation for small operators</title>
+<meta name="description" content="cobbl builds AI automation systems for small trades and service businesses. A force multiplier for the underdog." />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26'%3E%3Crect x='1' y='9' width='9' height='9' rx='2' fill='%23a3e635'/%3E%3Crect x='11' y='14' width='9' height='9' rx='2' fill='%23a3e635' opacity='0.55'/%3E%3Crect x='11' y='3' width='9' height='9' rx='2' fill='%23a3e635' opacity='0.8'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Chivo:wght@300;400;500;600;700&family=Martian+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0b0e12;
+    --bg-2:#0e1218;
+    --surface:#11161d;
+    --surface-2:#161c25;
+    --surface-3:#1b2230;
+    --line:rgba(174,200,224,0.09);
+    --line-strong:rgba(174,200,224,0.16);
+    --blueprint:rgba(96,148,196,0.14);
+    --text:#eef3f2;
+    --muted:#93a0ac;
+    --muted-dim:#646f7c;
+    --accent:#a3e635;
+    --accent-bright:#c4f042;
+    --accent-deep:#7fb524;
+    --accent-glow:rgba(163,230,53,0.18);
+    --spark:#ff8a3c;
+    --cool:#5fa8d3;
+    --radius:14px;
+    --maxw:1200px;
+    --ease:cubic-bezier(.16,1,.3,1);
+    --font-display:"Archivo",sans-serif;
+    --font-body:"Chivo",sans-serif;
+    --font-mono:"Martian Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    font-weight:400;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    position:relative;
+  }
+  ::selection{background:var(--accent);color:#0a0f04}
+
+  /* ---------- atmospheric layers ---------- */
+  .blueprint{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:
+      linear-gradient(var(--blueprint) 1px,transparent 1px),
+      linear-gradient(90deg,var(--blueprint) 1px,transparent 1px);
+    background-size:46px 46px;
+    opacity:.6;
+    transition:opacity .6s;
+  }
+  .blueprint::after{
+    content:"";position:absolute;inset:0;
+    background-image:
+      linear-gradient(var(--blueprint) 1px,transparent 1px),
+      linear-gradient(90deg,var(--blueprint) 1px,transparent 1px);
+    background-size:230px 230px;
+    opacity:.5;
+  }
+  /* cursor-reactive glow that follows pointer */
+  .cursor-glow{
+    position:fixed;z-index:0;pointer-events:none;width:560px;height:560px;
+    left:0;top:0;margin:-280px 0 0 -280px;border-radius:50%;
+    background:radial-gradient(circle,var(--accent-glow),transparent 62%);
+    opacity:0;transition:opacity .5s;will-change:transform;filter:blur(14px);
+  }
+  .glow{
+    position:fixed;z-index:0;pointer-events:none;border-radius:50%;
+    filter:blur(100px);opacity:.5;
+  }
+  .glow.a{top:-200px;right:-140px;width:520px;height:520px;background:radial-gradient(circle,var(--accent-glow),transparent 70%)}
+  .glow.b{top:46%;left:-220px;width:480px;height:480px;background:radial-gradient(circle,rgba(95,168,211,.12),transparent 70%)}
+  .scanline{
+    position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.4;
+    background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,0,0,.16) 3px,transparent 4px);
+    mix-blend-mode:overlay;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 30px;position:relative;z-index:2}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:60;
+    transition:background .4s var(--ease),border-color .4s var(--ease),backdrop-filter .4s;
+    border-bottom:1px solid transparent;
+  }
+  nav.scrolled{
+    background:rgba(11,14,18,.78);
+    backdrop-filter:blur(16px) saturate(140%);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:70px}
+  .brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text)}
+  .mark{width:25px;height:25px;flex:none}
+  .brand-name{font-family:var(--font-display);font-weight:800;font-size:21px;letter-spacing:-.03em}
+  .nav-links{display:flex;align-items:center;gap:30px}
+  .nav-links a{
+    color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;
+    transition:color .2s;letter-spacing:-.01em;
+  }
+  .nav-links a:hover{color:var(--text)}
+  .nav-links a:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:3px}
+  .nav-status{
+    font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;color:var(--accent);
+    display:inline-flex;align-items:center;gap:7px;text-transform:uppercase;
+  }
+  .nav-status .led{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 var(--accent-glow);animation:led 2.4s var(--ease) infinite}
+  @keyframes led{0%{box-shadow:0 0 0 0 rgba(163,230,53,.5)}70%{box-shadow:0 0 0 7px rgba(163,230,53,0)}100%{box-shadow:0 0 0 0 rgba(163,230,53,0)}}
+  .btn{
+    font-family:var(--font-body);font-weight:600;font-size:14px;
+    text-decoration:none;cursor:pointer;border:none;
+    padding:11px 19px;border-radius:9px;transition:all .25s var(--ease);
+    display:inline-flex;align-items:center;gap:8px;white-space:nowrap;letter-spacing:-.01em;
+  }
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .btn-primary{background:var(--accent);color:#0a0f04;font-weight:700}
+  .btn-primary:hover{background:var(--accent-bright);transform:translateY(-1px);box-shadow:0 10px 30px -10px var(--accent-glow)}
+  .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--line-strong)}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .btn .arr{transition:transform .25s var(--ease)}
+  .btn:hover .arr{transform:translateX(3px)}
+
+  /* mobile nav */
+  .nav-toggle{display:none;background:none;border:1px solid var(--line-strong);border-radius:8px;width:42px;height:38px;color:var(--text);cursor:pointer;align-items:center;justify-content:center}
+  .nav-toggle svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+  .mobile-menu{
+    position:fixed;inset:70px 0 0;z-index:55;background:rgba(11,14,18,.97);backdrop-filter:blur(20px);
+    display:flex;flex-direction:column;padding:30px;gap:6px;
+    transform:translateY(-12px);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s var(--ease);
+  }
+  .mobile-menu.open{opacity:1;transform:none;pointer-events:auto}
+  .mobile-menu a{
+    color:var(--text);text-decoration:none;font-family:var(--font-display);font-weight:600;font-size:1.5rem;
+    padding:16px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;
+  }
+  .mobile-menu a .mono{font-family:var(--font-mono);font-size:12px;color:var(--accent);font-weight:400}
+  .mobile-menu .btn{margin-top:22px;justify-content:center;padding:16px}
+
+  /* ---------- hero ---------- */
+  header{padding:130px 0 64px}
+  .hero{display:grid;grid-template-columns:1.04fr .96fr;gap:54px;align-items:center}
+  .eyebrow{
+    font-family:var(--font-mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);display:inline-flex;align-items:center;gap:11px;margin-bottom:26px;
+    border:1px solid var(--line-strong);border-radius:999px;padding:7px 15px 7px 13px;
+    background:rgba(163,230,53,.04);
+  }
+  .eyebrow .led{width:7px;height:7px;border-radius:50%;background:var(--accent);flex:none}
+  h1{
+    font-family:var(--font-display);font-weight:800;
+    font-size:clamp(2.7rem,6.2vw,4.9rem);line-height:.96;letter-spacing:-.035em;
+    margin-bottom:24px;
+  }
+  h1 .em{
+    color:var(--accent);position:relative;display:inline-block;
+  }
+  .lede{font-size:1.16rem;color:var(--muted);max-width:31em;margin-bottom:34px}
+  .lede b{color:var(--text);font-weight:600}
+  .hero-cta{display:flex;gap:13px;flex-wrap:wrap;margin-bottom:36px}
+  .hero-cta .btn{padding:14px 24px;font-size:15px}
+  .metrics{
+    display:flex;gap:0;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    background:linear-gradient(180deg,var(--surface),var(--bg-2));
+  }
+  .metric{flex:1;min-width:124px;padding:16px 18px;border-right:1px solid var(--line)}
+  .metric:last-child{border-right:none}
+  .metric .num{font-family:var(--font-display);font-weight:800;font-size:1.7rem;letter-spacing:-.03em;color:var(--text);line-height:1}
+  .metric .num .u{color:var(--accent);font-size:1.1rem}
+  .metric .lbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;color:var(--muted-dim);text-transform:uppercase;margin-top:9px}
+  .metrics-note{font-family:var(--font-mono);font-size:10px;color:var(--muted-dim);margin-top:11px;letter-spacing:.04em}
+
+  /* ---------- signature wiring diagram ---------- */
+  .diagram{position:relative;width:100%;aspect-ratio:1/.96;min-height:360px}
+  .diagram svg{width:100%;height:100%;overflow:visible}
+  .diagram-frame{
+    position:absolute;inset:-1px;border:1px solid var(--line);border-radius:16px;pointer-events:none;
+    background:radial-gradient(120% 100% at 70% 20%,rgba(163,230,53,.05),transparent 55%),rgba(13,18,24,.5);
+  }
+  .corner{position:absolute;width:14px;height:14px;border:1.5px solid var(--accent);opacity:.5}
+  .corner.tl{top:-1px;left:-1px;border-right:none;border-bottom:none}
+  .corner.tr{top:-1px;right:-1px;border-left:none;border-bottom:none}
+  .corner.bl{bottom:-1px;left:-1px;border-right:none;border-top:none}
+  .corner.br{bottom:-1px;right:-1px;border-left:none;border-top:none}
+  .diagram .tag-label{font-family:var(--font-mono);font-size:9.5px;fill:var(--muted-dim);letter-spacing:.06em;text-transform:uppercase}
+  .node-label{font-family:var(--font-mono);font-size:11px;fill:var(--muted);cursor:pointer}
+  .node-label.out{fill:var(--accent)}
+  .node-hit{cursor:pointer}
+  .node-dot{fill:var(--bg);stroke:var(--line-strong);stroke-width:1.4;transition:stroke .3s,fill .3s}
+  .node-dot.out{stroke:var(--accent)}
+  .ng.active .node-dot{stroke:var(--accent);fill:rgba(163,230,53,.12)}
+  .ng.active .node-label{fill:var(--text)}
+  .flow{stroke:var(--line-strong);stroke-width:1.3;fill:none;transition:stroke .3s,stroke-width .3s}
+  .flow.active{stroke:var(--accent);stroke-width:1.8}
+  .pulse-c{fill:var(--accent)}
+  .core-ring{fill:none;stroke:var(--accent);stroke-width:1.3}
+
+  /* ---------- sections ---------- */
+  section{padding:100px 0;position:relative;z-index:2}
+  .sec-head{max-width:64ch;margin-bottom:54px}
+  .kicker{
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted-dim);margin-bottom:18px;display:flex;align-items:center;gap:10px;
+  }
+  .kicker .idx{color:var(--accent)}
+  .kicker .ln{flex:0 0 30px;height:1px;background:var(--line-strong)}
+  h2{
+    font-family:var(--font-display);font-weight:800;
+    font-size:clamp(2rem,4.2vw,3.2rem);line-height:1.02;letter-spacing:-.035em;
+  }
+  h2 .em{color:var(--accent)}
+  .sec-head p{color:var(--muted);font-size:1.1rem;margin-top:20px;max-width:56ch}
+
+  /* ---------- terminal ---------- */
+  .terminal-wrap{display:grid;grid-template-columns:.92fr 1.08fr;gap:48px;align-items:center}
+  .terminal{
+    border:1px solid var(--line-strong);border-radius:14px;overflow:hidden;
+    background:linear-gradient(180deg,#0c1117,#0a0d12);
+    box-shadow:0 30px 80px -40px rgba(0,0,0,.8);
+  }
+  .term-bar{
+    display:flex;align-items:center;gap:8px;padding:13px 16px;border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,.015);
+  }
+  .term-bar .dots{display:flex;gap:7px}
+  .term-bar .dots i{width:11px;height:11px;border-radius:50%;background:var(--surface-3);display:block}
+  .term-bar .dots i:first-child{background:var(--spark);opacity:.7}
+  .term-bar .dots i:nth-child(2){background:#e7c14a;opacity:.7}
+  .term-bar .dots i:nth-child(3){background:var(--accent);opacity:.7}
+  .term-title{font-family:var(--font-mono);font-size:11px;color:var(--muted-dim);letter-spacing:.04em;margin-left:6px}
+  .term-live{margin-left:auto;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:var(--accent);display:inline-flex;align-items:center;gap:6px;text-transform:uppercase}
+  .term-live .led{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .term-body{padding:22px 20px;font-family:var(--font-mono);font-size:12.5px;line-height:1.85;min-height:330px}
+  .log-line{display:flex;gap:11px;align-items:flex-start;opacity:0;transform:translateY(4px);transition:opacity .35s,transform .35s}
+  .log-line.show{opacity:1;transform:none}
+  .log-time{color:var(--muted-dim);flex:none;font-size:11px;padding-top:1px}
+  .log-tick{flex:none;width:15px;text-align:center;font-weight:600}
+  .log-tick.ok{color:var(--accent)}
+  .log-tick.in{color:var(--cool)}
+  .log-tick.run{color:var(--spark)}
+  .log-text{color:var(--muted);flex:1}
+  .log-text b{color:var(--text);font-weight:500}
+  .log-text .hl{color:var(--accent)}
+  .log-cursor{display:inline-block;width:8px;height:14px;background:var(--accent);margin-left:3px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .term-side .pill{
+    font-family:var(--font-mono);font-size:11px;color:var(--accent);border:1px solid var(--line-strong);
+    border-radius:999px;padding:6px 13px;display:inline-flex;align-items:center;gap:8px;margin-bottom:24px;background:rgba(163,230,53,.03);
+  }
+  .term-side .pill .led{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .term-side h2{margin-bottom:18px}
+  .term-side p{color:var(--muted);font-size:1.06rem;margin-bottom:14px}
+  .term-side .chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:26px}
+  .term-side .chip{font-family:var(--font-mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:rgba(255,255,255,.012)}
+  .term-side .chip b{color:var(--accent);font-weight:400}
+
+  /* ---------- build modules ---------- */
+  .tiers{display:flex;flex-direction:column;gap:20px}
+  .tier{
+    border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+    background:linear-gradient(180deg,var(--surface),var(--bg-2));
+  }
+  .tier-head{display:flex;align-items:center;gap:16px;padding:22px 26px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .tier-no{font-family:var(--font-mono);font-size:12px;color:var(--accent);letter-spacing:.05em}
+  .tier-title{font-family:var(--font-display);font-weight:700;font-size:1.4rem;letter-spacing:-.02em}
+  .tier-sub{color:var(--muted-dim);font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;margin-left:auto;text-transform:uppercase}
+  .modules{display:grid;grid-template-columns:repeat(auto-fit,minmax(264px,1fr));gap:1px;background:var(--line)}
+  .module{
+    background:var(--surface);padding:28px 26px;transition:background .3s var(--ease);position:relative;
+    overflow:hidden;
+  }
+  .module::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);
+    transform:scaleY(0);transform-origin:top;transition:transform .35s var(--ease);
+  }
+  .module:hover{background:var(--surface-2)}
+  .module:hover::before{transform:scaleY(1)}
+  .module .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+  .module .ico{
+    width:42px;height:42px;border-radius:10px;display:grid;place-items:center;
+    background:rgba(163,230,53,.07);border:1px solid rgba(163,230,53,.2);
+  }
+  .module .ico svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:1.7}
+  .module .port{font-family:var(--font-mono);font-size:10px;color:var(--muted-dim);letter-spacing:.05em}
+  .module h4{font-family:var(--font-display);font-weight:700;font-size:1.14rem;margin-bottom:11px;letter-spacing:-.02em}
+  .module p{color:var(--muted);font-size:.96rem;line-height:1.62}
+  .module .roi{
+    margin-top:18px;font-family:var(--font-mono);font-size:10.5px;color:var(--cool);letter-spacing:.03em;
+    display:inline-flex;align-items:center;gap:8px;padding-top:14px;border-top:1px dashed var(--line);width:100%;
+  }
+  .module .roi::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--cool);flex:none}
+
+  /* ---------- how it works pipeline ---------- */
+  .pipeline{position:relative}
+  .pipe-track{
+    position:absolute;left:0;right:0;top:30px;height:2px;background:var(--line);z-index:0;
+  }
+  .pipe-track .fill{position:absolute;inset:0;width:0;background:linear-gradient(90deg,var(--accent-deep),var(--accent));transition:width 1.4s var(--ease)}
+  .pipeline.lit .pipe-track .fill{width:100%}
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;position:relative;z-index:1}
+  .step{position:relative;padding-top:62px}
+  .step .knob{
+    position:absolute;top:21px;left:0;width:20px;height:20px;border-radius:50%;
+    background:var(--bg);border:2px solid var(--line-strong);display:grid;place-items:center;transition:border-color .5s,box-shadow .5s;
+  }
+  .step .knob::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--line-strong);transition:background .5s}
+  .pipeline.lit .step .knob{border-color:var(--accent);box-shadow:0 0 0 5px rgba(163,230,53,.08)}
+  .pipeline.lit .step .knob::after{background:var(--accent)}
+  .step .no{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.06em;margin-bottom:12px;display:block}
+  .step h4{font-family:var(--font-display);font-weight:700;font-size:1.18rem;margin-bottom:10px;letter-spacing:-.02em}
+  .step p{color:var(--muted);font-size:.95rem}
+  .payback{
+    margin-top:54px;border:1px solid var(--line-strong);border-radius:var(--radius);padding:34px 38px;
+    display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+    background:radial-gradient(120% 200% at 0% 0%,rgba(163,230,53,.07),transparent 55%),var(--surface);
+  }
+  .payback .mono{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;flex:none}
+  .payback .ln{font-family:var(--font-display);font-weight:700;font-size:clamp(1.3rem,2.6vw,1.9rem);letter-spacing:-.025em;line-height:1.15}
+  .payback .ln b{color:var(--accent)}
+
+  /* ---------- who / model band ---------- */
+  .band{display:grid;grid-template-columns:1.15fr 1fr;gap:50px;align-items:start;
+    border:1px solid var(--line);border-radius:var(--radius);padding:48px;
+    background:radial-gradient(130% 150% at 100% 0%,rgba(163,230,53,.05),transparent 58%),var(--surface)}
+  .band h2{font-size:clamp(1.6rem,3vw,2.2rem)}
+  .who-list{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
+  .who-list span{font-family:var(--font-mono);font-size:12px;color:var(--muted);
+    border:1px solid var(--line);padding:8px 13px;border-radius:8px;transition:border-color .25s,color .25s}
+  .who-list span:hover{border-color:var(--accent);color:var(--text)}
+  .model ul{list-style:none}
+  .model li{display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--line);color:var(--muted);font-size:.98rem}
+  .model li:last-child{border-bottom:none}
+  .model li svg{width:18px;height:18px;stroke:var(--accent);flex:none;margin-top:3px;fill:none;stroke-width:2.2}
+  .model li b{color:var(--text);font-weight:600}
+
+  /* ---------- cta ---------- */
+  .cta{text-align:center;border:1px solid var(--line-strong);border-radius:22px;padding:74px 40px;position:relative;overflow:hidden;
+    background:radial-gradient(110% 130% at 50% 0%,rgba(163,230,53,.08),transparent 62%),var(--bg-2)}
+  .cta-grid{position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.5;
+    background-image:linear-gradient(var(--blueprint) 1px,transparent 1px),linear-gradient(90deg,var(--blueprint) 1px,transparent 1px);
+    background-size:44px 44px;
+    -webkit-mask-image:radial-gradient(ellipse 70% 80% at 50% 30%,#000,transparent 75%);
+    mask-image:radial-gradient(ellipse 70% 80% at 50% 30%,#000,transparent 75%);}
+  .cta>*{position:relative;z-index:1}
+  .cta h2{font-size:clamp(2.1rem,4.6vw,3.5rem)}
+  .cta p{color:var(--muted);font-size:1.12rem;margin:22px auto 34px;max-width:46ch}
+  .cta-actions{display:flex;gap:13px;justify-content:center;flex-wrap:wrap}
+  .cta .btn{padding:16px 30px;font-size:16px}
+  .cta-mail{margin-top:28px;font-family:var(--font-mono);font-size:12px;color:var(--muted-dim);letter-spacing:.04em}
+  .cta-mail a{color:var(--accent);text-decoration:none}
+  .cta-mail a:hover{text-decoration:underline}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding:54px 0 60px;position:relative;z-index:2}
+  .foot-inner{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:wrap}
+  .foot-tag{color:var(--muted-dim);font-size:.92rem;max-width:32ch;margin-top:14px}
+  .foot-line{color:var(--accent);font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;margin-top:18px}
+  .foot-cols{display:flex;gap:56px;flex-wrap:wrap}
+  .foot-col h5{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-dim);margin-bottom:16px}
+  .foot-col a{display:block;color:var(--muted);text-decoration:none;font-size:14px;margin-bottom:11px;transition:color .2s}
+  .foot-col a:hover{color:var(--accent)}
+  .copy{font-family:var(--font-mono);font-size:10.5px;color:var(--muted-dim);margin-top:34px;letter-spacing:.04em;border-top:1px solid var(--line);padding-top:24px}
+
+  /* ---------- reveal ---------- */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- responsive ---------- */
+  @media(max-width:980px){
+    .hero{grid-template-columns:1fr;gap:46px}
+    .diagram{max-width:460px;margin:0 auto;order:2;width:100%}
+    .terminal-wrap{grid-template-columns:1fr;gap:38px}
+    .band{grid-template-columns:1fr;gap:38px;padding:38px}
+    .nav-links,.nav-status{display:none}
+    .nav-toggle{display:inline-flex}
+    .steps{grid-template-columns:1fr 1fr;gap:32px 24px}
+    .pipe-track{display:none}
+  }
+  @media(max-width:560px){
+    .wrap{padding:0 20px}
+    header{padding:110px 0 50px}
+    section{padding:74px 0}
+    .steps{grid-template-columns:1fr}
+    .tier-sub{margin-left:0;width:100%;margin-top:4px}
+    .cta{padding:54px 22px}
+    .term-body{font-size:11.5px}
+    .metric{min-width:50%;border-bottom:1px solid var(--line)}
+    .payback{flex-direction:column;align-items:flex-start;gap:14px}
+  }
+
+  /* ---------- reduced motion ---------- */
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    .reveal{opacity:1;transform:none}
+    .cursor-glow{display:none}
+    .log-cursor{display:none}
+    .pipeline .pipe-track .fill{width:100%}
+    .pipeline .step .knob{border-color:var(--accent)}
+    .pipeline .step .knob::after{background:var(--accent)}
+  }
+</style>
+</head>
+<body>
+  <div class="blueprint" aria-hidden="true"></div>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+  <div class="glow a" aria-hidden="true"></div>
+  <div class="glow b" aria-hidden="true"></div>
+  <div class="scanline" aria-hidden="true"></div>
+
+  <nav id="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" aria-label="cobbl home">
+        <svg class="mark" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+          <rect x="1" y="9" width="9" height="9" rx="2" fill="#a3e635"/>
+          <rect x="11" y="14" width="9" height="9" rx="2" fill="#a3e635" opacity="0.55"/>
+          <rect x="11" y="3" width="9" height="9" rx="2" fill="#a3e635" opacity="0.8"/>
+        </svg>
+        <span class="brand-name">cobbl</span>
+      </a>
+      <div class="nav-links">
+        <a href="#build">What we build</a>
+        <a href="#live">Live ops</a>
+        <a href="#how">How it works</a>
+        <a href="/work.html">Work</a>
+        <span class="nav-status"><span class="led"></span>systems online</span>
+      </div>
+      <a class="btn btn-primary" href="#contact">Find your first win <span class="arr" aria-hidden="true">&rarr;</span></a>
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#build">What we build <span class="mono">01</span></a>
+    <a href="#live">Live ops <span class="mono">02</span></a>
+    <a href="#how">How it works <span class="mono">03</span></a>
+    <a href="#who">Who it's for <span class="mono">04</span></a>
+    <a href="/work.html">Work <span class="mono">&rarr;</span></a>
+    <a class="btn btn-primary" href="#contact">Find your first win</a>
+  </div>
+
+  <span id="top"></span>
+
+  <!-- ============ HERO ============ -->
+  <header>
+    <div class="wrap">
+      <div class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow reveal"><span class="led" aria-hidden="true"></span>Custom AI automation for small operators</span>
+          <h1 class="reveal">Wire your shop<br>to run like a<br><span class="em">bigger company.</span></h1>
+          <p class="lede reveal">cobbl builds the automation systems that used to need a big company's budget and IT team. <b>The manual work stops eating your day</b>, the phone stops ringing out, and you get to compete with anyone.</p>
+          <div class="hero-cta reveal">
+            <a class="btn btn-primary" href="#contact">Find your first win <span class="arr" aria-hidden="true">&rarr;</span></a>
+            <a class="btn btn-ghost" href="#build">See what we build</a>
+          </div>
+          <div class="metrics reveal" id="metrics">
+            <div class="metric">
+              <div class="num"><span data-count="38" data-suffix="s">38</span><span class="u">s</span></div>
+              <div class="lbl">missed-call text-back</div>
+            </div>
+            <div class="metric">
+              <div class="num"><span data-count="9" data-suffix="x">9</span><span class="u">x</span></div>
+              <div class="lbl">faster quote turnaround</div>
+            </div>
+            <div class="metric">
+              <div class="num"><span data-count="240" data-suffix="">240</span><span class="u">h</span></div>
+              <div class="lbl">retyping killed / yr</div>
+            </div>
+          </div>
+          <p class="metrics-note reveal">// illustrative figures, sized to a typical small shop</p>
+        </div>
+
+        <div class="diagram reveal">
+          <div class="diagram-frame" aria-hidden="true">
+            <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          </div>
+          <svg viewBox="0 0 480 462" id="wireSvg" role="img" aria-label="A wiring diagram showing inputs like missed calls, slow quotes and retyped invoices flowing through the cobbl core into outputs of booked jobs and faster payment.">
+            <defs>
+              <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#5fa8d3" stop-opacity="0.35"/>
+                <stop offset="1" stop-color="#a3e635" stop-opacity="0.95"/>
+              </linearGradient>
+              <radialGradient id="coreg" cx="50%" cy="50%" r="50%">
+                <stop offset="0" stop-color="#a3e635" stop-opacity="0.22"/>
+                <stop offset="1" stop-color="#a3e635" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <text x="24" y="36" class="tag-label">inputs</text>
+            <text x="456" y="36" text-anchor="end" class="tag-label">outputs</text>
+
+            <!-- input -> core wires -->
+            <path id="w1" class="flow" data-in="0" d="M44,92 C160,92 158,231 244,231"/>
+            <path id="w2" class="flow" data-in="1" d="M44,177 C160,177 168,231 244,231"/>
+            <path id="w3" class="flow" data-in="2" d="M44,262 C160,262 168,231 244,231"/>
+            <path id="w4" class="flow" data-in="3" d="M44,347 C160,347 158,231 244,231"/>
+            <!-- core -> output wires -->
+            <path id="o1" class="flow" data-out="0" d="M244,231 C338,231 334,146 436,146"/>
+            <path id="o2" class="flow" data-out="1" d="M244,231 C338,231 334,316 436,316"/>
+
+            <!-- input nodes -->
+            <g class="ng" data-node="in" data-idx="0" tabindex="0" role="button" aria-label="Missed calls input">
+              <rect class="node-hit" x="20" y="78" width="150" height="28" fill="transparent"/>
+              <circle class="node-dot" cx="44" cy="92" r="5"/>
+              <text x="58" y="96" class="node-label">missed calls</text>
+            </g>
+            <g class="ng" data-node="in" data-idx="1" tabindex="0" role="button" aria-label="Slow quotes input">
+              <rect class="node-hit" x="20" y="163" width="150" height="28" fill="transparent"/>
+              <circle class="node-dot" cx="44" cy="177" r="5"/>
+              <text x="58" y="181" class="node-label">slow quotes</text>
+            </g>
+            <g class="ng" data-node="in" data-idx="2" tabindex="0" role="button" aria-label="Retyped invoices input">
+              <rect class="node-hit" x="20" y="248" width="170" height="28" fill="transparent"/>
+              <circle class="node-dot" cx="44" cy="262" r="5"/>
+              <text x="58" y="266" class="node-label">retyped invoices</text>
+            </g>
+            <g class="ng" data-node="in" data-idx="3" tabindex="0" role="button" aria-label="Missed reviews input">
+              <rect class="node-hit" x="20" y="333" width="170" height="28" fill="transparent"/>
+              <circle class="node-dot" cx="44" cy="347" r="5"/>
+              <text x="58" y="351" class="node-label">missed reviews</text>
+            </g>
+
+            <!-- core -->
+            <circle cx="244" cy="231" r="62" fill="url(#coreg)"/>
+            <circle cx="244" cy="231" r="40" class="core-ring" opacity=".22"/>
+            <circle class="core-ring" cx="244" cy="231" r="30" opacity=".5" id="corePulse"/>
+            <g transform="translate(231,218)">
+              <rect x="0" y="9" width="12" height="12" rx="3" fill="#a3e635"/>
+              <rect x="14" y="13" width="12" height="12" rx="3" fill="#a3e635" opacity="0.55"/>
+              <rect x="14" y="0" width="12" height="12" rx="3" fill="#a3e635" opacity="0.8"/>
+            </g>
+            <text x="244" y="305" text-anchor="middle" class="tag-label">cobbl core</text>
+
+            <!-- output nodes -->
+            <g class="ng" data-node="out" data-idx="0">
+              <circle class="node-dot out" cx="436" cy="146" r="5.5"/>
+              <text x="422" y="150" text-anchor="end" class="node-label out">booked jobs</text>
+            </g>
+            <g class="ng" data-node="out" data-idx="1">
+              <circle class="node-dot out" cx="436" cy="316" r="5.5"/>
+              <text x="422" y="320" text-anchor="end" class="node-label out">paid faster</text>
+            </g>
+
+            <!-- traveling signal pulses -->
+            <g id="pulses">
+              <circle r="3.4" class="pulse-c"><animateMotion dur="2.8s" repeatCount="indefinite"><mpath href="#w1"/></animateMotion></circle>
+              <circle r="3.4" class="pulse-c"><animateMotion dur="2.8s" begin="0.7s" repeatCount="indefinite"><mpath href="#w2"/></animateMotion></circle>
+              <circle r="3.4" class="pulse-c"><animateMotion dur="2.8s" begin="1.4s" repeatCount="indefinite"><mpath href="#w3"/></animateMotion></circle>
+              <circle r="3.4" class="pulse-c"><animateMotion dur="2.8s" begin="2.1s" repeatCount="indefinite"><mpath href="#w4"/></animateMotion></circle>
+              <circle r="3.8" fill="#c4f042"><animateMotion dur="2.4s" begin="0.4s" repeatCount="indefinite"><mpath href="#o1"/></animateMotion></circle>
+              <circle r="3.8" fill="#c4f042"><animateMotion dur="2.4s" begin="1.5s" repeatCount="indefinite"><mpath href="#o2"/></animateMotion></circle>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ WHAT WE BUILD ============ -->
+  <section id="build">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="kicker"><span class="ln" aria-hidden="true"></span><span class="idx">01</span> What we build</div>
+        <h2>Start with one module. <span class="em">Grow into a system.</span></h2>
+        <p>Every offer is packaged, with a clear definition of done. Start with a quick win that pays for itself, then wire in the core builds where the real value lives.</p>
+      </div>
+
+      <div class="tiers">
+        <!-- tier 1 -->
+        <div class="tier reveal">
+          <div class="tier-head">
+            <span class="tier-no">[ TIER_01 ]</span>
+            <span class="tier-title">Quick wins</span>
+            <span class="tier-sub">door-openers · fast ROI · low lift</span>
+          </div>
+          <div class="modules">
+            <div class="module">
+              <div class="top">
+                <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13 1 .37 1.96.72 2.88a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2.11-.45c.92.35 1.88.59 2.88.72A2 2 0 0 1 22 16.92Z"/></svg></div>
+                <span class="port">MOD.01</span>
+              </div>
+              <h4>Missed-call recovery</h4>
+              <p>When a call goes unanswered, an AI texts back instantly, answers the basics, captures the lead, and books the job. Every missed call is a lost job, so we close that gap first.</p>
+              <span class="roi">cleanest ROI conversation there is</span>
+            </div>
+            <div class="module">
+              <div class="top">
+                <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg></div>
+                <span class="port">MOD.02</span>
+              </div>
+              <h4>Review &amp; follow-up automation</h4>
+              <p>Asks happy customers for a Google review and nudges on unpaid invoices and unapproved estimates, the things that quietly cost you revenue you already earned.</p>
+              <span class="roi">drives revenue you're already owed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- tier 2 -->
+        <div class="tier reveal">
+          <div class="tier-head">
+            <span class="tier-no">[ TIER_02 ]</span>
+            <span class="tier-title">Core builds</span>
+            <span class="tier-sub">the real value · custom · sticky</span>
+          </div>
+          <div class="modules">
+            <div class="module">
+              <div class="top">
+                <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg></div>
+                <span class="port">MOD.03</span>
+              </div>
+              <h4>Quote &amp; estimate automation</h4>
+              <p>Type the basics, get back a clean, consistent, professional quote in minutes. No more slow, inconsistent estimates losing you the job to whoever answered faster.</p>
+              <span class="roi">proven proof of concept</span>
+            </div>
+            <div class="module">
+              <div class="top">
+                <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v5H4zM4 13h10v5H4zM18 13l3 3-3 3"/></svg></div>
+                <span class="port">MOD.04</span>
+              </div>
+              <h4>Document &amp; data extraction</h4>
+              <p>Pull the data out of invoices, work orders, field tickets, and PDFs that someone retypes by hand today. Unglamorous, extremely valuable, and hard to fake.</p>
+              <span class="roi">strongest differentiator</span>
+            </div>
+            <div class="module">
+              <div class="top">
+                <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18M8 16V9M13 16V5M18 16v-4"/></svg></div>
+                <span class="port">MOD.05</span>
+              </div>
+              <h4>Job &amp; customer tracking</h4>
+              <p>One lightweight system tying together who called, what was quoted, what got scheduled, and what's profitable. Replaces paper, whiteboards, and memory.</p>
+              <span class="roi">highest-value, stickiest build</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- tier 3 -->
+        <div class="tier reveal">
+          <div class="tier-head">
+            <span class="tier-no">[ TIER_03 ]</span>
+            <span class="tier-title">Scale</span>
+            <span class="tier-sub">grow into it · bespoke · upsells</span>
+          </div>
+          <div class="modules">
+            <div class="module">
+              <div class="top">
+                <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-4 12.7V18h8v-3.3A7 7 0 0 0 12 2zM9 22h6"/></svg></div>
+                <span class="port">MOD.06</span>
+              </div>
+              <h4>Internal knowledge bot</h4>
+              <p>Ask your own manuals, SOPs, pricing, and warranty terms a question and get a straight answer. Built for shops sitting on piles of reference nobody can find fast.</p>
+              <span class="roi">a smarter add once you're rolling</span>
+            </div>
+            <div class="module">
+              <div class="top">
+                <div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg></div>
+                <span class="port">MOD.07</span>
+              </div>
+              <h4>Custom builds &amp; apps</h4>
+              <p>Whatever specific thing your business needs that doesn't fit a package, built properly and priced as the bespoke work it is, by someone who actually knows systems.</p>
+              <span class="roi">your unfair advantage, made to order</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LIVE OPS TERMINAL ============ -->
+  <section id="live">
+    <div class="wrap">
+      <div class="terminal-wrap">
+        <div class="term-side reveal">
+          <span class="pill"><span class="led" aria-hidden="true"></span>live activity log</span>
+          <div class="kicker"><span class="ln" aria-hidden="true"></span><span class="idx">02</span> Watch it run</div>
+          <h2>Automations that <span class="em">execute in real time.</span></h2>
+          <p>This is what a cobbl system does while you're on a roof or under a truck. A call comes in, gets answered, gets booked, and the customer gets a confirmation, with no one touching a phone.</p>
+          <p>Every step is logged, measured, and yours. No black box, just a machine you can watch working.</p>
+          <div class="chips">
+            <span class="chip"><b>+</b> runs 24/7</span>
+            <span class="chip"><b>+</b> every event logged</span>
+            <span class="chip"><b>+</b> handoff to a human anytime</span>
+          </div>
+        </div>
+
+        <div class="terminal reveal">
+          <div class="term-bar">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="term-title">cobbl-core · missed-call recovery</span>
+            <span class="term-live"><span class="led" aria-hidden="true"></span>live</span>
+          </div>
+          <div class="term-body" id="termBody" role="log" aria-live="polite" aria-label="Automation activity log"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section id="how">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <div class="kicker"><span class="ln" aria-hidden="true"></span><span class="idx">03</span> How it works</div>
+        <h2>The pipeline is the same <span class="em">every time.</span></h2>
+        <p>Four steps, scoped tight. We do not start with an AI pitch, we start with your worst time-waster and work back from payback.</p>
+      </div>
+
+      <div class="pipeline" id="pipeline">
+        <div class="pipe-track" aria-hidden="true"><span class="fill"></span></div>
+        <div class="steps">
+          <div class="step reveal">
+            <span class="knob" aria-hidden="true"></span>
+            <span class="no">STEP_01</span>
+            <h4>Find the pain</h4>
+            <p>We start with the one task eating your week. No AI pitch, just the worst bottleneck on the table.</p>
+          </div>
+          <div class="step reveal">
+            <span class="knob" aria-hidden="true"></span>
+            <span class="no">STEP_02</span>
+            <h4>Ship a win</h4>
+            <p>One working system, scoped tight, delivered fast, with a clear "version 1 is done."</p>
+          </div>
+          <div class="step reveal">
+            <span class="knob" aria-hidden="true"></span>
+            <span class="no">STEP_03</span>
+            <h4>Measure payback</h4>
+            <p>We show you the hours and dollars it gives back, in plain numbers you can check.</p>
+          </div>
+          <div class="step reveal">
+            <span class="knob" aria-hidden="true"></span>
+            <span class="no">STEP_04</span>
+            <h4>Grow together</h4>
+            <p>From there we layer on the systems that compound, as your ongoing technical partner.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="payback reveal">
+        <span class="mono">// the line that matters</span>
+        <div class="ln">What you're really buying is <b>payback speed.</b> Setup fee plus a monthly retainer, and we configure and reuse before we build from scratch.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHO IT'S FOR ============ -->
+  <section id="who">
+    <div class="wrap">
+      <div class="band reveal">
+        <div class="who">
+          <div class="kicker"><span class="ln" aria-hidden="true"></span><span class="idx">04</span> Who it's for</div>
+          <h2>Small operators doing real work by hand.</h2>
+          <p style="color:var(--muted);margin-top:16px">If your team is small, your margins matter, and too much still lives in your head, on paper, or in a phone that keeps ringing out, cobbl is built for you.</p>
+          <div class="who-list">
+            <span>home services</span><span>trades &amp; contractors</span><span>auto &amp; repair</span>
+            <span>installers</span><span>local shops</span><span>field crews</span>
+          </div>
+        </div>
+        <div class="model">
+          <div class="kicker"><span class="ln" aria-hidden="true"></span>How we work</div>
+          <ul>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Setup fee <b>plus a monthly retainer</b>, so we stay in your corner.</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Packaged offers with a <b>clear "version 1 is done"</b>, never endless scope.</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>We <b>configure and reuse before building from scratch</b>, custom only where it counts.</span></li>
+            <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span><b>Payback speed</b> is what you're buying. Cheapest isn't the goal.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section id="contact">
+    <div class="wrap">
+      <div class="cta reveal">
+        <div class="cta-grid" aria-hidden="true"></div>
+        <div class="kicker" style="justify-content:center"><span class="idx">&gt;_</span> Let's talk</div>
+        <h2>Let's find your <span class="em">first win.</span></h2>
+        <p>Tell us about the work that's eating your week. We'll point at the one thing worth automating first, and what it would take to ship it.</p>
+        <div class="cta-actions">
+          <a class="btn btn-primary" href="mailto:hello@cobbl.io">Start a conversation <span class="arr" aria-hidden="true">&rarr;</span></a>
+          <a class="btn btn-ghost" href="/work.html">See the work</a>
+        </div>
+        <p class="cta-mail">// reach a human at <a href="mailto:hello@cobbl.io">hello@cobbl.io</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="wrap foot-inner">
+      <div>
+        <a class="brand" href="#top" aria-label="cobbl home">
+          <svg class="mark" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+            <rect x="1" y="9" width="9" height="9" rx="2" fill="#a3e635"/>
+            <rect x="11" y="14" width="9" height="9" rx="2" fill="#a3e635" opacity="0.55"/>
+            <rect x="11" y="3" width="9" height="9" rx="2" fill="#a3e635" opacity="0.8"/>
+          </svg>
+          <span class="brand-name">cobbl</span>
+        </a>
+        <p class="foot-tag">Custom AI automation that lets small operators run leaner and compete like a bigger company.</p>
+        <p class="foot-line">// a force multiplier for the underdog</p>
+      </div>
+      <div class="foot-cols">
+        <div class="foot-col">
+          <h5>Build</h5>
+          <a href="#build">What we build</a>
+          <a href="#live">Live ops</a>
+          <a href="#how">How it works</a>
+        </div>
+        <div class="foot-col">
+          <h5>Company</h5>
+          <a href="#who">Who it's for</a>
+          <a href="/work.html">Work</a>
+          <a href="mailto:hello@cobbl.io">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="wrap">
+      <p class="copy">© <span id="yr"></span> cobbl · custom AI automation for small operators · hello@cobbl.io</p>
+    </div>
+  </footer>
+
+  <script>
+  (function(){
+    "use strict";
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ---- year ---- */
+    document.getElementById("yr").textContent = new Date().getFullYear();
+
+    /* ---- nav scroll state ---- */
+    var nav = document.getElementById("nav");
+    function onScroll(){ nav.classList.toggle("scrolled", window.scrollY > 18); }
+    onScroll();
+    window.addEventListener("scroll", onScroll, {passive:true});
+
+    /* ---- mobile menu ---- */
+    var toggle = document.getElementById("navToggle");
+    var menu = document.getElementById("mobileMenu");
+    function closeMenu(){ menu.classList.remove("open"); toggle.setAttribute("aria-expanded","false"); }
+    toggle.addEventListener("click", function(){
+      var open = menu.classList.toggle("open");
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    menu.querySelectorAll("a").forEach(function(a){ a.addEventListener("click", closeMenu); });
+
+    /* ---- cursor-reactive blueprint glow ---- */
+    if(!reduce){
+      var glow = document.getElementById("cursorGlow");
+      var gx = window.innerWidth/2, gy = window.innerHeight/2, tx = gx, ty = gy, shown = false;
+      window.addEventListener("pointermove", function(e){
+        tx = e.clientX; ty = e.clientY;
+        if(!shown){ glow.style.opacity = ".9"; shown = true; }
+      }, {passive:true});
+      (function raf(){
+        gx += (tx-gx)*0.12; gy += (ty-gy)*0.12;
+        glow.style.transform = "translate("+gx+"px,"+gy+"px)";
+        requestAnimationFrame(raf);
+      })();
+    }
+
+    /* ---- staggered hero reveal ---- */
+    var heroReveals = document.querySelectorAll("header .reveal");
+    heroReveals.forEach(function(el,i){
+      if(reduce){ el.classList.add("in"); return; }
+      setTimeout(function(){ el.classList.add("in"); }, 120 + i*100);
+    });
+
+    /* ---- scroll reveals + counters + pipeline ---- */
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          e.target.classList.add("in");
+          if(e.target.id === "metrics") runCounters();
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold:0.16});
+    document.querySelectorAll("section .reveal, #metrics").forEach(function(el){ io.observe(el); });
+
+    /* pipeline lights up when in view */
+    var pipeline = document.getElementById("pipeline");
+    if(pipeline){
+      var pio = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if(e.isIntersecting){ pipeline.classList.add("lit"); pio.unobserve(e.target); } });
+      }, {threshold:0.4});
+      pio.observe(pipeline);
+    }
+
+    /* ---- animated counters ---- */
+    var countersDone = false;
+    function runCounters(){
+      if(countersDone) return; countersDone = true;
+      document.querySelectorAll("[data-count]").forEach(function(el){
+        var target = parseInt(el.getAttribute("data-count"),10);
+        if(reduce){ el.textContent = target; return; }
+        var dur = 1300, start = performance.now();
+        function tick(now){
+          var p = Math.min((now-start)/dur, 1);
+          var eased = 1 - Math.pow(1-p, 3);
+          el.textContent = Math.round(eased*target);
+          if(p < 1) requestAnimationFrame(tick);
+          else el.textContent = target;
+        }
+        requestAnimationFrame(tick);
+      });
+    }
+
+    /* ---- interactive wiring graph ---- */
+    var svg = document.getElementById("wireSvg");
+    if(svg){
+      var inWires = {
+        0:["w1"], 1:["w2"], 2:["w3"], 3:["w4"]
+      };
+      var allOut = ["o1","o2"];
+      var nodes = svg.querySelectorAll(".ng[data-node='in']");
+      var corePulse = document.getElementById("corePulse");
+
+      function lightWires(ids, on){
+        ids.forEach(function(id){
+          var w = document.getElementById(id);
+          if(w) w.classList.toggle("active", on);
+        });
+      }
+      function activate(idx, on){
+        var node = svg.querySelector(".ng[data-node='in'][data-idx='"+idx+"']");
+        if(node) node.classList.toggle("active", on);
+        // light the input wire plus both output wires + core
+        var ids = (inWires[idx]||[]).concat(allOut);
+        lightWires(ids, on);
+        svg.querySelectorAll(".ng[data-node='out']").forEach(function(o){ o.classList.toggle("active", on); });
+        if(corePulse) corePulse.style.stroke = on ? "#c4f042" : "";
+      }
+      nodes.forEach(function(node){
+        var idx = node.getAttribute("data-idx");
+        node.addEventListener("mouseenter", function(){ activate(idx, true); });
+        node.addEventListener("mouseleave", function(){ activate(idx, false); });
+        node.addEventListener("focus", function(){ activate(idx, true); });
+        node.addEventListener("blur", function(){ activate(idx, false); });
+      });
+
+      /* gentle auto-cycle so it feels alive even without hover (motion-safe) */
+      if(!reduce){
+        var cyc = 0;
+        setInterval(function(){
+          if(svg.querySelector(".ng.active")) return; /* don't fight the user */
+          var prev = (cyc+3)%4;
+          activate(prev, false);
+          activate(cyc, true);
+          var cur = cyc;
+          setTimeout(function(){ if(!svg.querySelector(".ng[data-idx='"+cur+"']").matches(":hover,:focus")) activate(cur, false); }, 1500);
+          cyc = (cyc+1)%4;
+        }, 2600);
+      }
+    }
+
+    /* ---- self-typing activity terminal ---- */
+    var term = document.getElementById("termBody");
+    if(term){
+      var seq = [
+        {t:"09:42:07", tick:"●", cls:"run",  html:"<b>incoming call</b> from (414) 555-0188 <span class='hl'>// no answer</span>"},
+        {t:"09:42:45", tick:"✓", cls:"ok",   html:"missed call detected <b>after 38s</b>"},
+        {t:"09:42:46", tick:"→", cls:"in",   html:"SMS sent: <b>\"Hi, this is Ridgeline Plumbing. Sorry we missed you...\"</b>"},
+        {t:"09:43:31", tick:"←", cls:"in",   html:"reply received: <b>\"water heater leaking, need someone today\"</b>"},
+        {t:"09:43:33", tick:"✓", cls:"ok",   html:"intent classified: <span class='hl'>emergency / book ASAP</span>"},
+        {t:"09:43:40", tick:"→", cls:"in",   html:"offered slots: <b>2:00 PM, 4:30 PM today</b>"},
+        {t:"09:44:18", tick:"✓", cls:"ok",   html:"<b>job booked</b> &mdash; 2:00 PM, address captured, lead logged"},
+        {t:"09:44:19", tick:"→", cls:"in",   html:"confirmation sent + added to crew calendar"},
+        {t:"09:44:20", tick:"✓", cls:"ok",   html:"<span class='hl'>lead saved that would have rung out.</span>"}
+      ];
+
+      function makeLine(item, withCursor){
+        var div = document.createElement("div");
+        div.className = "log-line";
+        div.innerHTML =
+          "<span class='log-time'>"+item.t+"</span>"+
+          "<span class='log-tick "+item.cls+"'>"+item.tick+"</span>"+
+          "<span class='log-text'>"+item.html+(withCursor?"<span class='log-cursor'></span>":"")+"</span>";
+        return div;
+      }
+
+      if(reduce){
+        /* static end-state: show full log, no animation */
+        seq.forEach(function(item){
+          var div = makeLine(item, false);
+          div.classList.add("show");
+          term.appendChild(div);
+        });
+      } else {
+        var idx = 0;
+        function step(){
+          if(idx >= seq.length){
+            /* hold the finished log, then reset and loop */
+            setTimeout(function(){
+              term.style.transition = "opacity .5s";
+              term.style.opacity = "0";
+              setTimeout(function(){ term.innerHTML = ""; term.style.opacity = "1"; idx = 0; step(); }, 600);
+            }, 3200);
+            return;
+          }
+          var item = seq[idx];
+          var line = makeLine(item, true);
+          term.appendChild(line);
+          /* trim old lines if log gets tall on small screens */
+          while(term.children.length > 9) term.removeChild(term.firstChild);
+          requestAnimationFrame(function(){ line.classList.add("show"); });
+          idx++;
+          /* remove cursor from previous lines */
+          var cursors = term.querySelectorAll(".log-cursor");
+          for(var c=0;c<cursors.length-1;c++){ cursors[c].remove(); }
+          setTimeout(step, 950 + Math.random()*650);
+        }
+        /* start the terminal only when scrolled near it */
+        var started = false;
+        var tio = new IntersectionObserver(function(entries){
+          entries.forEach(function(e){
+            if(e.isIntersecting && !started){ started = true; step(); tio.disconnect(); }
+          });
+        }, {threshold:0.3});
+        tio.observe(term);
+      }
+    }
+  })();
+  </script>
+</body>
+</html>
