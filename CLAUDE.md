@@ -9,23 +9,17 @@ businesses**, using AI where it helps. Positioning line: *"A force multiplier fo
 the underdog."* This repo is the marketing site: a static, dependency-free set of
 hand-built HTML pages (no framework, no build step).
 
-## ⚠️ Web3Forms access key (action required to capture leads)
+## Web3Forms lead capture
 
-The home page contact form posts to **Web3Forms**. It ships with a **placeholder
-key**, so until that is replaced it does NOT email leads; it falls back to opening
-the visitor's mail app (mailto hello@cobbld.com).
+The home page contact form posts to **Web3Forms**. A live access key (registered
+to **hello@cobbld.com**) is set on the hidden `name="access_key"` input in
+[`index.html`](index.html), so valid submissions are emailed as leads.
 
-To activate real lead capture:
-
-1. Get a free access key at https://web3forms.com (register it to **hello@cobbld.com**).
-2. In [`index.html`](index.html), find the hidden input
-   `name="access_key"` (around line 565) and replace
-   `REPLACE_WITH_YOUR_WEB3FORMS_ACCESS_KEY` with your key.
-
-That is the only change needed. The submit handler in `index.html` gates on the
-key: if it still contains `REPLACE`, it uses the mailto fallback; once a real key
-is present it POSTs to `data-endpoint` (`https://api.web3forms.com/submit`) and
-shows the success state. To switch providers (e.g. Formspree), change
+The submit handler in `index.html` gates on the key: if the value still contains
+`REPLACE` it uses the mailto fallback (mailto hello@cobbld.com); otherwise it
+POSTs to `data-endpoint` (`https://api.web3forms.com/submit`) and shows the
+success state, falling back to mailto only if that request fails. To rotate the
+key, swap the `access_key` value. To switch providers (e.g. Formspree), change
 `data-endpoint` on the `<form id="contactForm">` and adjust the hidden fields.
 
 ## Repository layout
