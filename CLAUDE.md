@@ -1,10 +1,10 @@
 # CLAUDE.md
 
-Guidance for working in the **cobbl** marketing site repo.
+Guidance for working in the **cobbld** marketing site repo.
 
 ## What this is
 
-cobbl is a small studio that builds custom software and automation for **small
+cobbld is a small studio that builds custom software and automation for **small
 businesses**, using AI where it helps. Positioning line: *"A force multiplier for
 the underdog."* This repo is the marketing site: a static, dependency-free set of
 hand-built HTML pages (no framework, no build step).
@@ -13,11 +13,11 @@ hand-built HTML pages (no framework, no build step).
 
 The home page contact form posts to **Web3Forms**. It ships with a **placeholder
 key**, so until that is replaced it does NOT email leads; it falls back to opening
-the visitor's mail app (mailto hello@cobbl.io).
+the visitor's mail app (mailto hello@cobbld.com).
 
 To activate real lead capture:
 
-1. Get a free access key at https://web3forms.com (register it to **hello@cobbl.io**).
+1. Get a free access key at https://web3forms.com (register it to **hello@cobbld.com**).
 2. In [`index.html`](index.html), find the hidden input
    `name="access_key"` (around line 565) and replace
    `REPLACE_WITH_YOUR_WEB3FORMS_ACCESS_KEY` with your key.
@@ -33,7 +33,7 @@ shows the success state. To switch providers (e.g. Formspree), change
 ```
 .
 ├── index.html        # Home page (the live site root)
-├── work.html         # Work page: example/demo systems cobbl builds
+├── work.html         # Work page: example/demo systems cobbld builds
 ├── favicon.svg       # Logo mark (three offset rounded squares = "cobble together")
 ├── CLAUDE.md         # This file
 ├── .gitignore        # Ignores local .claude/ tooling
@@ -96,7 +96,7 @@ The user has set firm guidelines. Re-read [memory or] enforce these:
   examples/demos, not case studies.
 - **Audience is "small businesses."** Do not use "operator(s)". Do not lock into
   trade verticals (HVAC, plumbing, etc.). Describe capabilities, not niches.
-- **cobbl is not an AI company.** Lead with the business outcome; mention AI lightly
+- **cobbld is not an AI company.** Lead with the business outcome; mention AI lightly
   as the method. Keep AI references sparse.
 - **Services are examples, not an exhaustive menu.** Keep the "if it slows you down,
   we can probably build it" framing.
