@@ -155,7 +155,7 @@
 
   .build-row{flex:1;display:flex;align-items:center;gap:1.8rem;will-change:transform;padding-bottom:clamp(1rem,4vh,2rem)}
   .tier-card{
-    flex:none;width:min(78vw,440px);height:min(64vh,560px);border-radius:26px;
+    flex:none;width:min(78vw,440px);height:min(64vh,370px);border-radius:26px;
     background:var(--bone);color:var(--ink);padding:2.2rem 2.1rem;display:flex;flex-direction:column;
     border:2px solid var(--bone);position:relative;overflow:hidden;
     will-change:transform,opacity;
@@ -237,7 +237,7 @@
   /* ---------- final cta ---------- */
   #cta{background:var(--ink);color:var(--bone);text-align:center;overflow:hidden}
   .cta-eyebrow{font-size:.82rem;color:var(--acid);margin-bottom:1.8rem}
-  .cta-head{font-family:"Unbounded";font-weight:900;font-size:clamp(3rem,13vw,11rem);line-height:.86;letter-spacing:-.02em}
+  .cta-head{font-family:"Unbounded";font-weight:900;font-size:clamp(2.6rem,13vw,11rem);line-height:.86;letter-spacing:-.02em}
   .cta-head em{font-style:normal;color:var(--tang)}
   .cta-head .ol2{color:transparent;-webkit-text-stroke:1.6px var(--bone)}
   .cta-sub{max-width:42ch;margin:2rem auto 2.4rem;font-size:clamp(1.05rem,1.7vw,1.3rem);font-weight:500;color:rgba(242,239,233,.78)}
@@ -320,7 +320,12 @@
     .step .sdesc{justify-self:start;text-align:left;max-width:38ch}
     .step:hover .stitle{transform:none}
     .leak-panel{min-height:0}
-    /* horizontal build -> vertical native */
+    .payback-banner{text-align:left}
+  }
+  /* build gallery: stacked native cards on phones AND tablets; the horizontal
+     sliding gallery is reserved for wide desktops (>900px) so tablets never get
+     the tall, half-empty gallery cards or the scroll-pin */
+  @media (max-width:900px){
     #build{padding:4.6rem 0}
     .build-pin{height:auto !important}
     .build-sticky{position:static;height:auto;display:block}
@@ -330,11 +335,15 @@
     .build-mobile{display:flex;flex-direction:column;gap:1.4rem}
     .build-mobile .tier-card{width:100%;height:auto;min-height:0}
     .build-hint{display:none}
-    .payback-banner{text-align:left}
   }
   @media (max-width:420px){
     .wrap{width:min(1280px,100% - 1.6rem)}
     .btn{font-size:.92rem;padding:.7rem 1.2rem}
+  }
+  /* footer: even 2-col grid on phones so the third column can't wrap into a
+     lopsided row with a big empty gap */
+  @media (max-width:600px){
+    .foot-cols{display:grid;grid-template-columns:1fr 1fr;gap:2.2rem 1.5rem;width:100%}
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -784,7 +793,7 @@
   var row = document.getElementById("buildRow");
   var bar = document.getElementById("buildBar");
   var pct = document.getElementById("buildPct");
-  function isDesktop(){ return window.matchMedia("(min-width:761px)").matches; }
+  function isDesktop(){ return window.matchMedia("(min-width:901px)").matches; }
 
   function setupPin(){
     if(!pin || !row) return;
