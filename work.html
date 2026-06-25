@@ -235,6 +235,11 @@
     .btn{font-size:.92rem;padding:.7rem 1.2rem}
     .tier-tag{font-size:.74rem;padding:.4rem .75rem}
   }
+  /* footer: even 2-col grid on phones so the third column can't wrap into a
+     lopsided row with a big empty gap */
+  @media (max-width:600px){
+    .foot-cols{display:grid;grid-template-columns:1fr 1fr;gap:2.2rem 1.5rem;width:100%}
+  }
 
   @media (prefers-reduced-motion:reduce){
     *{animation:none !important;scroll-behavior:auto !important}
@@ -501,7 +506,7 @@
     </div>
     <div class="foot-bottom">
       <span>© 2026 cobbld. Built for small businesses.</span>
-      <span class="mono"><span class="mark">✦</span> Cobble together. Ship the win.</span>
+      <span class="mono"><span class="mark">✦</span> Cobble together.</span>
     </div>
   </div>
 </footer>

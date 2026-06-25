@@ -139,51 +139,30 @@
   .sec-head{font-size:clamp(2.3rem,6.5vw,5.4rem);font-weight:800;line-height:.96;max-width:16ch}
   .sec-head em{font-style:normal;color:var(--tang)}
 
-  /* ---------- what we build (horizontal pin) ---------- */
-  #build{padding:0;background:var(--ink);color:var(--bone)}
-  .build-pin{position:relative}
-  .build-sticky{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-  .build-top{display:flex;align-items:flex-end;justify-content:space-between;gap:1.5rem;padding:clamp(1.4rem,4vh,2.6rem) 0 1.1rem}
-  .build-top .sec-head{color:var(--bone)}
-  .build-top .kicker{color:var(--acid)}
-  .build-top .kicker .ix{color:var(--bone)}
-  .build-lead{margin-top:.9rem;max-width:52ch;font-size:.96rem;font-weight:500;color:rgba(242,239,233,.62);line-height:1.45}
-  .build-progress{flex:none;width:min(220px,30vw);align-self:flex-end;margin-bottom:.7rem}
-  .build-progress .bar{height:5px;background:rgba(242,239,233,0.2);border-radius:99px;overflow:hidden}
-  .build-progress .bar i{display:block;height:100%;width:15%;background:var(--tang);border-radius:99px;transition:width .1s linear}
-  .build-progress .lab{font-size:.72rem;color:rgba(242,239,233,.6);margin-top:.5rem;display:flex;justify-content:space-between}
+  /* ---------- what we build (progression path) ---------- */
+  #build{background:var(--ink);color:var(--bone);padding:6rem 0}
+  .build-head .kicker{color:var(--acid)}
+  .build-head .kicker .ix{color:var(--bone)}
+  .build-head .sec-head{color:var(--bone)}
+  .build-lead{margin-top:1.1rem;max-width:52ch;font-size:1rem;font-weight:500;color:rgba(242,239,233,.6);line-height:1.45}
 
-  .build-row{flex:1;display:flex;align-items:center;gap:1.8rem;will-change:transform;padding-bottom:clamp(1rem,4vh,2rem)}
-  .tier-card{
-    flex:none;width:min(78vw,440px);height:min(64vh,560px);border-radius:26px;
-    background:var(--bone);color:var(--ink);padding:2.2rem 2.1rem;display:flex;flex-direction:column;
-    border:2px solid var(--bone);position:relative;overflow:hidden;
-    will-change:transform,opacity;
-  }
-  .tier-card[data-accent="tang"]{background:var(--tang);border-color:var(--tang)}
-  .tier-card[data-accent="acid"]{background:var(--acid);border-color:var(--acid)}
-  .tier-card[data-accent="ink"]{background:var(--ink-soft);color:var(--bone);border-color:var(--ink-soft)}
-  .tier-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;border-bottom:2px solid currentColor;padding-bottom:1rem;margin-bottom:1.3rem}
-  .tier-num{font-family:"Unbounded";font-weight:900;font-size:2.4rem;line-height:1}
-  .tier-name{font-family:"Unbounded";font-weight:800;font-size:1.5rem;text-align:right;line-height:1}
-  .tier-blurb{font-size:.92rem;font-weight:500;opacity:.86;margin-bottom:1.4rem;line-height:1.45}
-  .tier-list{list-style:none;display:flex;flex-direction:column;gap:1.05rem;margin-top:auto}
-  .tier-list li{display:flex;gap:.85rem}
-  .tier-list .lnum{font-family:"DM Mono",monospace;font-size:.78rem;font-weight:500;opacity:.6;flex:none;padding-top:.18rem}
-  .tier-list h4{font-family:"Onest";font-weight:700;font-size:1.12rem;line-height:1.15;margin-bottom:.18rem}
-  .tier-list p{font-size:.86rem;font-weight:500;opacity:.82;line-height:1.4}
-  .tier-card .corner{position:absolute;top:1.4rem;left:2.1rem;font-size:.72rem;font-weight:500;opacity:.7}
-  .tier-eg{margin-top:auto}
-  .tier-eg-label{display:block;font-size:.7rem;opacity:.55;margin-bottom:.85rem}
-  .tier-tags{display:flex;flex-wrap:wrap;gap:.5rem}
-  .tier-tag{font-family:"DM Mono",monospace;font-size:.78rem;font-weight:500;border:1.5px solid currentColor;border-radius:99px;padding:.4rem .8rem;opacity:.82;white-space:nowrap}
-
-  .build-hint{position:absolute;left:0;right:0;bottom:1.1rem;text-align:center;font-size:.72rem;color:rgba(242,239,233,.55);pointer-events:none}
-  .build-hint span{display:inline-flex;align-items:center;gap:.5rem}
-
-  .build-desktop{flex:1;display:flex;min-width:0}
-  /* mobile build fallback */
-  .build-mobile{display:none}
+  .path{position:relative;margin-top:3.4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+  .stop{--acc:var(--bone);position:relative;padding-top:2.9rem}
+  .stop[data-accent="tang"]{--acc:var(--tang)}
+  .stop[data-accent="bone"]{--acc:var(--bone)}
+  .stop[data-accent="acid"]{--acc:var(--acid)}
+  .stop .dot{position:absolute;top:0;left:0;width:22px;height:22px;border-radius:50%;background:var(--ink);border:3px solid var(--acc)}
+  .stop::after{content:"";position:absolute;top:9px;left:22px;right:-2rem;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--acc),var(--bone))}
+  .stop[data-accent="bone"]::after{background:linear-gradient(90deg,var(--bone),var(--acid))}
+  .stop:last-child::after{display:none}
+  .stop-num{display:block;font-size:.72rem;color:rgba(242,239,233,.5);margin-bottom:.6rem}
+  .stop-name{font-family:"Unbounded";font-weight:800;font-size:clamp(1.7rem,2.8vw,2.5rem);line-height:1;letter-spacing:-.02em;color:var(--acc)}
+  .stop-blurb{margin-top:.8rem;font-size:.95rem;font-weight:500;color:rgba(242,239,233,.62);line-height:1.45;max-width:30ch}
+  .stop-list{list-style:none;margin-top:1.3rem;display:flex;flex-direction:column;gap:.55rem}
+  .stop-list li{position:relative;padding-left:1.1rem;font-family:"DM Mono",monospace;font-size:.8rem;letter-spacing:.03em;color:rgba(242,239,233,.8)}
+  .stop-list li::before{content:"";position:absolute;left:0;top:.5em;width:6px;height:6px;border-radius:1px;background:var(--acc)}
+  .path-cap{margin-top:3rem;text-align:center;font-size:.82rem;color:rgba(242,239,233,.6)}
+  .path-cap b{color:var(--bone);font-weight:500;margin:0 .25rem}
 
   /* ---------- signature: leak picker ---------- */
   #leak{background:var(--bone)}
@@ -237,7 +216,7 @@
   /* ---------- final cta ---------- */
   #cta{background:var(--ink);color:var(--bone);text-align:center;overflow:hidden}
   .cta-eyebrow{font-size:.82rem;color:var(--acid);margin-bottom:1.8rem}
-  .cta-head{font-family:"Unbounded";font-weight:900;font-size:clamp(3rem,13vw,11rem);line-height:.86;letter-spacing:-.02em}
+  .cta-head{font-family:"Unbounded";font-weight:900;font-size:clamp(2.6rem,13vw,11rem);line-height:.86;letter-spacing:-.02em}
   .cta-head em{font-style:normal;color:var(--tang)}
   .cta-head .ol2{color:transparent;-webkit-text-stroke:1.6px var(--bone)}
   .cta-sub{max-width:42ch;margin:2rem auto 2.4rem;font-size:clamp(1.05rem,1.7vw,1.3rem);font-weight:500;color:rgba(242,239,233,.78)}
@@ -320,21 +299,27 @@
     .step .sdesc{justify-self:start;text-align:left;max-width:38ch}
     .step:hover .stitle{transform:none}
     .leak-panel{min-height:0}
-    /* horizontal build -> vertical native */
-    #build{padding:4.6rem 0}
-    .build-pin{height:auto !important}
-    .build-sticky{position:static;height:auto;display:block}
-    .build-top{flex-direction:column;align-items:flex-start;gap:1rem;padding:0 0 1.8rem}
-    .build-progress{display:none}
-    .build-desktop{display:none}
-    .build-mobile{display:flex;flex-direction:column;gap:1.4rem}
-    .build-mobile .tier-card{width:100%;height:auto;min-height:0}
-    .build-hint{display:none}
     .payback-banner{text-align:left}
+  }
+  /* progression path turns vertical: the track runs down the left rail */
+  @media (max-width:820px){
+    #build{padding:4.8rem 0}
+    .path{grid-template-columns:1fr;gap:1.7rem;margin-top:2.6rem}
+    .stop{padding-top:0;padding-left:2.4rem}
+    .stop .dot{top:.15rem;left:0}
+    .stop::after{top:1.7rem;left:9px;right:auto;bottom:-1.7rem;width:3px;height:auto;background:linear-gradient(180deg,var(--acc),var(--bone))}
+    .stop[data-accent="bone"]::after{background:linear-gradient(180deg,var(--bone),var(--acid))}
+    .stop-blurb{max-width:46ch}
+    .path-cap{margin-top:2.4rem}
   }
   @media (max-width:420px){
     .wrap{width:min(1280px,100% - 1.6rem)}
     .btn{font-size:.92rem;padding:.7rem 1.2rem}
+  }
+  /* footer: even 2-col grid on phones so the third column can't wrap into a
+     lopsided row with a big empty gap */
+  @media (max-width:600px){
+    .foot-cols{display:grid;grid-template-columns:1fr 1fr;gap:2.2rem 1.5rem;width:100%}
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -343,7 +328,6 @@
     .reveal{opacity:1 !important;transform:none !important}
     .hero-head .line span{transform:none !important}
     .cursor-dot{display:none}
-    .build-row{transform:none !important}
     .hero-head .underdog svg path{stroke-dashoffset:0 !important;transition:none}
   }
 </style>
@@ -418,119 +402,54 @@
 
 <!-- ===================== WHAT WE BUILD ===================== -->
 <section id="build" aria-label="What we build">
-  <div class="build-pin" id="buildPin">
-    <div class="build-sticky">
-      <div class="wrap build-top">
-        <div>
-          <span class="kicker mono"><span class="ix">01</span> / What we build</span>
-          <h2 class="sec-head">A few things <em>we build.</em></h2>
-          <p class="build-lead">Examples, not a menu. If a job is eating your week, we build the thing that fixes it.</p>
-        </div>
-        <div class="build-progress" aria-hidden="true">
-          <div class="bar"><i id="buildBar"></i></div>
-          <div class="lab mono"><span>Drag / scroll</span><span id="buildPct">01/03</span></div>
-        </div>
-      </div>
-
-      <!-- desktop horizontal row -->
-      <div class="wrap build-desktop">
-        <div class="build-row" id="buildRow">
-
-          <article class="tier-card" data-accent="tang">
-            <span class="corner mono">Start here</span>
-            <div class="tier-head">
-              <span class="tier-num">01</span>
-              <span class="tier-name">Quick<br>wins</span>
-            </div>
-            <p class="tier-blurb">Fast, visible wins that get you set up and online. No big project to commit to.</p>
-            <div class="tier-eg">
-              <span class="tier-eg-label mono">For example</span>
-              <div class="tier-tags">
-                <span class="tier-tag">Websites</span>
-                <span class="tier-tag">Landing pages</span>
-                <span class="tier-tag">Booking &amp; forms</span>
-                <span class="tier-tag">Small automations</span>
-              </div>
-            </div>
-          </article>
-
-          <article class="tier-card" data-accent="ink">
-            <span class="corner mono">The day to day</span>
-            <div class="tier-head">
-              <span class="tier-num">02</span>
-              <span class="tier-name">Core<br>builds</span>
-            </div>
-            <p class="tier-blurb">The tools that run your day to day, so less of it lives on paper or in your head.</p>
-            <div class="tier-eg">
-              <span class="tier-eg-label mono">For example</span>
-              <div class="tier-tags">
-                <span class="tier-tag">Internal tools</span>
-                <span class="tier-tag">Customer &amp; job tracking</span>
-                <span class="tier-tag">Quoting &amp; admin</span>
-                <span class="tier-tag">Dashboards</span>
-              </div>
-            </div>
-          </article>
-
-          <article class="tier-card" data-accent="acid">
-            <span class="corner mono">Bespoke</span>
-            <div class="tier-head">
-              <span class="tier-num">03</span>
-              <span class="tier-name">Scale</span>
-            </div>
-            <p class="tier-blurb">Custom software built around exactly how you work, end to end.</p>
-            <div class="tier-eg">
-              <span class="tier-eg-label mono">For example</span>
-              <div class="tier-tags">
-                <span class="tier-tag">Custom apps</span>
-                <span class="tier-tag">Integrations</span>
-                <span class="tier-tag">Bespoke builds</span>
-              </div>
-            </div>
-          </article>
-
-        </div>
-      </div>
-
-      <div class="build-hint" aria-hidden="true"><span>Scroll to move the gallery sideways →</span></div>
+  <div class="wrap">
+    <div class="build-head reveal">
+      <span class="kicker mono"><span class="ix">01</span> / What we build</span>
+      <h2 class="sec-head">A few things <em>we build.</em></h2>
+      <p class="build-lead">Examples, not a menu. Start with one fast win, then grow into the systems that run the business.</p>
     </div>
-  </div>
 
-  <!-- mobile stacked fallback -->
-  <div class="wrap build-mobile" aria-hidden="false">
-    <article class="tier-card" data-accent="tang">
-      <span class="corner mono">Start here</span>
-      <div class="tier-head"><span class="tier-num">01</span><span class="tier-name">Quick wins</span></div>
-      <p class="tier-blurb">Fast, visible wins that get you set up and online. No big project to commit to.</p>
-      <div class="tier-eg">
-        <span class="tier-eg-label mono">For example</span>
-        <div class="tier-tags">
-          <span class="tier-tag">Websites</span><span class="tier-tag">Landing pages</span><span class="tier-tag">Booking &amp; forms</span><span class="tier-tag">Small automations</span>
-        </div>
+    <div class="path reveal">
+      <div class="stop" data-accent="tang">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="stop-num mono">01 / Start here</span>
+        <h3 class="stop-name">Quick wins</h3>
+        <p class="stop-blurb">Fast, visible wins that get you set up and online. No big project to commit to.</p>
+        <ul class="stop-list">
+          <li>Websites</li>
+          <li>Landing pages</li>
+          <li>Booking &amp; forms</li>
+          <li>Small automations</li>
+        </ul>
       </div>
-    </article>
-    <article class="tier-card" data-accent="ink">
-      <span class="corner mono">The day to day</span>
-      <div class="tier-head"><span class="tier-num">02</span><span class="tier-name">Core builds</span></div>
-      <p class="tier-blurb">The tools that run your day to day, so less of it lives on paper or in your head.</p>
-      <div class="tier-eg">
-        <span class="tier-eg-label mono">For example</span>
-        <div class="tier-tags">
-          <span class="tier-tag">Internal tools</span><span class="tier-tag">Customer &amp; job tracking</span><span class="tier-tag">Quoting &amp; admin</span><span class="tier-tag">Dashboards</span>
-        </div>
+
+      <div class="stop" data-accent="bone">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="stop-num mono">02 / The day to day</span>
+        <h3 class="stop-name">Core builds</h3>
+        <p class="stop-blurb">The tools that run your day to day, so less of it lives on paper or in your head.</p>
+        <ul class="stop-list">
+          <li>Internal tools</li>
+          <li>Customer &amp; job tracking</li>
+          <li>Quoting &amp; admin</li>
+          <li>Dashboards</li>
+        </ul>
       </div>
-    </article>
-    <article class="tier-card" data-accent="acid">
-      <span class="corner mono">Bespoke</span>
-      <div class="tier-head"><span class="tier-num">03</span><span class="tier-name">Scale</span></div>
-      <p class="tier-blurb">Custom software built around exactly how you work, end to end.</p>
-      <div class="tier-eg">
-        <span class="tier-eg-label mono">For example</span>
-        <div class="tier-tags">
-          <span class="tier-tag">Custom apps</span><span class="tier-tag">Integrations</span><span class="tier-tag">Bespoke builds</span>
-        </div>
+
+      <div class="stop" data-accent="acid">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="stop-num mono">03 / Bespoke</span>
+        <h3 class="stop-name">Scale</h3>
+        <p class="stop-blurb">Custom software built around exactly how you work, end to end.</p>
+        <ul class="stop-list">
+          <li>Custom apps</li>
+          <li>Integrations</li>
+          <li>Bespoke builds</li>
+        </ul>
       </div>
-    </article>
+    </div>
+
+    <p class="path-cap mono reveal">Start small <b>→</b> grow into custom software</p>
   </div>
 </section>
 
@@ -679,7 +598,7 @@
     </div>
     <div class="foot-bottom">
       <span>© 2026 cobbld. Built for small businesses.</span>
-      <span class="mono"><span class="mark">✦</span> Cobble together. Ship the win.</span>
+      <span class="mono"><span class="mark">✦</span> Cobble together.</span>
     </div>
   </div>
 </footer>
@@ -779,60 +698,7 @@
     });
   });
 
-  /* ---------- horizontal pinned build gallery ---------- */
-  var pin = document.getElementById("buildPin");
-  var row = document.getElementById("buildRow");
-  var bar = document.getElementById("buildBar");
-  var pct = document.getElementById("buildPct");
-  function isDesktop(){ return window.matchMedia("(min-width:761px)").matches; }
-
-  function setupPin(){
-    if(!pin || !row) return;
-    if(!isDesktop() || reduce){
-      pin.style.height = ""; row.style.transform = ""; row.style.paddingLeft = ""; row.style.paddingRight = ""; pin._dist = 0;
-      [].forEach.call(row.children, function(c){ c.style.transform = ""; c.style.opacity = ""; });
-      return;
-    }
-    var firstCard = row.querySelector(".tier-card");
-    var viewport = row.parentElement.getBoundingClientRect().width;
-    var cardW = firstCard ? firstCard.offsetWidth : 0;
-    // pad the rail so the first and last cards can sit dead-center
-    var pad = Math.max((viewport - cardW) / 2, 0);
-    row.style.paddingLeft = pad + "px";
-    row.style.paddingRight = pad + "px";
-    pin._cardW = cardW;
-    var dist = Math.max(row.scrollWidth - viewport, 0);
-    pin.style.height = (window.innerHeight + dist) + "px";
-    pin._dist = dist;
-  }
-  function emphasize(){
-    var mid = window.innerWidth / 2, cw = pin._cardW || 1;
-    [].forEach.call(row.children, function(card){
-      var r = card.getBoundingClientRect();
-      var center = r.left + r.width / 2;
-      var k = Math.max(0, 1 - Math.abs(center - mid) / cw); // 1 at center, 0 a card-width away
-      card.style.transform = "scale(" + (0.9 + 0.1 * k).toFixed(3) + ")";
-      card.style.opacity = (0.5 + 0.5 * k).toFixed(3);
-    });
-  }
-  function onScrollPin(){
-    if(!pin || !row || !isDesktop() || reduce) return;
-    var rect = pin.getBoundingClientRect();
-    var total = pin.offsetHeight - window.innerHeight;
-    if(total <= 0) return;
-    var p = Math.min(Math.max(-rect.top / total, 0), 1);
-    var dist = pin._dist || 0;
-    row.style.transform = "translate3d(" + (-p * dist) + "px,0,0)";
-    if(bar) bar.style.width = (15 + p * 85) + "%";
-    if(pct){ var idx = Math.min(3, Math.floor(p * 3) + 1); pct.textContent = "0" + idx + "/03"; }
-    emphasize();
-  }
-  if(pin && row && !reduce){
-    setupPin();
-    window.addEventListener("scroll", onScrollPin, {passive:true});
-    window.addEventListener("resize", function(){ setupPin(); onScrollPin(); });
-    onScrollPin();
-  }
+  /* ---------- what we build: progression path is CSS-only, no JS ---------- */
 
   /* ---------- magnetic buttons + cursor ---------- */
   var cursor = document.querySelector(".cursor-dot");
