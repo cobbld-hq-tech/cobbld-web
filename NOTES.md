@@ -142,3 +142,29 @@ $ cobbld help
 clear  -> wipes the log, shows: pick a command, or type one
 menu   -> same line + resets to the default chips
 ```
+
+---
+
+## Parked: Work page (`work.html`) — hidden 2026-06-27
+
+**Status:** built and still in the repo, but hidden from the live site.
+
+**Why parked:** `work.html` is a "what we build" overview, not a real portfolio.
+Until we have actual projects/clients to show, a "Work" tab sets the wrong
+expectation (visitors expect case studies). Holding it until the work is real.
+
+**What "hidden" means right now:**
+- The "Work" nav link is commented out in `index.html` in all three places: the
+  desktop nav, the mobile menu, and the footer "Explore" column (search the file
+  for `Work tab hidden`).
+- The contact-form "see the work" link was removed (now just "Or email ...").
+- `work.html` itself is untouched except a `<meta name="robots" content="noindex">`
+  so the orphaned page stays out of search. It is still reachable by direct URL.
+
+**To restore:** un-comment the three `Work` links in `index.html`, optionally
+re-add the "see the work" link in the contact `.cf-alt` line, and remove the
+`noindex` meta from `work.html`.
+
+**TODO before reviving:** have at least one or two real builds/case studies to
+show, then either keep `work.html` as the overview or rework it into an actual
+portfolio.
