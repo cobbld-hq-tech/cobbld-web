@@ -415,7 +415,9 @@
     #build{padding:4.8rem 0}
     .rung-num{font-size:1.8rem;width:54px}
     .ladder-line{left:27px}
-    .rung-body-inner{padding-left:0;gap:1.1rem 1.6rem}
+    /* keep the body indented past the rail (num 54px + 1.5rem gap) so the
+       vertical line never paints over the blurb or chips */
+    .rung-body-inner{padding-left:78px;gap:1.1rem 1.6rem}
     .rung-blurb{min-width:0}
     /* with blurb + chips stacked, the open panel is taller; give it room so it
        never clips its last chips on narrow screens */
@@ -425,6 +427,8 @@
     .rung-btn{gap:1rem;padding:1.4rem 0}
     .rung-num{font-size:1.5rem;width:42px}
     .ladder-line{left:21px}
+    /* narrower number column here (num 42px + 1rem gap), so re-align the body */
+    .rung-body-inner{padding-left:58px}
   }
   @media (max-width:420px){
     .wrap{width:min(1280px,100% - 1.6rem)}
