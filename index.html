@@ -100,9 +100,7 @@
 
   /* ---------- hero ---------- */
   .hero{position:relative;padding:calc(var(--nav-h) + 3.2rem) 0 2.4rem;overflow:hidden}
-  .hero-tag{display:flex;align-items:center;gap:.8rem;font-size:.82rem;margin-bottom:1.6rem;color:var(--ink-soft)}
-  .hero-tag .dot{width:9px;height:9px;border-radius:50%;background:var(--tang);flex:none;animation:pulse 2.4s infinite}
-  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
+  .hero-tag{font-size:.82rem;margin-bottom:1.6rem;color:var(--ink-soft)}
 
   .hero-head{font-size:clamp(3.1rem,12.4vw,11.5rem);font-weight:900}
   .hero-head .line{display:block;overflow:hidden;padding-bottom:.2em;margin-bottom:-.2em}
@@ -134,15 +132,11 @@
 
   /* ---------- generic section heads ---------- */
   .section{padding:6.4rem 0;position:relative}
-  .kicker{display:inline-flex;align-items:center;gap:.7rem;font-size:.8rem;margin-bottom:1.4rem;color:var(--tang-deep)}
-  .kicker .ix{font-family:"Unbounded";font-weight:700;color:var(--ink)}
   .sec-head{font-size:clamp(2.3rem,6.5vw,5.4rem);font-weight:800;line-height:.96;max-width:16ch}
   .sec-head em{font-style:normal;color:var(--tang)}
 
   /* ---------- what we build (progression path) ---------- */
   #build{background:var(--ink);color:var(--bone);padding:6rem 0}
-  .build-head .kicker{color:var(--acid)}
-  .build-head .kicker .ix{color:var(--bone)}
   .build-head .sec-head{color:var(--bone)}
   .build-lead{margin-top:1.1rem;max-width:52ch;font-size:1rem;font-weight:500;color:rgba(242,239,233,.6);line-height:1.45}
 
@@ -193,8 +187,6 @@
 
   /* ---------- thesis band ---------- */
   #thesis{background:var(--tang);color:var(--ink)}
-  #thesis .kicker{color:var(--ink-soft)}
-  #thesis .kicker .ix{color:var(--ink)}
   .thesis-head{font-family:"Unbounded",sans-serif;font-weight:800;font-size:clamp(2rem,5.4vw,4.4rem);line-height:.99;letter-spacing:-.02em;max-width:20ch}
   .thesis-head em{font-style:normal;background:var(--ink);color:var(--tang);padding:0 .14em;border-radius:.08em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
   .thesis-sub{font-size:clamp(1.05rem,1.7vw,1.36rem);font-weight:500;max-width:48ch;margin-top:1.8rem;color:var(--ink-soft)}
@@ -372,7 +364,7 @@
 <!-- ===================== HERO ===================== -->
 <section class="hero" id="hero">
   <div class="wrap">
-    <p class="hero-tag mono"><span class="dot" aria-hidden="true"></span>Custom builds and automation for small businesses</p>
+    <p class="hero-tag mono">Custom builds and automation for small businesses</p>
 
     <h1 class="hero-head display" id="heroHead">
       <span class="line"><span data-d="0">A force</span></span>
@@ -404,7 +396,6 @@
 <section id="build" aria-label="What we build">
   <div class="wrap">
     <div class="build-head reveal">
-      <span class="kicker mono"><span class="ix">01</span> / What we build</span>
       <h2 class="sec-head">A few things <em>we build.</em></h2>
       <p class="build-lead">Examples, not a menu. Start with one fast win, then grow into the systems that run the business.</p>
     </div>
@@ -456,7 +447,6 @@
 <!-- ===================== SIGNATURE: LEAK PICKER ===================== -->
 <section class="section" id="leak" aria-label="Where to start">
   <div class="wrap">
-    <span class="kicker mono reveal"><span class="ix">02</span> / Where to start</span>
     <h2 class="sec-head reveal">Where should we <em>start?</em></h2>
     <p class="leak-lead reveal">Pick what sounds like your business. We will point at the build worth shipping first.</p>
 
@@ -482,7 +472,6 @@
 <!-- ===================== THESIS BAND ===================== -->
 <section class="section" id="thesis" aria-label="The idea">
   <div class="wrap">
-    <span class="kicker mono reveal"><span class="ix">✦</span> The idea</span>
     <h2 class="thesis-head reveal">The capability a big company pays an <em>IT team</em> for. We build it, run it, keep it improving.</h2>
     <p class="thesis-sub reveal">No enterprise budget and no year-long rollout. Just the systems that quietly do the work, pointed at the one thing slowing you down right now.</p>
   </div>
@@ -491,7 +480,6 @@
 <!-- ===================== HOW IT WORKS ===================== -->
 <section class="section" id="how" aria-label="How it works">
   <div class="wrap">
-    <span class="kicker mono reveal"><span class="ix">03</span> / How it works</span>
     <h2 class="sec-head reveal">Three steps. No big-bang project.</h2>
 
     <div class="steps">

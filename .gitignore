@@ -1,2 +1,6 @@
 # Local Claude Code tooling (preview server launch config, etc.)
 .claude/
+
+# Installed agent skills + skills CLI lockfile (taste skill, etc.)
+.agents/
+skills-lock.json
