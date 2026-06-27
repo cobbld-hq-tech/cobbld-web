@@ -122,18 +122,54 @@
   .mobile-menu .mm-cta{margin-top:1.8rem;font-family:"Onest",sans-serif;font-size:1.05rem;font-weight:700;line-height:1;align-self:flex-start;width:auto}
 
   /* ---------- hero ---------- */
-  .hero{position:relative;padding:calc(var(--nav-h) + 3.2rem) 0 2.4rem;overflow:hidden}
+  .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:calc(var(--nav-h) + .5rem) 0 1.5rem;overflow:hidden}
   .hero-tag{font-size:.82rem;margin-bottom:1.6rem;color:var(--ink-soft)}
 
-  .hero-head{font-size:clamp(3.1rem,12.4vw,11.5rem);font-weight:900}
-  .hero-head .line{display:block;overflow:hidden;padding-bottom:.2em;margin-bottom:-.2em}
+  .hero-head{font-size:clamp(3.1rem,9.5vw,9.5rem);font-weight:900;padding-top:.2em}
+  .hero-head .line{display:block;overflow:hidden;padding:.2em 0;margin:-.2em 0}
   .hero-head .line span{display:inline-block;will-change:transform}
   .hero-head .ol{color:transparent;-webkit-text-stroke:2px var(--ink)}
   .hero-head em{font-style:normal;color:var(--tang)}
   .hero-head .underdog{position:relative;display:inline-block}
   .hero-head .underdog svg{position:absolute;left:-2%;bottom:-.06em;width:104%;height:.36em;overflow:visible}
-  .hero-head .underdog svg path{fill:none;stroke:var(--tang);stroke-width:11;stroke-linecap:round;stroke-dasharray:1400;stroke-dashoffset:1400;transition:stroke-dashoffset 1.1s var(--ease) .55s}
-  .hero-head.in .underdog svg path{stroke-dashoffset:0}
+  .hero-head .underdog svg path{fill:none;stroke:var(--tang);stroke-width:11;stroke-linecap:round;stroke-dasharray:1400;stroke-dashoffset:0}
+  /* ---------- cobble: hero assembly — squares build in, headline snaps then hovers ---------- */
+  .hero .wrap{position:relative;z-index:1}
+  .cobble-field{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .cobble-field i{position:absolute;display:block;border-radius:26%;border:2px solid rgba(17,16,13,.17);will-change:transform,opacity;animation:cobbleFloat var(--fdur,8s) ease-in-out infinite alternate}
+  /* on load: each square builds in with the headline, then hands off to the hover */
+  .hero.cobble .cobble-field i{animation:cobbleBuild .6s cubic-bezier(.34,1.5,.42,1) var(--bd,0s) both, cobbleFloat var(--fdur,8s) ease-in-out calc(.6s + var(--bd,0s)) infinite alternate}
+  @keyframes cobbleFloat{from{transform:translateY(0) rotate(0deg) scale(1)}to{transform:translateY(-24px) rotate(8deg) scale(1.05)}}
+  @keyframes cobbleBuild{0%{opacity:0;transform:scale(.2) rotate(-14deg)}60%{opacity:1}100%{opacity:1;transform:scale(1) rotate(0deg)}}
+
+  /* headline lines snap into place from slightly different angles, then seat */
+  .hero.cobble .hero-head .line > span{animation:cobbleSnap .86s cubic-bezier(.34,.62,.18,1) backwards}
+  .hero.cobble .hero-head .line:nth-child(1) > span{--cx:-2%;--cr:-2.4deg;animation-delay:.04s}
+  .hero.cobble .hero-head .line:nth-child(2) > span{--cx:2.4%;--cr:2deg;animation-delay:.13s}
+  .hero.cobble .hero-head .line:nth-child(3) > span{--cx:-1.4%;--cr:-1.6deg;animation-delay:.22s}
+  @keyframes cobbleSnap{0%{opacity:0;transform:translateY(116%) translateX(var(--cx,0)) rotate(var(--cr,-2deg)) scale(.97)}52%{opacity:1}74%{transform:translateY(-4%) translateX(0) rotate(.4deg) scale(1.014)}100%{opacity:1;transform:translateY(0) translateX(0) rotate(0deg) scale(1)}}
+
+  /* once assembled, the lines gently drift (translate only — never clips), with a soft ripple */
+  .hero.cobble .hero-head .line{animation:lineDrift 6s ease-in-out infinite alternate}
+  .hero.cobble .hero-head .line:nth-child(1){animation-delay:1.2s}
+  .hero.cobble .hero-head .line:nth-child(2){animation-delay:1.45s}
+  .hero.cobble .hero-head .line:nth-child(3){animation-delay:1.7s}
+  @keyframes lineDrift{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+
+  /* tagline + sub/ctas rise in with the assembly */
+  .hero.cobble .hero-tag{animation:cobbleRise .7s var(--ease) .05s backwards}
+  .hero.cobble .hero-lower{animation:cobbleRise .8s var(--ease) .66s backwards}
+  @keyframes cobbleRise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+  /* the tangerine underline is the keystone — draws on after the lines seat */
+  .hero.cobble .hero-head .underdog svg path{animation:drawU 1.05s var(--ease) .84s backwards}
+  @keyframes drawU{from{stroke-dashoffset:1400}}
+
+  /* nav logo cobbles together on load (the two tangerine squares snap in) */
+  .brand .sq2,.brand .sq3{transform-box:fill-box;transform-origin:center}
+  .brand.mark-go .sq2{animation:sqIn .55s cubic-bezier(.34,1.5,.4,1) .5s backwards}
+  .brand.mark-go .sq3{animation:sqIn .55s cubic-bezier(.34,1.5,.4,1) .62s backwards}
+  @keyframes sqIn{from{opacity:0;transform:translate(-3px,2px) scale(.45)}}
 
   .hero-lower{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:2rem;margin-top:2.4rem}
   .hero-sub{max-width:34ch;font-size:clamp(1.05rem,1.7vw,1.32rem);font-weight:500;color:var(--ink-soft);line-height:1.5}
@@ -348,6 +384,12 @@
   @media (max-width:760px){
     body{font-size:17px}
     .hero-head{font-size:clamp(1.95rem,9.5vw,3.3rem)}
+    /* the cobble field is placed for a wide hero; on phones the squares bunch up
+       and crowd the headline, so drop the heavy filled ones and fade the rest to
+       faint ambient texture behind the type */
+    .cobble-field{opacity:.5}
+    .cobble-field i:nth-child(1),.cobble-field i:nth-child(4),
+    .cobble-field i:nth-child(9),.cobble-field i:nth-child(14){display:none}
     .cursor-dot{display:none}
     .hero-lower{flex-direction:column;align-items:flex-start;gap:1.6rem}
     .step{grid-template-columns:1fr;gap:.5rem;text-align:left}
@@ -384,6 +426,7 @@
     .hero-head .line span{transform:none !important}
     .cursor-dot{display:none}
     .hero-head .underdog svg path{stroke-dashoffset:0 !important;transition:none}
+    .cobble-field{display:none !important}
   }
 </style>
 </head>
@@ -427,7 +470,23 @@
 <main id="top">
 
 <!-- ===================== HERO ===================== -->
-<section class="hero" id="hero">
+<section class="hero cobble" id="hero">
+  <div class="cobble-field" aria-hidden="true">
+    <i style="left:5%;top:18%;width:64px;height:64px;background:rgba(255,91,30,.13);border-color:rgba(255,91,30,.26);--fdur:8s;--bd:0s"></i>
+    <i style="left:14%;top:60%;width:40px;height:40px;--fdur:6.5s;--bd:.34s"></i>
+    <i style="left:auto;right:10%;top:22%;width:88px;height:88px;--fdur:9.2s;--bd:.1s"></i>
+    <i style="left:auto;right:19%;top:68%;width:48px;height:48px;background:rgba(255,91,30,.12);border-color:rgba(255,91,30,.24);--fdur:7s;--bd:.5s"></i>
+    <i style="left:44%;top:11%;width:32px;height:32px;border-color:rgba(217,67,12,.34);--fdur:5.6s;--bd:.06s"></i>
+    <i style="left:60%;top:76%;width:56px;height:56px;--fdur:8.6s;--bd:.6s"></i>
+    <i style="left:30%;top:31%;width:26px;height:26px;--fdur:6s;--bd:.42s"></i>
+    <i style="left:auto;right:31%;top:14%;width:36px;height:36px;border-color:rgba(17,16,13,.13);--fdur:7.4s;--bd:.22s"></i>
+    <i style="left:8%;top:80%;width:46px;height:46px;background:rgba(255,91,30,.11);border-color:rgba(255,91,30,.22);--fdur:7.8s;--bd:.66s"></i>
+    <i style="left:auto;right:5%;top:49%;width:30px;height:30px;border-color:rgba(217,67,12,.3);--fdur:5.2s;--bd:.16s"></i>
+    <i style="left:50%;top:87%;width:38px;height:38px;--fdur:9s;--bd:.54s"></i>
+    <i style="left:auto;right:39%;top:84%;width:28px;height:28px;border-color:rgba(17,16,13,.13);--fdur:6.8s;--bd:.7s"></i>
+    <i style="left:24%;top:8%;width:30px;height:30px;--fdur:7.1s;--bd:.28s"></i>
+    <i style="left:auto;right:24%;top:40%;width:22px;height:22px;background:rgba(255,91,30,.1);border-color:rgba(255,91,30,.2);--fdur:5.9s;--bd:.46s"></i>
+  </div>
   <div class="wrap">
     <p class="hero-tag mono">Custom builds and automation for small businesses</p>
 
@@ -700,23 +759,20 @@
     lastY = y;
   }, {passive:true});
 
-  /* ---------- hero intro ---------- */
-  var heroHead = document.getElementById("heroHead");
-  if(!reduce){
-    var spans = heroHead.querySelectorAll(".line span[data-d]");
-    spans.forEach(function(s){ s.style.transform = "translateY(110%)"; s.style.transition = "transform .9s cubic-bezier(.16,1,.3,1)"; });
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        spans.forEach(function(s){
-          s.style.transitionDelay = (0.08 + parseFloat(s.getAttribute("data-d")) * 0.11) + "s";
-          s.style.transform = "translateY(0%)";
-        });
-        heroHead.classList.add("in");
-      });
-    });
-  } else {
-    heroHead.classList.add("in");
-  }
+  /* ---------- hero intro ----------
+     The Cobble hero assembly (headline snap, square-field build-in, underline
+     keystone and gentle hover) is CSS-driven now: it self-runs on load from the
+     .cobble class on #hero, and is fully disabled under prefers-reduced-motion.
+     The only JS bit is tagging the nav logo's two tangerine squares so they can
+     cobble into place beside the ink one. */
+  (function(){
+    var navBrand = document.querySelector(".nav .brand");
+    if (!navBrand) return;
+    var sq = navBrand.querySelectorAll("rect");
+    if (sq[1]) sq[1].classList.add("sq2");
+    if (sq[2]) sq[2].classList.add("sq3");
+    navBrand.classList.add("mark-go");
+  })();
 
   /* ===== STASHED: build console (terminal) logic — parked for a future dedicated page.
      Inert here: it early-returns because #console is commented out of the hero markup.
