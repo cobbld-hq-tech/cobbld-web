@@ -59,14 +59,16 @@ Both live pages share one system. Keep them consistent.
   resource is Google Fonts. Must work via `file://` and via a static server.
 - **Shared behaviors** (kept in sync across both pages): fixed nav that hides on
   scroll-down + a mobile hamburger menu, `.reveal` IntersectionObserver scroll-ins,
-  a custom `.cursor-dot` (disabled on touch / reduced-motion), a kinetic marquee,
-  and full `@media (prefers-reduced-motion: reduce)` handling.
+  a custom `.cursor-dot` (disabled on touch / reduced-motion), and full
+  `@media (prefers-reduced-motion: reduce)` handling. The home hero's kinetic marquee
+  was removed; an interactive terminal-style **build console** was built then parked
+  (inert; markup commented out in `index.html`) for a future dedicated page. See NOTES.md.
 - **Responsive:** must stay clean from 380px up with no horizontal overflow.
 
 ## Page structure
 
 **`index.html`** (section ids / anchors):
-`#nav` + `#mobileMenu` → `#hero` (`#top`, kinetic headline + ticker) →
+`#nav` + `#mobileMenu` → `#hero` (`#top`, kinetic headline, sub + CTAs) →
 `#build` ("a few things we build", horizontal-scroll gallery with a stacked mobile
 fallback) → `#leak` (interactive "find the leak" picker) → `#thesis` (tangerine
 band) → `#how` (four steps + payback banner) → `#cta` (contact form) → `footer`.

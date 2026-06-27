@@ -139,19 +139,56 @@
   .hero-sub{max-width:34ch;font-size:clamp(1.05rem,1.7vw,1.32rem);font-weight:500;color:var(--ink-soft);line-height:1.5}
   .hero-cta{display:flex;flex-wrap:wrap;gap:.9rem}
 
-  /* hero marquee ticker */
-  .ticker{
-    margin-top:2.6rem;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);
-    background:var(--ink);color:var(--bone);overflow:hidden;white-space:nowrap;position:relative;
+  /* ===== STASHED: build console (terminal) styles — parked, not rendered. Markup is commented
+     out in the hero; these rules and the JS below are inert (no #console in the DOM). Kept for a
+     future dedicated page. Full copy/logic spec and rationale: see NOTES.md. ===== */
+  .console-wrap{margin-top:2.6rem}
+  .console-cap{display:flex;align-items:center;gap:.6rem;font-size:.78rem;margin-bottom:.95rem;color:var(--ink-soft)}
+  .console-cap .blip{width:7px;height:7px;border-radius:50%;background:var(--tang);flex:none}
+  .console{
+    position:relative;display:flex;flex-direction:column;width:100%;max-width:860px;
+    height:clamp(420px,56vh,520px);background:var(--ink);color:var(--bone);
+    border:2px solid var(--ink);border-radius:16px;overflow:hidden;
+    font-family:"DM Mono",ui-monospace,monospace;cursor:text;
+    box-shadow:0 22px 55px -34px rgba(17,16,13,.45);
   }
-  .ticker::before,.ticker::after{content:"";position:absolute;top:0;bottom:0;width:13%;max-width:90px;z-index:2;pointer-events:none}
-  .ticker::before{left:0;background:linear-gradient(90deg,var(--ink),transparent)}
-  .ticker::after{right:0;background:linear-gradient(270deg,var(--ink),transparent)}
-  .ticker-track{display:inline-flex;align-items:center;gap:0;will-change:transform;animation:ticker-scroll 45s linear infinite}
-  @keyframes ticker-scroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
-  .ticker:hover .ticker-track{animation-play-state:paused}
-  .ticker-track .item{display:inline-flex;align-items:center;font-family:"Unbounded";font-weight:700;font-size:clamp(1.1rem,2.6vw,2rem);padding:.55rem 0;text-transform:uppercase;letter-spacing:-.01em}
-  .ticker-track .item .star{color:var(--tang);margin:0 1.4rem;font-size:.7em}
+  .console-bar{display:flex;align-items:center;gap:.7rem;padding:.7rem .95rem;background:var(--ink-soft);border-bottom:1px solid rgba(242,239,233,.1);user-select:none;flex:0 0 auto}
+  .console-dots{display:flex;gap:.45rem}
+  .console-dots i{width:9px;height:9px;border-radius:50%;display:block}
+  .console-dots i:nth-child(1){background:var(--tang)}
+  .console-dots i:nth-child(2){background:rgba(242,239,233,.26)}
+  .console-dots i:nth-child(3){background:rgba(242,239,233,.15)}
+  .console-title{font-size:.78rem;letter-spacing:.03em;color:rgba(242,239,233,.72)}
+  .console-status{margin-left:auto;display:flex;align-items:center;gap:.45rem;font-size:.72rem;letter-spacing:.03em;color:rgba(242,239,233,.46)}
+  .console-status .live{width:6px;height:6px;border-radius:50%;background:var(--tang);box-shadow:0 0 0 3px rgba(255,91,30,.16);flex:none}
+  .console-log{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;padding:1rem 1.05rem .6rem;font-size:13.5px;line-height:1.5;color:var(--bone)}
+  .console-log .ln{min-height:1.42em;line-height:1.5;word-break:break-word}
+  .console-log .ln span{white-space:pre-wrap}
+  .console-log .c-fg{color:var(--bone)}
+  .console-log .c-mut{color:rgba(242,239,233,.62)}
+  .console-log .c-dim{color:rgba(242,239,233,.4)}
+  .console-log .c-acc{color:var(--tang)}
+  .console-log .c-acid{color:var(--acid)}
+  .console-log .b{font-weight:500}
+  .console-log::-webkit-scrollbar{width:9px}
+  .console-log::-webkit-scrollbar-thumb{background:rgba(242,239,233,.18);border-radius:6px}
+  .console-log::-webkit-scrollbar-track{background:transparent}
+  .console-chips{display:flex;flex-wrap:wrap;gap:.5rem;padding:.65rem .95rem;border-top:1px solid rgba(242,239,233,.08);background:rgba(242,239,233,.02);flex:0 0 auto}
+  .console-chip{font-family:"DM Mono",monospace;font-size:.74rem;letter-spacing:.02em;color:rgba(242,239,233,.78);background:rgba(242,239,233,.05);border:1px solid rgba(242,239,233,.2);border-radius:7px;padding:.36rem .72rem;cursor:pointer;transition:border-color .15s var(--ease),color .15s var(--ease),background .15s var(--ease),transform .08s var(--ease)}
+  .console-chip:hover{border-color:var(--tang);color:var(--bone);background:rgba(255,91,30,.12)}
+  .console-chip:active{transform:translateY(1px)}
+  .console-prompt{display:flex;align-items:center;gap:.5rem;padding:.7rem .95rem .8rem;border-top:1px solid rgba(242,239,233,.1);flex:0 0 auto;font-size:13.5px}
+  .console-prompt .path{color:var(--acid)}
+  .console-prompt .sign{color:var(--tang)}
+  .console-input{flex:1 1 auto;min-width:0;background:transparent;border:none;outline:none;color:var(--bone);font-family:"DM Mono",monospace;font-size:13.5px;caret-color:var(--tang);padding:0}
+  .console-input::placeholder{color:rgba(242,239,233,.34)}
+  .console-caret{display:inline-block;width:8px;height:15px;background:var(--tang);opacity:.85;animation:console-blink 1.05s step-end infinite;flex:none}
+  @keyframes console-blink{0%,48%{opacity:.85}50%,100%{opacity:0}}
+  @media (max-width:760px){
+    .console{height:clamp(380px,62vh,460px);max-width:100%}
+    .console-log,.console-prompt,.console-input{font-size:12.75px}
+    .console-cap{font-size:.74rem}
+  }
 
   /* ---------- generic section heads ---------- */
   .section{padding:6.4rem 0;position:relative}
@@ -343,7 +380,6 @@
 
   @media (prefers-reduced-motion:reduce){
     *{animation:none !important;scroll-behavior:auto !important}
-    .ticker-track{transform:none !important}
     .reveal{opacity:1 !important;transform:none !important}
     .hero-head .line span{transform:none !important}
     .cursor-dot{display:none}
@@ -412,13 +448,30 @@
     </div>
   </div>
 
-  <!-- signature kinetic ticker -->
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker-track" id="ticker">
-      <span class="item">WEBSITES<span class="star">✦</span>LANDING PAGES<span class="star">✦</span>BOOKING &amp; FORMS<span class="star">✦</span>INTERNAL TOOLS<span class="star">✦</span>JOB TRACKING<span class="star">✦</span>DASHBOARDS<span class="star">✦</span>INTEGRATIONS<span class="star">✦</span>CUSTOM APPS<span class="star">✦</span></span>
-      <span class="item">WEBSITES<span class="star">✦</span>LANDING PAGES<span class="star">✦</span>BOOKING &amp; FORMS<span class="star">✦</span>INTERNAL TOOLS<span class="star">✦</span>JOB TRACKING<span class="star">✦</span>DASHBOARDS<span class="star">✦</span>INTEGRATIONS<span class="star">✦</span>CUSTOM APPS<span class="star">✦</span></span>
+  <!--
+  STASHED: interactive build console (terminal). Not currently rendered.
+  Parked for a future dedicated page; to restore, un-comment the markup below
+  (it self-boots on scroll-in). Its CSS (.console-*) and JS (IIFE) remain in
+  this file, inert. Full copy/logic spec and the reason it is parked: see NOTES.md.
+
+  <div class="wrap console-wrap">
+    <p class="console-cap mono"><span class="blip" aria-hidden="true"></span>Build console · tap or type a command</p>
+    <div class="console" id="console" role="group" aria-label="Interactive build console demo">
+      <div class="console-bar">
+        <span class="console-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="console-title">cobbld build console</span>
+        <span class="console-status"><span class="live" aria-hidden="true"></span>open for work</span>
+      </div>
+      <div class="console-log" aria-hidden="true"></div>
+      <div class="console-chips" aria-label="Commands"></div>
+      <div class="console-prompt">
+        <span class="path">~/your-business</span><span class="sign">$</span>
+        <input class="console-input" type="text" spellcheck="false" autocomplete="off" aria-label="Try a command, for example: help" placeholder="type a command…  try: scope" />
+        <span class="console-caret" aria-hidden="true"></span>
+      </div>
     </div>
   </div>
+  -->
 </section>
 
 <!-- ===================== WHAT WE BUILD ===================== -->
@@ -665,7 +718,240 @@
     heroHead.classList.add("in");
   }
 
-  /* ---------- ticker marquee: handled by a seamless CSS animation (no JS, no jitter) ---------- */
+  /* ===== STASHED: build console (terminal) logic — parked for a future dedicated page.
+     Inert here: it early-returns because #console is commented out of the hero markup.
+     To revive, un-comment that markup; it self-boots on scroll-in. See NOTES.md. ===== */
+  (function(){
+    var root = document.getElementById("console");
+    if(!root) return;
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var logEl = root.querySelector(".console-log");
+    var chipsEl = root.querySelector(".console-chips");
+    var inputEl = root.querySelector(".console-input");
+    var running = false, booted = false;
+
+    var DEFAULT_CHIPS = [
+      {label:"quick-win", cmd:"quick-win"}, {label:"core", cmd:"core"}, {label:"scale", cmd:"scale"},
+      {label:"scope", cmd:"scope"}, {label:"help", cmd:"help"}, {label:"clear", cmd:"clear"}
+    ];
+    var PROBLEMS = [
+      {label:"no website yet", key:"website", q:"no real website, or one that just sits there",
+       build:"A website that works", tier:"Quick win", detail:"a clean, fast site that brings in work instead of sitting there."},
+      {label:"hard to book / reach", key:"booking", q:"customers can't easily book or reach you",
+       build:"Booking and enquiry flows", tier:"Quick win", detail:"a simple way to book time or send an enquiry, minus the back and forth."},
+      {label:"lives on paper", key:"paper", q:"it all lives on paper and in your head",
+       build:"An internal tool", tier:"Core build", detail:"one place that holds your customers, jobs and notes."},
+      {label:"admin eats evenings", key:"admin", q:"admin and quoting eat your evenings",
+       build:"Quoting and admin tools", tier:"Core build", detail:"quotes, invoices and follow-ups handled, so they stop eating your nights."},
+      {label:"off-the-shelf won't fit", key:"fit", q:"off-the-shelf software doesn't fit how you work",
+       build:"A custom app", tier:"Scale", detail:"when the tools you can buy don't fit, we build the exact one you need."}
+    ];
+    var PROBLEM_CHIPS = PROBLEMS.map(function(p){ return {label:p.label, cmd:"scope:"+p.key}; })
+                                .concat([{label:"‹ back", cmd:"menu"}]);
+    var AFTER_CHIPS = [
+      {label:"→ start this build", cmd:"start"}, {label:"scope again", cmd:"scope"}, {label:"‹ menu", cmd:"menu"}
+    ];
+
+    function sleep(ms){ return new Promise(function(r){ setTimeout(r, reduce ? 0 : ms); }); }
+    function toBottom(){ logEl.scrollTop = logEl.scrollHeight; }
+    function trim(){ while(logEl.children.length > 140) logEl.removeChild(logEl.firstChild); }
+
+    function mkSpan(seg){
+      var s = document.createElement("span");
+      s.textContent = seg.t;
+      if(seg.c) s.className = seg.c;
+      if(seg.b) s.classList.add("b");
+      return s;
+    }
+    function addLine(segs){
+      var d = document.createElement("div"); d.className = "ln";
+      (segs||[]).forEach(function(sg){ d.appendChild(mkSpan(sg)); });
+      logEl.appendChild(d); trim(); toBottom();
+      return d;
+    }
+    function outSegs(segs, delay){ addLine(segs); return sleep(delay==null?70:delay); }
+    function out(t, c, delay){ return outSegs([{t:t, c:c||"c-mut"}], delay); }
+    function blank(delay){ return out("", "c-dim", delay==null?40:delay); }
+    function ok(t, delay){ return outSegs([{t:"  ✓ ", c:"c-acc"},{t:t, c:"c-fg"}], delay==null?95:delay); }
+
+    function typeCmd(text, delay){
+      var d = addLine([{t:"$ ", c:"c-dim"}]);
+      var span = mkSpan({t:"", c:"c-fg", b:true}); d.appendChild(span);
+      if(reduce){ span.textContent = text; toBottom(); return sleep(delay==null?120:delay); }
+      return new Promise(function(resolve){
+        var i = 0;
+        (function step(){
+          if(i < text.length){ span.textContent += text.charAt(i++); toBottom(); setTimeout(step, 15 + Math.random()*26); }
+          else setTimeout(resolve, delay==null?150:delay);
+        })();
+      });
+    }
+    function bar(speed){
+      var d = addLine([{t:"  ", c:"c-dim"}]);
+      var fill = mkSpan({t:"", c:"c-acc"}), rest = mkSpan({t:"", c:"c-dim"}), pct = mkSpan({t:"", c:"c-fg"});
+      d.appendChild(fill); d.appendChild(rest); d.appendChild(pct);
+      var N = 22;
+      if(reduce){ fill.textContent = "█".repeat(N); pct.textContent = "  100%"; toBottom(); return sleep(0); }
+      return new Promise(function(resolve){
+        var i = 0;
+        (function step(){
+          fill.textContent = "█".repeat(i); rest.textContent = "░".repeat(N-i);
+          pct.textContent = "  " + String(Math.round(i/N*100)) + "%"; toBottom();
+          if(i++ < N) setTimeout(step, speed==null?30:speed); else setTimeout(resolve, 140);
+        })();
+      });
+    }
+
+    function focusInput(){ if(inputEl) inputEl.focus({preventScroll:true}); }
+    function renderChips(list){
+      chipsEl.innerHTML = "";
+      (list||[]).forEach(function(ch){
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "console-chip"; b.textContent = ch.label;
+        b.addEventListener("click", function(e){ e.stopPropagation(); focusInput(); run(ch.cmd); });
+        chipsEl.appendChild(b);
+      });
+    }
+
+    async function cQuick(){
+      await typeCmd("cobbld quick-win");
+      await out("  websites · booking · small automations", "c-mut", 90);
+      await out("  building…", "c-dim", 120);
+      await bar();
+      await ok("ships fast. built to pay for itself.");
+      await out("  → stop missing calls. start booking jobs.", "c-acc", 60);
+      await blank();
+    }
+    async function cCore(){
+      await typeCmd("cobbld core");
+      await out("  internal tools · job tracking · quoting · dashboards", "c-mut", 90);
+      await out("  assembling…", "c-dim", 120);
+      await bar();
+      await ok("the system your business actually runs on.");
+      await out("  → one place where the work finally lives.", "c-acc", 60);
+      await blank();
+    }
+    async function cScale(){
+      await typeCmd("cobbld scale");
+      await out("  custom apps · integrations · bespoke builds", "c-mut", 90);
+      await out("  compiling…", "c-dim", 120);
+      await bar();
+      await ok("when off-the-shelf can't cut it.");
+      await out("  → built around how you work, not the other way.", "c-acc", 60);
+      await blank();
+    }
+    async function cHelp(){
+      await typeCmd("cobbld help");
+      await outSegs([{t:"  quick-win  ", c:"c-acc"},{t:"ship fast. built to pay for itself.", c:"c-mut"}], 55);
+      await outSegs([{t:"  core       ", c:"c-acc"},{t:"the system you run on.", c:"c-mut"}], 55);
+      await outSegs([{t:"  scale      ", c:"c-acc"},{t:"bespoke builds + integrations.", c:"c-mut"}], 55);
+      await outSegs([{t:"  scope      ", c:"c-acc"},{t:"find your first build.", c:"c-mut"}], 55);
+      await outSegs([{t:"  clear      ", c:"c-acc"},{t:"wipe the log.", c:"c-mut"}], 55);
+      await blank();
+    }
+    async function cScope(){
+      await typeCmd("cobbld scope");
+      await out("  what's slowing you down? pick one ↓", "c-fg", 60);
+      await blank();
+      renderChips(PROBLEM_CHIPS);
+    }
+    async function cProblem(key){
+      var p = null;
+      for(var i=0;i<PROBLEMS.length;i++){ if(PROBLEMS[i].key === key){ p = PROBLEMS[i]; break; } }
+      if(!p){ await out("  unknown: " + key, "c-acc"); await out("  try: scope", "c-dim", 50); return; }
+      await typeCmd("cobbld scope " + key);
+      await outSegs([{t:"  reading the bottleneck…… ", c:"c-mut"},{t:"ok", c:"c-acc"}], 220);
+      await outSegs([{t:"  bottleneck: ", c:"c-dim"},{t:p.q, c:"c-fg"}], 120);
+      await out("  recommended first build:", "c-fg", 90);
+      await out("    ▸ " + p.build, "c-mut", 110);
+      await out("      " + p.detail, "c-dim", 130);
+      await bar();
+      await ok(p.build + " · " + p.tier);
+      await blank();
+      renderChips(AFTER_CHIPS);
+    }
+    async function cStart(){
+      await typeCmd("cobbld start");
+      await out("  opening a work order…", "c-dim", 160);
+      await ok("let's build something that pays for itself.");
+      await out("  → taking you to the form ↓", "c-acc", 60);
+      await blank();
+      renderChips(DEFAULT_CHIPS);
+      var cta = document.getElementById("cta");
+      if(cta) cta.scrollIntoView({behavior: reduce ? "auto" : "smooth", block:"start"});
+      setTimeout(function(){ var n = document.getElementById("cfName"); if(n) n.focus({preventScroll:true}); }, reduce ? 0 : 700);
+    }
+    function cClear(){
+      logEl.innerHTML = "";
+      renderChips(DEFAULT_CHIPS);
+      out("  pick a command, or type one ↓", "c-dim", 0);
+    }
+    function cMenu(){
+      out("  pick a command, or type one ↓", "c-dim", 30);
+      renderChips(DEFAULT_CHIPS);
+    }
+
+    function run(raw){
+      var cmd = (raw||"").trim().toLowerCase().replace(/\s+/g, " ");
+      if(!cmd) return;
+      if(cmd.indexOf("cobbld ") === 0) cmd = cmd.slice(7);
+      if(running) return;
+      exec(cmd);
+    }
+    async function exec(cmd){
+      running = true;
+      try{
+        if(cmd === "__boot") await boot();
+        else if(["quick-win","quickwin","quick","quick win","1"].indexOf(cmd) > -1) await cQuick();
+        else if(cmd === "core" || cmd === "2") await cCore();
+        else if(cmd === "scale" || cmd === "3") await cScale();
+        else if(["scope","estimate","diagnose","where","start-here","find-leak"].indexOf(cmd) > -1) await cScope();
+        else if(cmd.indexOf("scope:") === 0) await cProblem(cmd.slice(6));
+        else if(cmd === "start") await cStart();
+        else if(cmd === "menu" || cmd === "back") cMenu();
+        else if(["help","?","--help","commands"].indexOf(cmd) > -1) await cHelp();
+        else if(["clear","cls","reset"].indexOf(cmd) > -1) cClear();
+        else {
+          await typeCmd(cmd);
+          await out("  command not found: " + cmd, "c-acc", 70);
+          await out("  try: help", "c-dim", 50);
+          await blank();
+        }
+      } finally { running = false; }
+    }
+    async function boot(){
+      await outSegs([{t:"cobbld build console", c:"c-acc", b:true},{t:"  v1.0", c:"c-dim"}], 120);
+      await out("  a force multiplier for the underdog.", "c-mut", 150);
+      await blank();
+      await typeCmd("cobbld init");
+      await outSegs([{t:"  reading your business……… ", c:"c-mut"},{t:"ok", c:"c-acc"}], 200);
+      await outSegs([{t:"  finding what slows you down…… ", c:"c-mut"},{t:"ok", c:"c-acc"}], 200);
+      await out("  ready.", "c-fg", 160);
+      await blank();
+      await out("  pick a command, or type one ↓", "c-dim", 30);
+    }
+
+    inputEl.addEventListener("keydown", function(e){
+      if(e.key === "Enter"){ var v = e.target.value; e.target.value = ""; run(v); }
+    });
+    root.addEventListener("click", function(e){
+      if(e.target.closest && e.target.closest(".console-chip")) return;
+      focusInput();
+    });
+
+    function start(){
+      if(booted) return;
+      booted = true;
+      renderChips(DEFAULT_CHIPS);
+      exec("__boot");
+    }
+    if("IntersectionObserver" in window){
+      var io2 = new IntersectionObserver(function(ents){
+        ents.forEach(function(en){ if(en.isIntersecting){ start(); io2.disconnect(); } });
+      }, {threshold:0.25});
+      io2.observe(root);
+    } else { start(); }
+  })();
 
   /* ---------- reveal observer ---------- */
   var io = new IntersectionObserver(function(entries){
