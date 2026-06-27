@@ -103,9 +103,7 @@
 
   /* ---------- page hero ---------- */
   .work-hero{position:relative;padding:calc(var(--nav-h) + 3.4rem) 0 3rem;overflow:hidden}
-  .work-hero-tag{display:flex;align-items:center;gap:.8rem;font-size:.82rem;margin-bottom:1.6rem;color:var(--ink-soft)}
-  .work-hero-tag .dot{width:9px;height:9px;border-radius:50%;background:var(--tang);flex:none;animation:pulse 2.4s infinite}
-  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
+  .work-hero-tag{font-size:.82rem;margin-bottom:1.6rem;color:var(--ink-soft)}
 
   .work-hero-head{font-family:"Unbounded",sans-serif;font-weight:900;line-height:.94;letter-spacing:-.02em;font-size:clamp(2.6rem,8.4vw,6.6rem);max-width:16ch}
   .work-hero-head em{font-style:normal;color:var(--tang)}
@@ -140,10 +138,8 @@
   .tier[data-accent="ink"] .tier-art{order:1}
 
   .tier-corner{display:inline-flex;align-items:center;gap:.7rem;font-size:.78rem;margin-bottom:1.5rem}
-  .tier-corner .tx{font-family:"Unbounded";font-weight:800}
   .tier[data-accent="tang"] .tier-corner{color:var(--ink-soft)}
   .tier[data-accent="ink"] .tier-corner{color:rgba(242,239,233,.66)}
-  .tier[data-accent="ink"] .tier-corner .tx{color:var(--bone)}
   .tier[data-accent="acid"] .tier-corner{color:var(--ink-soft)}
 
   .tier-name{font-family:"Unbounded",sans-serif;font-weight:900;line-height:.9;letter-spacing:-.02em;font-size:clamp(2.6rem,8vw,5.6rem)}
@@ -175,7 +171,6 @@
   /* ---------- honest note ---------- */
   .note{background:var(--bone);border-top:2px solid var(--ink);padding:clamp(3rem,6vw,4.4rem) 0}
   .note p.note-body{max-width:52ch;font-size:clamp(1rem,1.6vw,1.22rem);font-weight:500;color:var(--ink-soft);line-height:1.5}
-  .note .note-eyebrow{font-size:.78rem;color:var(--tang-deep);margin-bottom:1rem}
 
   /* ---------- final cta ---------- */
   #cta{background:var(--ink);color:var(--bone);text-align:center;overflow:hidden;border-top:2px solid var(--ink);padding:clamp(4.4rem,9vw,7rem) 0}
@@ -288,7 +283,7 @@
 <!-- ===================== PAGE HERO ===================== -->
 <section class="work-hero" id="hero">
   <div class="wrap">
-    <p class="work-hero-tag mono"><span class="dot" aria-hidden="true"></span>What we build</p>
+    <p class="work-hero-tag mono">What we build</p>
 
     <h1 class="work-hero-head">Start small. Grow into custom <em>software.</em></h1>
 
@@ -316,7 +311,7 @@
   <div class="wrap">
     <div class="tier-grid">
       <div class="tier-copy reveal">
-        <span class="tier-corner mono"><span class="tx">01</span> / Start here</span>
+        <span class="tier-corner mono">Start here</span>
         <h2 class="tier-name" id="t01-name">Quick wins</h2>
         <p class="tier-blurb">Fast, visible wins that get you set up and online. No big project to commit to.</p>
         <span class="tier-eg-label mono">For example</span>
@@ -359,7 +354,7 @@
   <div class="wrap">
     <div class="tier-grid">
       <div class="tier-copy reveal">
-        <span class="tier-corner mono"><span class="tx">02</span> / The day to day</span>
+        <span class="tier-corner mono">The day to day</span>
         <h2 class="tier-name" id="t02-name">Core builds</h2>
         <p class="tier-blurb">The tools that run your day to day, so less of it lives on paper or in your head.</p>
         <span class="tier-eg-label mono">For example</span>
@@ -407,7 +402,7 @@
   <div class="wrap">
     <div class="tier-grid">
       <div class="tier-copy reveal">
-        <span class="tier-corner mono"><span class="tx">03</span> / Bespoke</span>
+        <span class="tier-corner mono">Bespoke</span>
         <h2 class="tier-name" id="t03-name">Scale</h2>
         <p class="tier-blurb">Custom software built around exactly how you work, end to end.</p>
         <span class="tier-eg-label mono">For example</span>
@@ -446,7 +441,6 @@
 <!-- ===================== HONEST NOTE ===================== -->
 <section class="note" aria-label="A note on this page">
   <div class="wrap">
-    <p class="note-eyebrow mono reveal">A note</p>
     <p class="note-body reveal">These are the kinds of things we build, shaped around your business. We will walk through the closest fit when we talk.</p>
   </div>
 </section>
@@ -490,11 +484,11 @@
           <a href="/work.html">Work</a>
         </div>
         <div class="foot-col">
-          <h5 class="mono">Quick wins</h5>
-          <span>Missed-call recovery</span>
-          <span>Review &amp; follow-up</span>
-          <span>Quote automation</span>
-          <span>Knowledge bot</span>
+          <h5 class="mono">What we build</h5>
+          <span>Websites</span>
+          <span>Internal tools</span>
+          <span>Custom apps</span>
+          <span>Integrations</span>
         </div>
         <div class="foot-col">
           <h5 class="mono">Get in touch</h5>
