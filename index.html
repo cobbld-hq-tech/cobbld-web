@@ -272,6 +272,19 @@
   #leak .btn.tang:hover{background:var(--bone);border-color:var(--bone);color:var(--ink)}
   .ys-alt{font-size:.98rem;font-weight:500;color:rgba(242,239,233,.66);border-bottom:1px solid rgba(242,239,233,.3);padding-bottom:1px}
   .ys-alt:hover{color:var(--tang)}
+  /* Short, wide viewports (laptops): the card's rotating quotes vary in height, so
+     tighten the section rhythm enough that even the tallest one fits one screen and
+     the section can center instead of overflowing. Phones (narrow) keep the roomier
+     spacing above and just scroll. */
+  @media (min-width:761px) and (max-height:900px){
+    #leak{padding-block:1.4rem}
+    .ys-sub{margin-top:.7rem}
+    .ys-card{margin-top:1.4rem;padding-top:clamp(1.3rem,3vw,1.9rem);padding-bottom:1.8rem}
+    .ys-rot{margin-top:.9rem}
+    .ys-divrow{margin:1.1rem 0 .75rem}
+    .ys-foot{margin-top:1.4rem}
+    .ys-cta{margin-top:1.4rem}
+  }
 
   /* ---------- thesis band ---------- */
   #thesis{background:var(--tang);color:var(--ink)}
