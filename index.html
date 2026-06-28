@@ -97,8 +97,8 @@
   .btn.tang:hover{background:var(--ink);border-color:var(--ink);color:var(--bone)}
   /* physical press feedback */
   .btn:active{transform:translateY(1px) scale(.985)}
-  .leak-chip:active{transform:translateX(6px) scale(.99)}
-  @media (prefers-reduced-motion:reduce){ .btn:active,.leak-chip:active{transform:none} }
+  .ys-dot:active{transform:scale(.9)}
+  @media (prefers-reduced-motion:reduce){ .btn:active,.ys-dot:active{transform:none} }
 
   .menu-toggle{display:none;background:none;border:2px solid var(--ink);border-radius:10px;width:48px;height:44px;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px}
   .menu-toggle span{display:block;width:22px;height:2.5px;background:var(--ink);transition:transform .3s var(--ease),opacity .3s var(--ease)}
@@ -231,66 +231,35 @@
   .sec-head{font-size:clamp(2.3rem,6.5vw,5.4rem);font-weight:800;line-height:.96;max-width:16ch}
   .sec-head em{font-style:normal;color:var(--tang)}
 
-  /* ---------- what we build (progression path) ---------- */
-  #build{background:var(--ink);color:var(--bone);padding:6rem 0}
-  .build-head .sec-head{color:var(--bone)}
-  .build-lead{margin-top:1.1rem;max-width:52ch;font-size:1rem;font-weight:500;color:rgba(242,239,233,.6);line-height:1.45}
-
-  .build-hint{margin-top:1rem;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--tang)}
-  .ladder{position:relative;margin-top:2.8rem}
-  .ladder-line{position:absolute;left:33px;top:46px;bottom:46px;width:3px;background:rgba(242,239,233,.14);transform-origin:top;transform:scaleY(0)}
-  .ladder.in .ladder-line{transform:scaleY(1);transition:transform .85s var(--ease) .25s}
-  .rung{position:relative;--racc:var(--bone);--rglow:rgba(242,239,233,.5);opacity:0;transform:translateY(20px)}
-  .ladder.in .rung{opacity:1;transform:none;transition:opacity .55s var(--ease) var(--d,0s),transform .55s var(--ease) var(--d,0s)}
-  .rung[data-accent="tang"]{--racc:var(--tang);--rglow:rgba(255,91,30,.5)}
-  .rung[data-accent="bone"]{--racc:var(--bone);--rglow:rgba(242,239,233,.5)}
-  .rung[data-accent="acid"]{--racc:var(--acid);--rglow:rgba(242,226,5,.5)}
-  .rung-btn{display:flex;width:100%;align-items:center;gap:1.5rem;background:transparent;border:none;border-top:1px solid rgba(242,239,233,.14);cursor:pointer;text-align:left;padding:1.7rem 0;color:inherit;font-family:inherit}
-  .rung-num{font-family:"Unbounded";font-weight:900;font-size:clamp(1.9rem,3.4vw,2.6rem);line-height:1;width:66px;flex:none;background:var(--ink);position:relative;z-index:1;color:rgba(242,239,233,.26);transition:color .3s var(--ease)}
-  .rung-meta{flex:1;display:flex;flex-direction:column;gap:.4rem;min-width:0}
-  .rung-phase{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(242,239,233,.42);transition:color .3s var(--ease)}
-  .rung-name{font-family:"Unbounded";font-weight:800;font-size:clamp(1.5rem,3.2vw,2.1rem);letter-spacing:-.02em;line-height:1;color:rgba(242,239,233,.82);transition:color .3s var(--ease)}
-  .rung-plus{font-size:2rem;font-weight:400;line-height:1;flex:none;color:rgba(242,239,233,.5);transition:transform .35s var(--ease),color .3s var(--ease)}
-  .rung-body{overflow:hidden;max-height:0;opacity:0;transition:max-height .5s var(--ease),opacity .45s var(--ease)}
-  .rung-body-inner{display:flex;flex-wrap:wrap;gap:1.6rem 2.6rem;align-items:flex-start;padding:.2rem 1rem 2rem 81px}
-  .rung-blurb{flex:1;min-width:240px;max-width:42ch;font-size:1.05rem;font-weight:500;color:rgba(242,239,233,.8);line-height:1.5}
-  .rung-chips{display:flex;flex-wrap:wrap;gap:.6rem;max-width:34ch}
-  .rung-chip{font-family:"DM Mono",monospace;font-size:.82rem;letter-spacing:.02em;color:rgba(242,239,233,.86);border:1px solid rgba(242,239,233,.18);border-radius:99px;padding:.42rem .9rem}
-  .rung-btn:hover .rung-name{color:var(--bone)}
-  .rung-btn:hover .rung-plus{color:var(--racc)}
-  .rung.open .rung-num{color:var(--racc)}
-  .rung.open .rung-phase{color:var(--racc)}
-  .rung.open .rung-name{color:var(--bone)}
-  .rung.open .rung-plus{transform:rotate(135deg);color:var(--racc)}
-  .rung.open .rung-body{max-height:340px;opacity:1}
-  .rung.open .rung-chip{border-color:var(--rglow)}
-
-  /* ---------- signature: leak picker ---------- */
-  #leak{background:var(--bone)}
-  .leak-lead{font-size:clamp(1.05rem,1.7vw,1.32rem);font-weight:500;color:var(--ink-soft);max-width:46ch;margin-top:1.4rem}
-  .leak-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:2.2rem;align-items:stretch;margin-top:2.8rem}
-  .leak-chips{display:flex;flex-direction:column;gap:1rem}
-  .leak-chip{
-    text-align:left;font-family:"Unbounded",sans-serif;font-weight:700;
-    font-size:clamp(1.05rem,2.3vw,1.6rem);line-height:1.07;letter-spacing:-.01em;
-    background:transparent;color:var(--ink);border:2px solid var(--ink);border-radius:18px;
-    padding:1.05rem 3rem 1.05rem 1.3rem;cursor:pointer;position:relative;width:100%;
-    transition:background .25s var(--ease),color .25s var(--ease),transform .25s var(--ease);
-  }
-  .leak-chip:hover{transform:translateX(6px)}
-  .leak-chip.is-active{background:var(--ink);color:var(--bone)}
-  .leak-chip::after{content:"→";position:absolute;right:1.2rem;top:50%;transform:translateY(-50%);color:var(--tang);opacity:0;transition:opacity .25s var(--ease)}
-  .leak-chip.is-active::after{opacity:1}
-  .leak-panel{
-    background:var(--ink);color:var(--bone);border-radius:26px;padding:clamp(1.8rem,3vw,2.8rem);
-    display:flex;flex-direction:column;justify-content:center;min-height:340px;position:relative;overflow:hidden;
-    transition:opacity .3s var(--ease),transform .3s var(--ease);
-  }
-  .leak-panel.swap{opacity:0;transform:translateY(12px)}
-  .leak-tag{font-size:.76rem;color:var(--acid);margin-bottom:1.1rem}
-  .leak-fix{font-family:"Unbounded",sans-serif;font-weight:800;font-size:clamp(1.7rem,3.6vw,2.8rem);line-height:1;color:var(--tang);letter-spacing:-.02em;margin-bottom:1.2rem}
-  .leak-desc{font-size:clamp(1rem,1.5vw,1.16rem);font-weight:500;color:rgba(242,239,233,.82);max-width:42ch;margin-bottom:1.6rem;line-height:1.5}
-  .leak-step{font-size:.74rem;color:rgba(242,239,233,.6);border:1px solid rgba(242,239,233,.25);border-radius:99px;padding:.45rem .9rem;align-self:flex-start}
+  /* ---------- where to start: you say, we build ---------- */
+  #leak{background:var(--ink);color:var(--bone);overflow:hidden;border-top:1px solid rgba(242,239,233,.1)}
+  #leak .wrap{position:relative;z-index:1}
+  .ys-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+  .ys-inner{max-width:940px;margin-inline:auto;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .ys-eyebrow{font-size:.74rem;color:var(--tang);margin-bottom:1.1rem}
+  .ys-head{font-family:"Unbounded",sans-serif;font-weight:800;font-size:clamp(2.4rem,6vw,3.8rem);line-height:1;letter-spacing:-.02em;color:var(--bone)}
+  .ys-head em{font-style:normal;color:var(--tang)}
+  .ys-sub{font-size:clamp(1.02rem,1.6vw,1.18rem);font-weight:500;color:rgba(242,239,233,.62);line-height:1.5;max-width:50ch;margin-top:1.2rem}
+  .ys-card{position:relative;width:100%;background:rgba(242,239,233,.03);border:1px solid rgba(242,239,233,.1);border-radius:26px;padding:clamp(2rem,4vw,3.2rem) clamp(1.5rem,4vw,3.4rem) 3.2rem;margin-top:2.6rem;text-align:left;overflow:hidden}
+  .ys-cardlabel{font-size:.72rem;color:rgba(242,239,233,.45)}
+  .ys-rot{cursor:pointer;margin-top:1.3rem}
+  .ys-say{font-family:"Unbounded",sans-serif;font-weight:600;font-size:clamp(1.55rem,3.3vw,2.5rem);line-height:1.22;letter-spacing:-.02em;color:var(--bone)}
+  .ys-say .q{color:var(--tang)}
+  .ys-divrow{display:flex;align-items:center;gap:.8rem;margin:1.9rem 0 1.05rem}
+  .ys-dash{height:2px;width:32px;background:var(--tang);border-radius:2px;flex:none}
+  .ys-divlabel{font-size:.72rem;color:var(--tang)}
+  .ys-build{font-size:clamp(1.12rem,1.9vw,1.42rem);font-weight:500;color:rgba(242,239,233,.88);line-height:1.5;max-width:52ch}
+  .ys-foot{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-top:2.4rem}
+  .ys-dots{display:flex;align-items:center;gap:.7rem}
+  .ys-dot{width:9px;height:9px;border-radius:99px;border:none;background:rgba(242,239,233,.28);cursor:pointer;padding:0;transition:width .35s var(--ease),background .35s var(--ease)}
+  .ys-dot.on{width:26px;background:var(--tang)}
+  .ys-counter{font-size:.74rem;color:rgba(242,239,233,.5)}
+  .ys-progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(242,239,233,.08)}
+  .ys-progress span{display:block;height:100%;width:100%;background:var(--tang);transform:scaleX(0);transform-origin:left}
+  .ys-cta{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1.2rem;margin-top:2.4rem}
+  #leak .btn.tang:hover{background:var(--bone);border-color:var(--bone);color:var(--ink)}
+  .ys-alt{font-size:.98rem;font-weight:500;color:rgba(242,239,233,.66);border-bottom:1px solid rgba(242,239,233,.3);padding-bottom:1px}
+  .ys-alt:hover{color:var(--tang)}
 
   /* ---------- thesis band ---------- */
   #thesis{background:var(--tang);color:var(--ink)}
@@ -384,9 +353,6 @@
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E")}
 
   /* ---------- responsive ---------- */
-  @media (max-width:760px){
-    .leak-grid{grid-template-columns:1fr;gap:1.5rem}
-  }
   /* nav collapses to hamburger a bit early so the 4-link bar never crowds */
   @media (max-width:840px){
     .nav-links{display:none}
@@ -407,28 +373,7 @@
     .step .snum{font-size:1.1rem}
     .step .sdesc{justify-self:start;text-align:left;max-width:38ch}
     .step:hover .stitle{transform:none}
-    .leak-panel{min-height:0}
     .payback-banner{text-align:left}
-  }
-  /* what we build: ladder stacks tighter on small screens */
-  @media (max-width:820px){
-    #build{padding:4.8rem 0}
-    .rung-num{font-size:1.8rem;width:54px}
-    .ladder-line{left:27px}
-    /* keep the body indented past the rail (num 54px + 1.5rem gap) so the
-       vertical line never paints over the blurb or chips */
-    .rung-body-inner{padding-left:78px;gap:1.1rem 1.6rem}
-    .rung-blurb{min-width:0}
-    /* with blurb + chips stacked, the open panel is taller; give it room so it
-       never clips its last chips on narrow screens */
-    .rung.open .rung-body{max-height:560px}
-  }
-  @media (max-width:460px){
-    .rung-btn{gap:1rem;padding:1.4rem 0}
-    .rung-num{font-size:1.5rem;width:42px}
-    .ladder-line{left:21px}
-    /* narrower number column here (num 42px + 1rem gap), so re-align the body */
-    .rung-body-inner{padding-left:58px}
   }
   @media (max-width:420px){
     .wrap{width:min(1280px,100% - 1.6rem)}
@@ -447,8 +392,7 @@
     .cursor-dot{display:none}
     .hero-head .underdog svg path{stroke-dashoffset:0 !important;transition:none}
     .cobble-field{display:none !important}
-    .ladder .rung{opacity:1 !important;transform:none !important}
-    .ladder-line{transform:scaleY(1) !important}
+    .ys-progress span{display:none}
   }
 </style>
 </head>
@@ -469,7 +413,6 @@
       <span>cobbld</span>
     </a>
     <nav class="nav-links" aria-label="Primary">
-      <a class="lnk" href="#build">What we build</a>
       <a class="lnk" href="#leak">Where to start</a>
       <a class="lnk" href="#how">How it works</a>
       <!-- Work tab hidden until we have real projects to show. See NOTES.md.
@@ -483,7 +426,6 @@
 </header>
 
 <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
-  <a href="#build">What we build</a>
   <a href="#leak">Where to start</a>
   <a href="#how">How it works</a>
   <!-- Work tab hidden until we have real projects to show. See NOTES.md.
@@ -526,7 +468,7 @@
       </p>
       <div class="hero-cta">
         <a class="btn magnet" href="#cta">Find your first win <span class="arr" aria-hidden="true">→</span></a>
-        <a class="btn ghost magnet" href="#build">See what we build</a>
+        <a class="btn ghost magnet" href="#leak">See where to start</a>
       </div>
     </div>
   </div>
@@ -557,106 +499,35 @@
   -->
 </section>
 
-<!-- ===================== WHAT WE BUILD ===================== -->
-<section id="build" aria-label="What we build">
-  <div class="wrap">
-    <div class="build-head reveal">
-      <h2 class="sec-head">A few things <em>we build.</em></h2>
-      <p class="build-lead">Examples, not a menu. Three stages, one partner. Open any stage to see what's inside. Most start at the top and grow down.</p>
-      <p class="build-hint mono">&#8627; Tap a stage to expand</p>
-    </div>
-
-    <div class="ladder reveal">
-      <div class="rung open" data-accent="tang" style="--d:0s">
-        <button class="rung-btn" type="button" aria-expanded="true" aria-controls="rung-quick">
-          <span class="rung-num">01</span>
-          <span class="rung-meta">
-            <span class="rung-phase mono">Start here</span>
-            <span class="rung-name">Quick wins</span>
-          </span>
-          <span class="rung-plus" aria-hidden="true">+</span>
-        </button>
-        <div class="rung-body" id="rung-quick">
-          <div class="rung-body-inner">
-            <p class="rung-blurb">Fast, visible wins that get you online and earning. No big project to sign off on.</p>
-            <div class="rung-chips">
-              <span class="rung-chip">Websites</span>
-              <span class="rung-chip">Landing pages</span>
-              <span class="rung-chip">Booking &amp; forms</span>
-              <span class="rung-chip">Small automations</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="rung" data-accent="bone" style="--d:.1s">
-        <button class="rung-btn" type="button" aria-expanded="false" aria-controls="rung-core">
-          <span class="rung-num">02</span>
-          <span class="rung-meta">
-            <span class="rung-phase mono">The day-to-day</span>
-            <span class="rung-name">Core builds</span>
-          </span>
-          <span class="rung-plus" aria-hidden="true">+</span>
-        </button>
-        <div class="rung-body" id="rung-core">
-          <div class="rung-body-inner">
-            <p class="rung-blurb">The tools that run your day-to-day, so less of the business lives on paper or in your head.</p>
-            <div class="rung-chips">
-              <span class="rung-chip">Internal tools</span>
-              <span class="rung-chip">Customer &amp; job tracking</span>
-              <span class="rung-chip">Quoting &amp; admin</span>
-              <span class="rung-chip">Dashboards</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="rung" data-accent="acid" style="--d:.2s">
-        <button class="rung-btn" type="button" aria-expanded="false" aria-controls="rung-scale">
-          <span class="rung-num">03</span>
-          <span class="rung-meta">
-            <span class="rung-phase mono">Bespoke</span>
-            <span class="rung-name">Scale</span>
-          </span>
-          <span class="rung-plus" aria-hidden="true">+</span>
-        </button>
-        <div class="rung-body" id="rung-scale">
-          <div class="rung-body-inner">
-            <p class="rung-blurb">Custom software shaped around exactly how you work. Built end to end, kept improving.</p>
-            <div class="rung-chips">
-              <span class="rung-chip">Custom apps</span>
-              <span class="rung-chip">Integrations</span>
-              <span class="rung-chip">Bespoke systems</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="ladder-line" aria-hidden="true"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== SIGNATURE: LEAK PICKER ===================== -->
+<!-- ===================== WHERE TO START — YOU SAY, WE BUILD ===================== -->
 <section class="section" id="leak" aria-label="Where to start">
+  <canvas class="ys-canvas" id="ysCanvas" aria-hidden="true"></canvas>
   <div class="wrap">
-    <h2 class="sec-head reveal">Where should we <em>start?</em></h2>
-    <p class="leak-lead reveal">Pick what sounds like your business. We will point at the build worth shipping first.</p>
+    <div class="ys-inner">
+      <p class="ys-eyebrow mono reveal">Where to start</p>
+      <h2 class="ys-head reveal">Sound <em>familiar?</em></h2>
+      <p class="ys-sub reveal">The stuff we hear from small businesses every week, and exactly what we'd build to fix it. Find the one that sounds like you.</p>
 
-    <div class="leak-grid">
-      <div class="leak-chips reveal" aria-label="Common problems">
-        <button class="leak-chip is-active" type="button" aria-pressed="true" data-fix="0">You barely have a website</button>
-        <button class="leak-chip" type="button" aria-pressed="false" data-fix="1">Customers can't easily book or reach you</button>
-        <button class="leak-chip" type="button" aria-pressed="false" data-fix="2">It all lives on paper and in your head</button>
-        <button class="leak-chip" type="button" aria-pressed="false" data-fix="3">Admin and quoting eat your evenings</button>
-        <button class="leak-chip" type="button" aria-pressed="false" data-fix="4">Off-the-shelf software doesn't fit</button>
+      <div class="ys-card reveal">
+        <p class="ys-cardlabel mono">What we hear</p>
+        <div class="ys-rot" id="ysRot">
+          <p class="ys-say"><span class="q">&ldquo;</span><span id="ysSay">I've only got a Facebook page, not a website.</span><span class="q">&rdquo;</span></p>
+          <div class="ys-divrow">
+            <span class="ys-dash"></span>
+            <span class="ys-divlabel mono">So we'd build</span>
+          </div>
+          <p class="ys-build" id="ysBuild">A proper, professional website, tailored to the needs of your business.</p>
+        </div>
+        <div class="ys-foot">
+          <div class="ys-dots" id="ysDots"></div>
+          <span class="ys-counter mono" id="ysCounter">01 / 06</span>
+        </div>
+        <div class="ys-progress"><span id="ysBar"></span></div>
       </div>
 
-      <div class="leak-panel reveal" id="leakPanel" aria-live="polite">
-        <span class="leak-tag mono">What we'd build</span>
-        <h3 class="leak-fix" id="leakName">A website that works</h3>
-        <p class="leak-desc" id="leakDesc">A clean, fast site that brings in work instead of just sitting there. The first thing people check, done properly and looked after for you.</p>
-        <span class="leak-step mono" id="leakWhere">Quick win</span>
+      <div class="ys-cta reveal">
+        <a class="btn tang" href="#cta">This sounds like me <span class="arr" aria-hidden="true">&rarr;</span></a>
+        <a class="ys-alt" href="#cta">or tell us in your own words</a>
       </div>
     </div>
   </div>
@@ -756,7 +627,6 @@
       <div class="foot-cols">
         <div class="foot-col">
           <h5 class="mono">Explore</h5>
-          <a href="#build">What we build</a>
           <a href="#leak">Where to start</a>
           <a href="#how">How it works</a>
           <!-- Work tab hidden until we have real projects to show. See NOTES.md.
@@ -1070,68 +940,109 @@
   }, {threshold:0.16, rootMargin:"0px 0px -8% 0px"});
   document.querySelectorAll(".reveal").forEach(function(el){ io.observe(el); });
 
-  /* ---------- what we build: ladder accordion ---------- */
+  /* ---------- where to start: you say, we build ---------- */
   (function(){
-    var rungs = Array.prototype.slice.call(document.querySelectorAll("#build .rung"));
-    if(!rungs.length) return;
-    rungs.forEach(function(rung){
-      var btn = rung.querySelector(".rung-btn");
-      if(!btn) return;
-      btn.addEventListener("click", function(){
-        var willOpen = !rung.classList.contains("open");
-        rungs.forEach(function(other){
-          other.classList.remove("open");
-          var b = other.querySelector(".rung-btn");
-          if(b) b.setAttribute("aria-expanded", "false");
-        });
-        if(willOpen){
-          rung.classList.add("open");
-          btn.setAttribute("aria-expanded", "true");
-        }
+    var SAYS = [
+      {s:"I've only got a Facebook page, not a website.", b:"A proper, professional website, tailored to the needs of your business."},
+      {s:"Booking me in means missed calls and phone tag.", b:"A booking page where customers grab a slot themselves, with auto-reminders so they show up."},
+      {s:"My customer list is sticky notes and my memory.", b:"One app with every customer, job and note, on your phone, shared with your crew."},
+      {s:"I'm still doing quotes and invoices at 10pm.", b:"Quotes you can fire off from your phone, and invoices that chase late payers so you don't have to."},
+      {s:"I type the same job into three different screens. Every single time.", b:"Your tools wired together, so you enter a job once and it shows up everywhere."},
+      {s:"The software I can buy almost fits. Almost.", b:"A made-to-measure tool, only the buttons you need, wired to the apps you already use."}
+    ];
+    var PACE = 6000, EASE = "cubic-bezier(.16,1,.3,1)";
+    var sayEl = document.getElementById("ysSay"), buildEl = document.getElementById("ysBuild");
+    var rotEl = document.getElementById("ysRot"), dotsEl = document.getElementById("ysDots");
+    var counterEl = document.getElementById("ysCounter"), barEl = document.getElementById("ysBar");
+    if(sayEl && dotsEl){
+      var idx = 0, paused = false, barAnim = null;
+      var pad = function(n){ return n < 10 ? "0" + n : "" + n; };
+      var dotBtns = SAYS.map(function(item, i){
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "ys-dot"; b.setAttribute("aria-label", item.s);
+        b.addEventListener("click", function(e){ e.stopPropagation(); pause(); go(i); });
+        dotsEl.appendChild(b); return b;
       });
-    });
+      function render(){
+        sayEl.textContent = SAYS[idx].s; buildEl.textContent = SAYS[idx].b;
+        counterEl.textContent = pad(idx + 1) + " / " + pad(SAYS.length);
+        dotBtns.forEach(function(b, i){ b.classList.toggle("on", i === idx); });
+      }
+      function rise(){
+        if(reduce || !rotEl.animate) return;
+        try { rotEl.animate([{transform:"translateY(18px)",opacity:.45},{transform:"none",opacity:1}], {duration:460, easing:EASE}); } catch(e){}
+      }
+      function go(i){ idx = (i + SAYS.length) % SAYS.length; render(); rise(); }
+      function cycle(){
+        if(reduce || !barEl || !barEl.animate) return;
+        try { if(barAnim) barAnim.cancel(); } catch(e){}
+        barEl.style.opacity = "1";
+        try {
+          barAnim = barEl.animate([{transform:"scaleX(0)"},{transform:"scaleX(1)"}], {duration:PACE, easing:"linear", fill:"forwards"});
+          barAnim.onfinish = function(){ if(!paused){ go(idx + 1); cycle(); } };
+        } catch(e){}
+      }
+      function pause(){
+        if(paused) return;
+        paused = true;
+        try { if(barAnim) barAnim.cancel(); } catch(e){}
+        if(barEl) barEl.style.opacity = "0";
+      }
+      rotEl.addEventListener("click", function(){ pause(); go(idx + 1); });
+      render();
+      if(!reduce) cycle();
+    }
+
+    /* cobble field — drifting, glowing, mouse-reactive squares */
+    (function(){
+      var cv = document.getElementById("ysCanvas"); if(!cv || !cv.getContext) return;
+      var ctx = cv.getContext("2d"); if(!ctx) return;
+      var DPR = Math.min(window.devicePixelRatio || 1, 2), W = 1, H = 1;
+      function resize(){ var r = cv.getBoundingClientRect(); W = Math.max(1, r.width); H = Math.max(1, r.height); cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR); ctx.setTransform(DPR,0,0,DPR,0,0); }
+      resize(); window.addEventListener("resize", resize);
+      var POOL = [
+        {c:"255,91,30",fill:false,lw:2.5},{c:"255,91,30",fill:false,lw:2.5},{c:"255,91,30",fill:true,lw:1},
+        {c:"242,239,233",fill:false,lw:2.5},{c:"242,239,233",fill:false,lw:2.5},
+        {c:"242,226,5",fill:false,lw:2},{c:"242,226,5",fill:true,lw:1}
+      ];
+      var N = 20, P = [];
+      for(var i=0;i<N;i++){
+        var col = POOL[(Math.random()*POOL.length)|0], size = 20 + Math.random()*66;
+        var p = {x:Math.random()*W,y:Math.random()*H,size:size,bvx:(Math.random()-0.5)*0.16,bvy:-(0.05+Math.random()*0.2),vx:0,vy:0,rot:Math.random()*Math.PI,vrot:(Math.random()-0.5)*0.005,phase:Math.random()*Math.PI*2,gs:0.5+Math.random()*0.8,c:col.c,fill:col.fill,lw:col.lw,baseA:col.fill?(0.05+Math.random()*0.05):(0.14+Math.random()*0.2)};
+        p.vx = p.bvx; p.vy = p.bvy; P.push(p);
+      }
+      var mouse = {x:-9999,y:-9999};
+      window.addEventListener("mousemove", function(e){ var r = cv.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; });
+      window.addEventListener("mouseout", function(){ mouse.x = -9999; mouse.y = -9999; });
+      function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+      var t0 = performance.now(), R = 165, R2 = R*R;
+      function frame(now){
+        var t = (now - t0)/1000; ctx.clearRect(0,0,W,H);
+        var mx = mouse.x, my = mouse.y;
+        for(var i=0;i<P.length;i++){
+          var p = P[i];
+          if(!reduce){
+            var dx = p.x-mx, dy = p.y-my, d2 = dx*dx+dy*dy;
+            if(d2 < R2 && d2 > 0.5){ var d = Math.sqrt(d2), f = (1-d/R)*1.15; p.vx += (dx/d)*f; p.vy += (dy/d)*f; }
+            p.vx += (p.bvx-p.vx)*0.045; p.vy += (p.bvy-p.vy)*0.045;
+            p.x += p.vx; p.y += p.vy; p.rot += p.vrot;
+            var m = p.size;
+            if(p.x<-m)p.x=W+m; else if(p.x>W+m)p.x=-m;
+            if(p.y<-m)p.y=H+m; else if(p.y>H+m)p.y=-m;
+          }
+          var pulse = 0.5+0.5*Math.sin(t*p.gs+p.phase), alpha = p.baseA*(0.65+0.35*pulse), s = p.size;
+          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+          rr(-s/2,-s/2,s,s,s*0.26);
+          ctx.shadowColor = "rgba("+p.c+","+(0.45*pulse)+")"; ctx.shadowBlur = 5+15*pulse;
+          if(p.fill){ ctx.fillStyle = "rgba("+p.c+","+alpha+")"; ctx.fill(); }
+          else { ctx.lineWidth = p.lw; ctx.strokeStyle = "rgba("+p.c+","+alpha+")"; ctx.stroke(); }
+          ctx.restore();
+        }
+        if(!reduce) requestAnimationFrame(frame);
+      }
+      if(reduce) frame(performance.now()); else requestAnimationFrame(frame);
+    })();
   })();
-
-  /* ---------- leak picker ---------- */
-  var leakData = [
-    {n:"A website that works", d:"A clean, fast site that brings in work instead of just sitting there. The first thing people check, done properly and looked after for you.", w:"Quick win"},
-    {n:"Booking and enquiry flows", d:"A simple way for customers to book time or send an enquiry, so the work comes to you without the endless back and forth.", w:"Quick win"},
-    {n:"An internal tool", d:"One lightweight place that holds your customers, jobs and notes, instead of being scattered across paper, your phone and your memory.", w:"Core build"},
-    {n:"Quoting and admin tools", d:"The repetitive admin handled for you, so quotes, invoices and follow-ups stop eating your evenings.", w:"Core build"},
-    {n:"A custom app", d:"When off-the-shelf software does not fit how you work, we build the exact tool your business needs, end to end.", w:"Scale"}
-  ];
-  var leakChips = Array.prototype.slice.call(document.querySelectorAll(".leak-chip"));
-  var leakPanel = document.getElementById("leakPanel");
-  var leakName = document.getElementById("leakName");
-  var leakDesc = document.getElementById("leakDesc");
-  var leakWhere = document.getElementById("leakWhere");
-  function selectLeak(i){
-    var d = leakData[i];
-    if(!d) return;
-    leakChips.forEach(function(c, idx){
-      var on = idx === i;
-      c.classList.toggle("is-active", on);
-      c.setAttribute("aria-pressed", on ? "true" : "false");
-    });
-    if(leakPanel && !reduce) leakPanel.classList.add("swap");
-    setTimeout(function(){
-      if(leakName) leakName.textContent = d.n;
-      if(leakDesc) leakDesc.textContent = d.d;
-      if(leakWhere) leakWhere.textContent = d.w;
-      if(leakPanel) leakPanel.classList.remove("swap");
-    }, reduce ? 0 : 150);
-  }
-  leakChips.forEach(function(c, i){
-    c.addEventListener("click", function(){ selectLeak(i); });
-    c.addEventListener("keydown", function(e){
-      var j = -1;
-      if(e.key === "ArrowDown" || e.key === "ArrowRight") j = (i + 1) % leakChips.length;
-      else if(e.key === "ArrowUp" || e.key === "ArrowLeft") j = (i - 1 + leakChips.length) % leakChips.length;
-      if(j > -1){ e.preventDefault(); selectLeak(j); leakChips[j].focus(); }
-    });
-  });
-
-  /* ---------- what we build: progression path is CSS-only, no JS ---------- */
 
   /* ---------- magnetic buttons + cursor ---------- */
   var cursor = document.querySelector(".cursor-dot");
