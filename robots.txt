@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# work.html is intentionally excluded from search (noindex) until there
+# are real projects to show, so it is left out of the sitemap below.
+
+Sitemap: https://cobbld.com/sitemap.xml
