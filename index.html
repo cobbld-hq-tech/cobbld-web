@@ -1271,13 +1271,15 @@
       el.addEventListener("mouseleave", function(){ el.style.transform = ""; });
     });
 
-    /* hide the blend-mode cursor over the tangerine Why band: difference blending
-       on orange turns the dot a harsh blue, which reads as a glitch */
-    var whyBand = document.getElementById("thesis");
-    if(whyBand){
-      whyBand.addEventListener("mouseenter", function(){ cursor.classList.add("hide"); });
-      whyBand.addEventListener("mouseleave", function(){ cursor.classList.remove("hide"); });
-    }
+    /* hide the blend-mode cursor over sections where difference blending misfires:
+       the tangerine Why band turns the dot a harsh blue, and over the Where to
+       start controls (tangerine dots/buttons on ink) it inverts oddly too */
+    ["thesis","leak"].forEach(function(id){
+      var sec = document.getElementById(id);
+      if(!sec) return;
+      sec.addEventListener("mouseenter", function(){ cursor.classList.add("hide"); });
+      sec.addEventListener("mouseleave", function(){ cursor.classList.remove("hide"); });
+    });
   } else if(cursor){
     cursor.style.display = "none";
   }
