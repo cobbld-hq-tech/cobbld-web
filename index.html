@@ -286,11 +286,56 @@
     .ys-cta{margin-top:1.4rem}
   }
 
-  /* ---------- thesis band ---------- */
-  #thesis{background:var(--tang);color:var(--ink)}
-  .thesis-head{font-family:"Unbounded",sans-serif;font-weight:800;font-size:clamp(2rem,5.4vw,4.4rem);line-height:.99;letter-spacing:-.02em;max-width:20ch}
-  .thesis-head em{font-style:normal;background:var(--ink);color:var(--tang);padding:0 .14em;border-radius:.08em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
-  .thesis-sub{font-size:clamp(1.05rem,1.7vw,1.36rem);font-weight:500;max-width:48ch;margin-top:1.8rem;color:var(--ink-soft)}
+  /* ---------- why cobbld (one partner) ----------
+     A tangerine band that shows the team a big company would hire (four roles as
+     stacked rows) cobbling down into one partner block, then reveals the facets.
+     Plays once when the band scrolls in; the button replays it either way. */
+  #thesis{background:var(--tang);color:var(--ink);overflow:hidden;min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding-block:clamp(2.6rem,5vh,4.2rem)}
+  .why{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .why-eyebrow{font-size:.8rem;color:var(--ink);opacity:.62;margin-bottom:.85rem}
+  .why-head{font-family:"Unbounded",sans-serif;font-weight:800;font-size:clamp(1.9rem,4.3vw,3.3rem);line-height:1.05;letter-spacing:-.02em;max-width:23ch}
+  .why-head em{font-style:normal;background:var(--ink);color:var(--tang);padding:0 .14em;border-radius:.08em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+  .why-sub{font-size:clamp(1rem,1.4vw,1.18rem);font-weight:500;color:var(--ink-soft);line-height:1.5;max-width:54ch;margin-top:.95rem}
+
+  /* the merge stage is a fixed 520x220 coordinate space, scaled to fit by JS */
+  .why-stagewrap{width:min(460px,100%);margin-top:clamp(1.4rem,2.4vw,2rem);display:flex;justify-content:center;overflow:hidden}
+  .why-stage{position:relative;width:520px;height:220px;flex:none;transform-origin:top center}
+  .why-row{position:absolute;left:var(--x);top:var(--y);width:var(--w);height:44px;display:flex;align-items:center;gap:.6rem;padding:0 1rem;border-radius:13px;background:var(--ink);box-shadow:0 10px 24px -16px rgba(17,16,13,.7);transition:transform .72s var(--ease),opacity .55s var(--ease)}
+  .why-row .rtag{font-family:"DM Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--acid);border:1px solid rgba(242,226,5,.4);border-radius:99px;padding:.26rem .5rem;flex:none}
+  .why-row .rlabel{font-family:"Onest",sans-serif;font-weight:600;font-size:.95rem;color:var(--bone);letter-spacing:-.01em;white-space:nowrap}
+  .why-block{position:absolute;left:304px;top:36px;width:176px;height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:22px;background:var(--ink);transform:scale(.94);opacity:.66;box-shadow:0 12px 30px -20px rgba(17,16,13,.5);transition:transform .7s cubic-bezier(.34,1.5,.4,1),opacity .55s var(--ease),box-shadow .7s var(--ease)}
+  .why-block .wb-mark{position:relative;width:60px;height:60px;margin-bottom:.45rem}
+  .why-block .wb-mark span{position:absolute;width:23px;height:23px;border-radius:7px}
+  .why-block .wb-name{font-family:"Unbounded",sans-serif;font-weight:800;font-size:1.4rem;letter-spacing:-.02em;color:var(--bone)}
+  .why-block .wb-tag{font-family:"DM Mono",monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(242,239,233,.6);margin-top:.2rem}
+  .why.is-merged .why-row{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0;transition-delay:calc(var(--i) * .05s)}
+  .why.is-merged .why-block{transform:translateX(-132px) scale(1.08);opacity:1;box-shadow:0 26px 56px -22px rgba(17,16,13,.78)}
+
+  .why-controls{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:1rem;margin-top:clamp(1.2rem,2vw,1.6rem)}
+  .why-caption{font-family:"DM Mono",monospace;text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;color:rgba(17,16,13,.58)}
+
+  .why-facets{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;width:100%;max-width:760px;margin-top:clamp(1.4rem,2.4vw,2rem)}
+  .why-facet{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:rgba(17,16,13,.05);border:1px solid rgba(17,16,13,.14);border-radius:16px;padding:1rem 1.1rem}
+  .why-facet .fbullet{width:16px;height:16px;border-radius:5px;flex:none}
+  .why-facet .flabel{font-family:"Unbounded",sans-serif;font-weight:700;font-size:1.02rem;letter-spacing:-.01em;color:var(--ink);margin-top:.65rem}
+  .why-facet .fline{font-size:.9rem;font-weight:500;color:rgba(17,16,13,.68);line-height:1.4;margin-top:.32rem}
+  /* facets fade in on merge only when JS is live; without JS they stay visible */
+  html.js .why-facet{opacity:0;transform:translateY(14px);transition:transform .6s var(--ease),opacity .6s var(--ease)}
+  html.js .why.is-merged .why-facet{opacity:1;transform:none;transition-delay:calc(.3s + var(--i) * .1s)}
+
+  .why-cta{display:inline-flex;align-items:center;gap:.55rem;font-family:"Onest",sans-serif;font-weight:700;font-size:1.02rem;color:var(--ink);margin-top:clamp(1.4rem,2.4vw,2rem)}
+  .why-cta .u{border-bottom:2px solid var(--ink);padding-bottom:3px;transition:color .25s var(--ease),border-color .25s var(--ease)}
+  .why-cta .arr{transition:transform .3s var(--ease)}
+  .why-cta:hover .u{color:var(--tang-deep);border-color:var(--tang-deep)}
+  .why-cta:hover .arr{transform:translateX(4px)}
+
+  /* parallax cobble field behind the band (mouse-driven, fine pointers only) */
+  .why-field{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .why-field .pl{position:absolute;inset:0;transition:transform .5s var(--ease);will-change:transform}
+  .why-field i{position:absolute;display:block;animation:cobbleFloat var(--fdur,10s) ease-in-out infinite alternate}
+
+  /* reduced motion: land straight on the merged state with no movement */
+  .why.instant .why-row,.why.instant .why-block,.why.instant .why-facet{transition:none !important}
 
   /* ---------- how it works ---------- */
   #how{background:var(--bone)}
@@ -409,6 +454,10 @@
   @media (max-width:600px){
     .foot-cols{display:grid;grid-template-columns:1fr 1fr;gap:2.2rem 1.5rem;width:100%}
   }
+  /* why-cobbld facets: stack to one column before the three cards get cramped */
+  @media (max-width:720px){
+    .why-facets{grid-template-columns:1fr;max-width:420px}
+  }
 
   @media (prefers-reduced-motion:reduce){
     *{animation:none !important;scroll-behavior:auto !important}
@@ -451,6 +500,7 @@
     </a>
     <nav class="nav-links" aria-label="Primary">
       <a class="lnk" href="#leak">Where to start</a>
+      <a class="lnk" href="#thesis">Why cobbld</a>
       <a class="lnk" href="#how">How it works</a>
       <!-- Work tab hidden until we have real projects to show. See NOTES.md.
       <a class="lnk" href="/work.html">Work</a> -->
@@ -464,6 +514,7 @@
 
 <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
   <a href="#leak">Where to start</a>
+  <a href="#thesis">Why cobbld</a>
   <a href="#how">How it works</a>
   <!-- Work tab hidden until we have real projects to show. See NOTES.md.
   <a href="/work.html">Work</a> -->
@@ -501,7 +552,7 @@
 
     <div class="hero-lower">
       <p class="hero-sub">
-        cobbld builds the systems that used to need a big company's budget and an IT team. We land one fast win that pays for itself, then stay on as your technical partner.
+        cobbld builds the systems that used to need a big company's budget and a dev team. We land one fast win that pays for itself, then stay on as your technical partner.
       </p>
       <div class="hero-cta">
         <a class="btn magnet" href="#cta">Find your first win <span class="arr" aria-hidden="true">→</span></a>
@@ -571,10 +622,64 @@
 </section>
 
 <!-- ===================== THESIS BAND ===================== -->
-<section class="section" id="thesis" aria-label="The idea">
+<section class="section" id="thesis" aria-label="Why cobbld">
+  <div class="why-field" aria-hidden="true">
+    <div class="pl pl0">
+      <i style="left:6%;top:18%;width:96px;height:96px;border-radius:24px;border:2px solid rgba(17,16,13,.08);--fdur:8s"></i>
+      <i style="right:9%;top:60%;width:120px;height:120px;border-radius:28px;border:2px solid rgba(17,16,13,.07);--fdur:9s;animation-delay:-3s"></i>
+      <i style="left:15%;bottom:9%;width:74px;height:74px;border-radius:20px;border:2px solid rgba(17,16,13,.08);--fdur:7.5s;animation-delay:-1.5s"></i>
+    </div>
+    <div class="pl pl1">
+      <i style="left:11%;top:64%;width:58px;height:58px;border-radius:16px;border:2px solid rgba(242,239,233,.18);--fdur:6.5s;animation-delay:-2s"></i>
+      <i style="right:14%;top:20%;width:66px;height:66px;border-radius:18px;border:2px solid rgba(242,239,233,.16);--fdur:7s;animation-delay:-4s"></i>
+      <i style="left:48%;top:8%;width:44px;height:44px;border-radius:13px;background:rgba(17,16,13,.05);--fdur:6s;animation-delay:-1s"></i>
+      <i style="left:43%;bottom:11%;width:50px;height:50px;border-radius:14px;border:2px solid rgba(242,239,233,.16);--fdur:7.5s;animation-delay:-5s"></i>
+    </div>
+    <div class="pl pl2">
+      <i style="left:22%;top:30%;width:30px;height:30px;border-radius:9px;background:rgba(242,226,5,.5);--fdur:5.5s;animation-delay:-1.2s"></i>
+      <i style="right:24%;bottom:24%;width:26px;height:26px;border-radius:8px;background:rgba(242,226,5,.42);--fdur:5s;animation-delay:-3.5s"></i>
+      <i style="right:30%;top:14%;width:20px;height:20px;border-radius:6px;background:rgba(242,239,233,.5);--fdur:6s;animation-delay:-2.4s"></i>
+    </div>
+  </div>
+
   <div class="wrap">
-    <h2 class="thesis-head reveal">The capability a big company pays an <em>IT team</em> for. We build it, run it, keep it improving.</h2>
-    <p class="thesis-sub reveal">No enterprise budget and no year-long rollout. Just the systems that quietly do the work, pointed at the one thing slowing you down right now.</p>
+    <div class="why">
+      <p class="why-eyebrow mono reveal">Why cobbld</p>
+      <h2 class="why-head reveal">Software built just for how you work. The kind only <em>big companies</em> used to be able to afford.</h2>
+      <p class="why-sub reveal">We build it, run it, and keep it improving. No enterprise budget, no year-long rollout, just the systems that quietly do the work.</p>
+
+      <!-- merge stage: the team a big company hires, cobbling into one partner -->
+      <div class="why-stagewrap">
+        <div class="why-stage">
+          <div class="why-row" style="--x:8px;--y:0px;--w:236px;--dx:134px;--dy:84px;--i:0"><span class="rtag">web</span><span class="rlabel">Builds the website</span></div>
+          <div class="why-row" style="--x:8px;--y:56px;--w:236px;--dx:134px;--dy:28px;--i:1"><span class="rtag">dev</span><span class="rlabel">Builds your tools</span></div>
+          <div class="why-row" style="--x:8px;--y:112px;--w:236px;--dx:134px;--dy:-28px;--i:2"><span class="rtag">ops</span><span class="rlabel">Keeps it running</span></div>
+          <div class="why-row" style="--x:8px;--y:168px;--w:236px;--dx:134px;--dy:-84px;--i:3"><span class="rtag">plan</span><span class="rlabel">Plans what's next</span></div>
+          <div class="why-block">
+            <span class="wb-mark" aria-hidden="true">
+              <span style="left:2px;top:22px;background:#f2efe9"></span>
+              <span style="left:27px;top:33px;background:#ff5b1e;opacity:.6"></span>
+              <span style="left:27px;top:8px;background:#ff5b1e"></span>
+            </span>
+            <span class="wb-name">cobbld</span>
+            <span class="wb-tag">one partner</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="why-controls">
+        <button type="button" class="btn why-toggle">Cobble into one</button>
+        <span class="why-caption" aria-live="polite">What used to take a team</span>
+      </div>
+
+      <div class="why-facets">
+        <div class="why-facet" style="--i:0"><span class="fbullet" style="background:var(--ink)"></span><span class="flabel">Live in weeks</span><span class="fline">A first build that ships fast, not a year-long rollout.</span></div>
+        <div class="why-facet" style="--i:1"><span class="fbullet" style="background:var(--acid)"></span><span class="flabel">One monthly retainer</span><span class="fline">Priced for a small business, not an enterprise.</span></div>
+        <div class="why-facet" style="--i:2"><span class="fbullet" style="background:var(--bone)"></span><span class="flabel">We stay on</span><span class="fline">We run it and keep improving it as you grow.</span></div>
+      </div>
+
+      <a class="why-cta" href="#cta"><span class="u">Start your first build</span><span class="arr" aria-hidden="true">→</span></a>
+    </div>
   </div>
 </section>
 
@@ -665,6 +770,7 @@
         <div class="foot-col">
           <h5 class="mono">Explore</h5>
           <a href="#leak">Where to start</a>
+          <a href="#thesis">Why cobbld</a>
           <a href="#how">How it works</a>
           <!-- Work tab hidden until we have real projects to show. See NOTES.md.
           <a href="/work.html">Work</a> -->
@@ -1206,6 +1312,70 @@
       }
     });
   }
+
+  /* ---------- why cobbld: cobble the team into one ----------
+     The stage lives in a fixed 520x220 space scaled to fit. We play the merge
+     once the band scrolls into view (show the four roles, then collapse them
+     into one partner block and fade the facets in); the button replays it
+     either way. Under reduced motion we land on the merged state with no
+     movement, and the parallax field only runs on fine pointers. */
+  (function(){
+    var why = document.querySelector(".why");
+    if(!why) return;
+    var stageWrap = why.querySelector(".why-stagewrap");
+    var stage = why.querySelector(".why-stage");
+    var btn = why.querySelector(".why-toggle");
+    var caption = why.querySelector(".why-caption");
+    var merged = false, timer;
+
+    function setMerged(on){
+      merged = on;
+      why.classList.toggle("is-merged", on);
+      if(btn) btn.textContent = on ? "Show the team" : "Cobble into one";
+      if(caption) caption.textContent = on ? "One partner, in weeks" : "What used to take a team";
+    }
+    function fit(){
+      if(!stageWrap || !stage) return;
+      var s = Math.min(1, stageWrap.clientWidth / 520);
+      stage.style.transform = "scale(" + s + ")";
+      stageWrap.style.height = (220 * s) + "px";
+    }
+    fit();
+    window.addEventListener("resize", fit, {passive:true});
+
+    if(btn){ btn.addEventListener("click", function(){ clearTimeout(timer); setMerged(!merged); }); }
+
+    if(reduce){
+      why.classList.add("instant");
+      setMerged(true);
+    } else {
+      var played = false;
+      function play(){ if(played) return; played = true; timer = setTimeout(function(){ setMerged(true); }, 1100); }
+      if("IntersectionObserver" in window){
+        var io3 = new IntersectionObserver(function(ents){
+          ents.forEach(function(en){ if(en.isIntersecting){ play(); io3.disconnect(); } });
+        }, {threshold:0.35});
+        io3.observe(why);
+      } else { play(); }
+
+      if(fine){
+        var field = why.querySelector(".why-field");
+        var layers = field ? [
+          [field.querySelector(".pl0"), 0.012],
+          [field.querySelector(".pl1"), 0.026],
+          [field.querySelector(".pl2"), 0.05]
+        ] : [];
+        if(layers.length){
+          window.addEventListener("mousemove", function(e){
+            var dx = e.clientX - window.innerWidth/2, dy = e.clientY - window.innerHeight/2;
+            layers.forEach(function(p){
+              if(p[0]) p[0].style.transform = "translate(" + (dx*p[1]).toFixed(1) + "px," + (dy*p[1]).toFixed(1) + "px)";
+            });
+          }, {passive:true});
+        }
+      }
+    }
+  })();
 
 })();
 </script>
