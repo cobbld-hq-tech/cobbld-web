@@ -295,7 +295,7 @@
      A tangerine band that shows the team a big company would hire (four roles as
      stacked rows) cobbling down into one partner block, then reveals the facets.
      Plays once when the band scrolls in; the button replays it either way. */
-  #thesis{background:var(--tang);color:var(--ink);overflow:hidden;min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding-block:clamp(1.4rem,3.6vh,3.8rem)}
+  #thesis{background:var(--bone);color:var(--ink);overflow:hidden;min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding-block:clamp(1rem,2.6vh,3rem)}
   .why{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center}
   .why-eyebrow{font-size:.8rem;color:var(--ink);opacity:.62;margin-bottom:.85rem}
   .why-head{font-family:"Unbounded",sans-serif;font-weight:800;font-size:clamp(1.6rem,min(4.3vw,5.4vh),3.1rem);line-height:1.04;letter-spacing:-.02em;max-width:23ch}
@@ -303,7 +303,7 @@
   .why-sub{font-size:clamp(1rem,1.4vw,1.18rem);font-weight:500;color:var(--ink-soft);line-height:1.5;max-width:54ch;margin-top:.7rem}
 
   /* the merge stage is a fixed 520x220 coordinate space, scaled to fit by JS */
-  .why-stagewrap{width:min(400px,100%);margin-top:clamp(.9rem,2vh,1.5rem);display:flex;justify-content:center;overflow:hidden}
+  .why-stagewrap{width:min(820px,100%);margin-top:clamp(.55rem,1.4vh,1.1rem);display:flex;justify-content:center;overflow:hidden}
   .why-stage{position:relative;width:520px;height:220px;flex:none;transform-origin:top center}
   .why-row{position:absolute;left:var(--x);top:var(--y);width:var(--w);height:44px;display:flex;align-items:center;gap:.6rem;padding:0 1rem;border-radius:13px;background:var(--ink);box-shadow:0 10px 24px -16px rgba(17,16,13,.7);transition:transform .72s var(--ease),opacity .55s var(--ease)}
   .why-row .rtag{font-family:"DM Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--acid);border:1px solid rgba(242,226,5,.4);border-radius:99px;padding:.26rem .5rem;flex:none}
@@ -314,12 +314,12 @@
   .why-block .wb-name{font-family:"Unbounded",sans-serif;font-weight:800;font-size:1.4rem;letter-spacing:-.02em;color:var(--bone)}
   .why-block .wb-tag{font-family:"DM Mono",monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(242,239,233,.6);margin-top:.2rem}
   .why.is-merged .why-row{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0;transition-delay:calc(var(--i) * .05s)}
-  .why.is-merged .why-block{transform:translateX(-132px) scale(1.08);opacity:1;box-shadow:0 26px 56px -22px rgba(17,16,13,.78)}
+  .why.is-merged .why-block{transform:translateX(-132px) scale(1.08);opacity:1;box-shadow:0 16px 44px -16px rgba(17,16,13,.42)}
 
-  .why-controls{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:1rem;margin-top:clamp(.9rem,1.6vh,1.3rem)}
+  .why-controls{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:1rem;margin-top:clamp(.5rem,1.1vh,1rem)}
   .why-caption{font-family:"DM Mono",monospace;text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;color:rgba(17,16,13,.58)}
 
-  .why-facets{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;width:100%;max-width:760px;margin-top:clamp(.9rem,2vh,1.5rem)}
+  .why-facets{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;width:100%;max-width:760px;margin-top:clamp(.55rem,1.4vh,1.1rem)}
   .why-facet{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:rgba(17,16,13,.05);border:1px solid rgba(17,16,13,.14);border-radius:16px;padding:.8rem 1rem}
   .why-facet .fbullet{width:16px;height:16px;border-radius:5px;flex:none}
   .why-facet .flabel{font-family:"Unbounded",sans-serif;font-weight:700;font-size:1.02rem;letter-spacing:-.01em;color:var(--ink);margin-top:.65rem}
@@ -328,7 +328,7 @@
   html.js .why-facet{opacity:0;transform:translateY(14px);transition:transform .6s var(--ease),opacity .6s var(--ease)}
   html.js .why.is-merged .why-facet{opacity:1;transform:none;transition-delay:calc(.3s + var(--i) * .1s)}
 
-  .why-cta{display:inline-flex;align-items:center;gap:.55rem;font-family:"Onest",sans-serif;font-weight:700;font-size:1.02rem;color:var(--ink);margin-top:clamp(.9rem,2vh,1.5rem)}
+  .why-cta{display:inline-flex;align-items:center;gap:.55rem;font-family:"Onest",sans-serif;font-weight:700;font-size:1.02rem;color:var(--ink);margin-top:clamp(.55rem,1.4vh,1.1rem)}
   .why-cta .u{border-bottom:2px solid var(--ink);padding-bottom:3px;transition:color .25s var(--ease),border-color .25s var(--ease)}
   .why-cta .arr{transition:transform .3s var(--ease)}
   .why-cta:hover .u{color:var(--tang-deep);border-color:var(--tang-deep)}
@@ -431,7 +431,8 @@
   .foot-col a,.foot-col span{display:block;font-size:1rem;font-weight:500;padding:.32rem 0;color:rgba(242,239,233,.86)}
   .foot-col a:hover{color:var(--tang)}
   .foot-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding-top:1.8rem;font-size:.78rem;color:rgba(242,239,233,.5)}
-  .foot-bottom .mark{color:var(--tang)}
+  .foot-bottom .mark{color:var(--tang);display:inline-flex;align-items:center}
+  .foot-bottom .mark-logo{width:15px;height:15px;display:block}
 
   /* ---------- reveal ---------- */
   .reveal{opacity:0;transform:translateY(34px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
@@ -477,11 +478,29 @@
   /* why-cobbld: stack facets to one column before they get cramped, and tighten
      the stack + stage so the section still fits one phone screen */
   @media (max-width:720px){
-    .why-facets{grid-template-columns:1fr;max-width:420px;gap:.55rem}
-    .why-facet{padding:.6rem .9rem}
-    .why-facet .flabel{margin-top:.3rem}
-    .why-facet .fline{margin-top:.15rem;line-height:1.35}
-    .why-stagewrap{width:min(330px,100%)}
+    .why-facets{grid-template-columns:1fr;max-width:420px;gap:.45rem}
+    .why-facet{flex-direction:row;align-items:center;flex-wrap:wrap;padding:.5rem .8rem;column-gap:.6rem}
+    .why-facet .flabel{margin-top:0}
+    .why-facet .fline{margin-top:.1rem;line-height:1.32;flex-basis:100%}
+    .why-stagewrap{width:min(340px,100%)}
+  }
+  /* short viewports (laptops, shorter phones): compact the Why band's vertical
+     rhythm so it still reads as one screen. The stage itself already shrinks via
+     the JS height budget; this trims the type spacing and padding around it. */
+  @media (max-height:820px){
+    #thesis{padding-block:clamp(.5rem,1.4vh,1.1rem)}
+    .why-head{line-height:1;letter-spacing:-.025em}
+    .why-sub{margin-top:.4rem;line-height:1.42}
+    .why-facet{padding:.5rem .85rem}
+  }
+  @media (max-height:700px){
+    .why-head{font-size:clamp(1.45rem,min(4vw,5vh),2.6rem)}
+    .why-eyebrow{margin-bottom:.45rem}
+    .why-sub{font-size:.96rem;margin-top:.25rem}
+    .why-facets{gap:.35rem}
+    .why-facet{padding:.42rem .8rem}
+    .why-facet .fline{line-height:1.28}
+    .why-stagewrap{width:min(280px,100%)}
   }
 
   @media (prefers-reduced-motion:reduce){
@@ -668,20 +687,29 @@
 <section class="section" id="thesis" aria-label="Why cobbld">
   <div class="why-field" aria-hidden="true">
     <div class="pl pl0">
-      <i style="left:6%;top:18%;width:96px;height:96px;border-radius:24px;border:2px solid rgba(17,16,13,.08);--fdur:8s"></i>
-      <i style="right:9%;top:60%;width:120px;height:120px;border-radius:28px;border:2px solid rgba(17,16,13,.07);--fdur:9s;animation-delay:-3s"></i>
-      <i style="left:15%;bottom:9%;width:74px;height:74px;border-radius:20px;border:2px solid rgba(17,16,13,.08);--fdur:7.5s;animation-delay:-1.5s"></i>
+      <i style="left:5%;top:16%;width:100px;height:100px;border-radius:24px;border:2px solid rgba(17,16,13,.09);--fdur:8s"></i>
+      <i style="right:7%;top:58%;width:124px;height:124px;border-radius:28px;border:2px solid rgba(17,16,13,.08);--fdur:9s;animation-delay:-3s"></i>
+      <i style="left:13%;bottom:8%;width:78px;height:78px;border-radius:20px;border:2px solid rgba(17,16,13,.09);--fdur:7.5s;animation-delay:-1.5s"></i>
+      <i style="left:3%;top:62%;width:64px;height:64px;border-radius:18px;border:2px solid rgba(17,16,13,.07);--fdur:8.5s;animation-delay:-4.5s"></i>
+      <i style="right:5%;top:13%;width:72px;height:72px;border-radius:19px;border:2px solid rgba(255,91,30,.16);--fdur:9.5s;animation-delay:-2.2s"></i>
+      <i style="right:17%;bottom:14%;width:88px;height:88px;border-radius:22px;border:2px solid rgba(17,16,13,.08);--fdur:8s;animation-delay:-6s"></i>
     </div>
     <div class="pl pl1">
-      <i style="left:11%;top:64%;width:58px;height:58px;border-radius:16px;border:2px solid rgba(242,239,233,.18);--fdur:6.5s;animation-delay:-2s"></i>
-      <i style="right:14%;top:20%;width:66px;height:66px;border-radius:18px;border:2px solid rgba(242,239,233,.16);--fdur:7s;animation-delay:-4s"></i>
-      <i style="left:48%;top:8%;width:44px;height:44px;border-radius:13px;background:rgba(17,16,13,.05);--fdur:6s;animation-delay:-1s"></i>
-      <i style="left:43%;bottom:11%;width:50px;height:50px;border-radius:14px;border:2px solid rgba(242,239,233,.16);--fdur:7.5s;animation-delay:-5s"></i>
+      <i style="left:10%;top:63%;width:58px;height:58px;border-radius:16px;background:rgba(17,16,13,.05);--fdur:6.5s;animation-delay:-2s"></i>
+      <i style="right:13%;top:21%;width:66px;height:66px;border-radius:18px;background:rgba(255,91,30,.16);--fdur:7s;animation-delay:-4s"></i>
+      <i style="left:47%;top:7%;width:44px;height:44px;border-radius:13px;background:rgba(17,16,13,.05);--fdur:6s;animation-delay:-1s"></i>
+      <i style="left:42%;bottom:10%;width:50px;height:50px;border-radius:14px;border:2px solid rgba(255,91,30,.22);--fdur:7.5s;animation-delay:-5s"></i>
+      <i style="right:23%;top:70%;width:52px;height:52px;border-radius:15px;background:rgba(17,16,13,.05);--fdur:6.8s;animation-delay:-3.2s"></i>
+      <i style="left:20%;top:30%;width:40px;height:40px;border-radius:12px;border:2px solid rgba(17,16,13,.1);--fdur:6.2s;animation-delay:-0.6s"></i>
+      <i style="right:36%;bottom:13%;width:38px;height:38px;border-radius:11px;background:rgba(17,16,13,.05);--fdur:7.2s;animation-delay:-4.8s"></i>
     </div>
     <div class="pl pl2">
-      <i style="left:22%;top:30%;width:30px;height:30px;border-radius:9px;background:rgba(242,226,5,.5);--fdur:5.5s;animation-delay:-1.2s"></i>
-      <i style="right:24%;bottom:24%;width:26px;height:26px;border-radius:8px;background:rgba(242,226,5,.42);--fdur:5s;animation-delay:-3.5s"></i>
-      <i style="right:30%;top:14%;width:20px;height:20px;border-radius:6px;background:rgba(242,239,233,.5);--fdur:6s;animation-delay:-2.4s"></i>
+      <i style="left:22%;top:30%;width:30px;height:30px;border-radius:9px;background:rgba(242,226,5,.55);--fdur:5.5s;animation-delay:-1.2s"></i>
+      <i style="right:24%;bottom:24%;width:26px;height:26px;border-radius:8px;background:rgba(242,226,5,.48);--fdur:5s;animation-delay:-3.5s"></i>
+      <i style="right:30%;top:14%;width:22px;height:22px;border-radius:7px;background:rgba(255,91,30,.55);--fdur:6s;animation-delay:-2.4s"></i>
+      <i style="left:30%;bottom:19%;width:24px;height:24px;border-radius:7px;background:rgba(255,91,30,.5);--fdur:5.4s;animation-delay:-4.2s"></i>
+      <i style="right:44%;top:25%;width:18px;height:18px;border-radius:6px;background:rgba(242,226,5,.5);--fdur:6.4s;animation-delay:-1.8s"></i>
+      <i style="left:37%;top:50%;width:16px;height:16px;border-radius:5px;background:rgba(17,16,13,.28);--fdur:5.8s;animation-delay:-3s"></i>
     </div>
   </div>
 
@@ -718,7 +746,7 @@
       <div class="why-facets">
         <div class="why-facet" style="--i:0"><span class="fbullet" style="background:var(--ink)"></span><span class="flabel">Live in weeks</span><span class="fline">A first build that ships fast, not a year-long rollout.</span></div>
         <div class="why-facet" style="--i:1"><span class="fbullet" style="background:var(--acid)"></span><span class="flabel">One monthly retainer</span><span class="fline">Priced for a small business, not an enterprise.</span></div>
-        <div class="why-facet" style="--i:2"><span class="fbullet" style="background:var(--bone)"></span><span class="flabel">We stay on</span><span class="fline">We run it and keep improving it as you grow.</span></div>
+        <div class="why-facet" style="--i:2"><span class="fbullet" style="background:var(--tang)"></span><span class="flabel">We stay on</span><span class="fline">We run it and keep improving it as you grow.</span></div>
       </div>
 
       <a class="why-cta" href="#cta"><span class="u">Start your first build</span><span class="arr" aria-hidden="true">→</span></a>
@@ -850,7 +878,7 @@
     </div>
     <div class="foot-bottom">
       <span>© 2026 cobbld. Built for small businesses.</span>
-      <span class="mono"><span class="mark">✦</span> Cobble together.</span>
+      <span class="mono"><span class="mark"><svg class="mark-logo" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="9" width="9" height="9" rx="2" fill="#f2efe9"/><rect x="11" y="14" width="9" height="9" rx="2" fill="#ff5b1e" opacity="0.55"/><rect x="11" y="3" width="9" height="9" rx="2" fill="#ff5b1e" opacity="0.85"/></svg></span> Cobble together.</span>
     </div>
   </div>
 </footer>
@@ -1471,7 +1499,11 @@
       if(!stageWrap || !stage) return;
       var cw = stageWrap.clientWidth;
       if(!cw) return; /* skip a zero-width measure so the stage never locks at scale(0) */
-      var s = Math.min(1, cw / 520);
+      var byWidth = cw / 520;
+      /* also bound the stage to a slice of viewport height so the whole band still
+         fits one screen on short laptops and phones (the stage is the tallest part) */
+      var byHeight = window.innerHeight ? (window.innerHeight * 0.32) / 220 : Infinity;
+      var s = Math.min(1.6, byWidth, byHeight);
       stage.style.transform = "scale(" + s + ")";
       stageWrap.style.height = (220 * s) + "px";
     }
