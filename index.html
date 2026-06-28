@@ -1461,8 +1461,11 @@
         io3.observe(why);
       } else { play(); }
 
-      if(fine){
-        var field = why.querySelector(".why-field");
+      /* parallax: .why-field is a sibling of .wrap (not inside .why), so query the
+         document for it. Gate on any-pointer:fine so a mouse on a touch-primary
+         laptop still drives it (pointer:fine reflects only the primary device). */
+      if(window.matchMedia("(any-pointer:fine)").matches){
+        var field = document.querySelector(".why-field");
         var layers = field ? [
           [field.querySelector(".pl0"), 0.012],
           [field.querySelector(".pl1"), 0.026],
