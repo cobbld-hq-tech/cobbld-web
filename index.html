@@ -135,6 +135,15 @@
   .hero-head .underdog svg path{fill:none;stroke:var(--tang);stroke-width:11;stroke-linecap:round;stroke-dasharray:1400;stroke-dashoffset:0}
   /* ---------- cobble: hero assembly — squares build in, headline snaps then hovers ---------- */
   .hero .wrap{position:relative;z-index:1}
+  /* With JS on, hold the whole assembly paused on its first frame until #hero gets
+     .go (added a beat after fonts load), so it plays once the page is actually up
+     for the visitor instead of firing during the initial paint. */
+  html.js .hero.cobble:not(.go) .cobble-field i,
+  html.js .hero.cobble:not(.go) .hero-head .line,
+  html.js .hero.cobble:not(.go) .hero-head .line > span,
+  html.js .hero.cobble:not(.go) .hero-tag,
+  html.js .hero.cobble:not(.go) .hero-lower,
+  html.js .hero.cobble:not(.go) .hero-head .underdog svg path{animation-play-state:paused}
   .cobble-field{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
   .cobble-field i{position:absolute;display:block;border-radius:26%;border:2px solid rgba(17,16,13,.17);will-change:transform,opacity;animation:cobbleFloat var(--fdur,8s) ease-in-out infinite alternate}
   /* on load: each square builds in with the headline, then hands off to the hover */
@@ -232,7 +241,10 @@
   .sec-head em{font-style:normal;color:var(--tang)}
 
   /* ---------- where to start: you say, we build ---------- */
-  #leak{background:var(--ink);color:var(--bone);overflow:hidden;border-top:1px solid rgba(242,239,233,.1)}
+  /* full-height like the hero: min-height (never a fixed height) so tall content
+     on small screens still grows and scrolls instead of clipping; centered when
+     the content is shorter than the viewport */
+  #leak{background:var(--ink);color:var(--bone);overflow:hidden;border-top:1px solid rgba(242,239,233,.1);min-height:100svh;display:flex;flex-direction:column;justify-content:center}
   #leak .wrap{position:relative;z-index:1}
   .ys-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
   .ys-inner{max-width:940px;margin-inline:auto;display:flex;flex-direction:column;align-items:center;text-align:center}
@@ -260,47 +272,70 @@
   #leak .btn.tang:hover{background:var(--bone);border-color:var(--bone);color:var(--ink)}
   .ys-alt{font-size:.98rem;font-weight:500;color:rgba(242,239,233,.66);border-bottom:1px solid rgba(242,239,233,.3);padding-bottom:1px}
   .ys-alt:hover{color:var(--tang)}
+  /* Short, wide viewports (laptops): the card's rotating quotes vary in height, so
+     tighten the section rhythm enough that even the tallest one fits one screen and
+     the section can center instead of overflowing. Phones (narrow) keep the roomier
+     spacing above and just scroll. */
+  @media (min-width:761px) and (max-height:900px){
+    #leak{padding-block:1.4rem}
+    .ys-sub{margin-top:.7rem}
+    .ys-card{margin-top:1.4rem;padding-top:clamp(1.3rem,3vw,1.9rem);padding-bottom:1.8rem}
+    .ys-rot{margin-top:.9rem}
+    .ys-divrow{margin:1.1rem 0 .75rem}
+    .ys-foot{margin-top:1.4rem}
+    .ys-cta{margin-top:1.4rem}
+  }
 
-  /* ---------- thesis band: why cobbld / one-partner merge ---------- */
-  #thesis{background:var(--tang);color:var(--ink);position:relative;overflow:hidden}
-  #thesis .wrap{position:relative;z-index:1}
-  .op-wrap{max-width:1000px;margin-inline:auto;text-align:center;display:flex;flex-direction:column;align-items:center}
-  .op-field{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-  .op-field>div{position:absolute;inset:0}
-  .op-field span{position:absolute}
-  @keyframes opFloat{from{transform:translateY(0) rotate(0deg)}to{transform:translateY(-22px) rotate(9deg)}}
-  .op-eyebrow{font-size:.74rem;color:var(--ink);opacity:.66;margin-bottom:1rem}
-  .op-head{font-family:"Unbounded";font-weight:800;font-size:clamp(1.9rem,4.6vw,3.4rem);line-height:1.04;letter-spacing:-.02em;max-width:24ch}
-  .op-em{background:var(--ink);color:var(--tang);padding:0 .14em;border-radius:.08em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
-  .op-sub{font-size:clamp(1.02rem,1.5vw,1.2rem);font-weight:500;color:rgba(17,16,13,.72);line-height:1.5;max-width:52ch;margin-top:1.2rem}
-  .op-stage-wrap{width:min(520px,100%);margin-top:clamp(1.8rem,3vw,2.6rem);height:220px}
-  .op-stage{position:relative;width:520px;height:220px;transform-origin:top center}
-  .op-row{position:absolute;width:236px;height:44px;display:flex;align-items:center;gap:.6rem;padding:0 1rem;border-radius:13px;background:var(--ink);box-shadow:0 10px 24px -16px rgba(17,16,13,.7);transition:transform .72s var(--ease),opacity .55s var(--ease)}
-  .op-tag{font-family:"DM Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--acid);border:1px solid rgba(242,226,5,.4);border-radius:99px;padding:.26rem .5rem;flex:none}
-  .op-label{font-family:"Onest";font-weight:600;font-size:.95rem;color:var(--bone);letter-spacing:-.01em;white-space:nowrap}
-  .op-block{position:absolute;left:304px;top:36px;width:176px;height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:22px;background:var(--ink);transition:transform .7s cubic-bezier(.34,1.5,.4,1),opacity .55s var(--ease),box-shadow .7s var(--ease)}
-  .op-mark{position:relative;width:60px;height:60px;margin-bottom:.45rem}
-  .op-mark span{position:absolute;border-radius:7px;width:23px;height:23px}
-  .op-mark span:nth-child(1){left:2px;top:22px;background:var(--bone)}
-  .op-mark span:nth-child(2){left:27px;top:33px;background:var(--tang);opacity:.6}
-  .op-mark span:nth-child(3){left:27px;top:8px;background:var(--tang)}
-  .op-bname{font-family:"Unbounded";font-weight:800;font-size:1.4rem;letter-spacing:-.02em;color:var(--bone)}
-  .op-bsub{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(242,239,233,.6);margin-top:.2rem}
-  .op-controls{display:flex;align-items:center;gap:1rem;margin-top:clamp(1.4rem,2.4vw,2rem)}
-  .op-btn{font-family:"Onest";font-weight:700;font-size:1rem;background:var(--ink);color:var(--bone);border:none;border-radius:99px;padding:.8rem 1.5rem;cursor:pointer}
-  .op-caption{text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;color:rgba(17,16,13,.55)}
-  .op-facets{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;width:100%;max-width:740px;margin-top:clamp(1.8rem,3vw,2.6rem)}
-  .op-facet{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:rgba(17,16,13,.05);border:1px solid rgba(17,16,13,.14);border-radius:16px;padding:1.15rem 1.2rem;opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
-  .op-facets.on .op-facet{opacity:1;transform:none}
-  .op-facets.on .op-facet:nth-child(1){transition-delay:.3s}
-  .op-facets.on .op-facet:nth-child(2){transition-delay:.4s}
-  .op-facets.on .op-facet:nth-child(3){transition-delay:.5s}
-  .op-bullet{width:16px;height:16px;border-radius:5px;flex:none}
-  .op-fh{font-family:"Unbounded";font-weight:700;font-size:1.02rem;letter-spacing:-.01em;color:var(--ink);margin-top:.65rem}
-  .op-fp{font-size:.9rem;font-weight:500;color:rgba(17,16,13,.68);line-height:1.4;margin-top:.32rem}
-  .op-cta{display:inline-flex;align-items:center;gap:.55rem;font-family:"Onest";font-weight:700;font-size:1.02rem;color:var(--ink);text-decoration:none;margin-top:clamp(2rem,3vw,2.6rem)}
-  .op-cta .u{border-bottom:2px solid var(--ink);padding-bottom:3px}
-  @media (max-width:560px){ .op-facets{grid-template-columns:1fr} }
+  /* ---------- why cobbld (one partner) ----------
+     A tangerine band that shows the team a big company would hire (four roles as
+     stacked rows) cobbling down into one partner block, then reveals the facets.
+     Plays once when the band scrolls in; the button replays it either way. */
+  #thesis{background:var(--tang);color:var(--ink);overflow:hidden;min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding-block:clamp(2.6rem,5vh,4.2rem)}
+  .why{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .why-eyebrow{font-size:.8rem;color:var(--ink);opacity:.62;margin-bottom:.85rem}
+  .why-head{font-family:"Unbounded",sans-serif;font-weight:800;font-size:clamp(1.9rem,4.3vw,3.3rem);line-height:1.05;letter-spacing:-.02em;max-width:23ch}
+  .why-head em{font-style:normal;background:var(--ink);color:var(--tang);padding:0 .14em;border-radius:.08em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+  .why-sub{font-size:clamp(1rem,1.4vw,1.18rem);font-weight:500;color:var(--ink-soft);line-height:1.5;max-width:54ch;margin-top:.95rem}
+
+  /* the merge stage is a fixed 520x220 coordinate space, scaled to fit by JS */
+  .why-stagewrap{width:min(460px,100%);margin-top:clamp(1.4rem,2.4vw,2rem);display:flex;justify-content:center;overflow:hidden}
+  .why-stage{position:relative;width:520px;height:220px;flex:none;transform-origin:top center}
+  .why-row{position:absolute;left:var(--x);top:var(--y);width:var(--w);height:44px;display:flex;align-items:center;gap:.6rem;padding:0 1rem;border-radius:13px;background:var(--ink);box-shadow:0 10px 24px -16px rgba(17,16,13,.7);transition:transform .72s var(--ease),opacity .55s var(--ease)}
+  .why-row .rtag{font-family:"DM Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--acid);border:1px solid rgba(242,226,5,.4);border-radius:99px;padding:.26rem .5rem;flex:none}
+  .why-row .rlabel{font-family:"Onest",sans-serif;font-weight:600;font-size:.95rem;color:var(--bone);letter-spacing:-.01em;white-space:nowrap}
+  .why-block{position:absolute;left:304px;top:36px;width:176px;height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:22px;background:var(--ink);transform:scale(.94);opacity:.66;box-shadow:0 12px 30px -20px rgba(17,16,13,.5);transition:transform .7s cubic-bezier(.34,1.5,.4,1),opacity .55s var(--ease),box-shadow .7s var(--ease)}
+  .why-block .wb-mark{position:relative;width:60px;height:60px;margin-bottom:.45rem}
+  .why-block .wb-mark span{position:absolute;width:23px;height:23px;border-radius:7px}
+  .why-block .wb-name{font-family:"Unbounded",sans-serif;font-weight:800;font-size:1.4rem;letter-spacing:-.02em;color:var(--bone)}
+  .why-block .wb-tag{font-family:"DM Mono",monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(242,239,233,.6);margin-top:.2rem}
+  .why.is-merged .why-row{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0;transition-delay:calc(var(--i) * .05s)}
+  .why.is-merged .why-block{transform:translateX(-132px) scale(1.08);opacity:1;box-shadow:0 26px 56px -22px rgba(17,16,13,.78)}
+
+  .why-controls{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:1rem;margin-top:clamp(1.2rem,2vw,1.6rem)}
+  .why-caption{font-family:"DM Mono",monospace;text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;color:rgba(17,16,13,.58)}
+
+  .why-facets{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;width:100%;max-width:760px;margin-top:clamp(1.4rem,2.4vw,2rem)}
+  .why-facet{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:rgba(17,16,13,.05);border:1px solid rgba(17,16,13,.14);border-radius:16px;padding:1rem 1.1rem}
+  .why-facet .fbullet{width:16px;height:16px;border-radius:5px;flex:none}
+  .why-facet .flabel{font-family:"Unbounded",sans-serif;font-weight:700;font-size:1.02rem;letter-spacing:-.01em;color:var(--ink);margin-top:.65rem}
+  .why-facet .fline{font-size:.9rem;font-weight:500;color:rgba(17,16,13,.68);line-height:1.4;margin-top:.32rem}
+  /* facets fade in on merge only when JS is live; without JS they stay visible */
+  html.js .why-facet{opacity:0;transform:translateY(14px);transition:transform .6s var(--ease),opacity .6s var(--ease)}
+  html.js .why.is-merged .why-facet{opacity:1;transform:none;transition-delay:calc(.3s + var(--i) * .1s)}
+
+  .why-cta{display:inline-flex;align-items:center;gap:.55rem;font-family:"Onest",sans-serif;font-weight:700;font-size:1.02rem;color:var(--ink);margin-top:clamp(1.4rem,2.4vw,2rem)}
+  .why-cta .u{border-bottom:2px solid var(--ink);padding-bottom:3px;transition:color .25s var(--ease),border-color .25s var(--ease)}
+  .why-cta .arr{transition:transform .3s var(--ease)}
+  .why-cta:hover .u{color:var(--tang-deep);border-color:var(--tang-deep)}
+  .why-cta:hover .arr{transform:translateX(4px)}
+
+  /* parallax cobble field behind the band (mouse-driven, fine pointers only) */
+  .why-field{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .why-field .pl{position:absolute;inset:0;transition:transform .5s var(--ease);will-change:transform}
+  .why-field i{position:absolute;display:block;animation:cobbleFloat var(--fdur,10s) ease-in-out infinite alternate}
+
+  /* reduced motion: land straight on the merged state with no movement */
+  .why.instant .why-row,.why.instant .why-block,.why.instant .why-facet{transition:none !important}
 
   /* ---------- how it works: living timeline ---------- */
   #how{background:var(--bone);position:relative;overflow:hidden}
@@ -432,6 +467,10 @@
   @media (max-width:600px){
     .foot-cols{display:grid;grid-template-columns:1fr 1fr;gap:2.2rem 1.5rem;width:100%}
   }
+  /* why-cobbld facets: stack to one column before the three cards get cramped */
+  @media (max-width:720px){
+    .why-facets{grid-template-columns:1fr;max-width:420px}
+  }
 
   @media (prefers-reduced-motion:reduce){
     *{animation:none !important;scroll-behavior:auto !important}
@@ -443,6 +482,18 @@
     .ys-progress span{display:none}
   }
 </style>
+<script>
+  /* Mark JS as live before first paint so the hero can hold its assembly until
+     we deliberately play it (see "hero intro" below). Failsafe: if the main
+     script never runs, reveal the hero anyway so it can't stay hidden. */
+  document.documentElement.classList.add("js");
+  window.addEventListener("load", function(){
+    setTimeout(function(){
+      var h = document.getElementById("hero");
+      if (h && !h.classList.contains("go")) h.classList.add("go");
+    }, 1600);
+  });
+</script>
 </head>
 <body>
 <a class="skip-link" href="#top">Skip to content</a>
@@ -462,6 +513,7 @@
     </a>
     <nav class="nav-links" aria-label="Primary">
       <a class="lnk" href="#leak">Where to start</a>
+      <a class="lnk" href="#thesis">Why cobbld</a>
       <a class="lnk" href="#how">How it works</a>
       <!-- Work tab hidden until we have real projects to show. See NOTES.md.
       <a class="lnk" href="/work.html">Work</a> -->
@@ -475,6 +527,7 @@
 
 <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile">
   <a href="#leak">Where to start</a>
+  <a href="#thesis">Why cobbld</a>
   <a href="#how">How it works</a>
   <!-- Work tab hidden until we have real projects to show. See NOTES.md.
   <a href="/work.html">Work</a> -->
@@ -512,7 +565,7 @@
 
     <div class="hero-lower">
       <p class="hero-sub">
-        cobbld builds the systems that used to need a big company's budget and an IT team. We land one fast win that pays for itself, then stay on as your technical partner.
+        cobbld builds the systems that used to need a big company's budget and a dev team. We land one fast win that pays for itself, then stay on as your technical partner.
       </p>
       <div class="hero-cta">
         <a class="btn magnet" href="#cta">Find your first win <span class="arr" aria-hidden="true">→</span></a>
@@ -581,57 +634,65 @@
   </div>
 </section>
 
-<!-- ===================== WHY COBBLD — ONE-PARTNER MERGE ===================== -->
+<!-- ===================== THESIS BAND ===================== -->
 <section class="section" id="thesis" aria-label="Why cobbld">
-  <div class="op-field" aria-hidden="true">
-    <div id="opL0">
-      <span style="left:6%;top:18%;width:96px;height:96px;border-radius:24px;border:2px solid rgba(17,16,13,.08);animation:opFloat 11s ease-in-out infinite alternate"></span>
-      <span style="right:9%;top:62%;width:120px;height:120px;border-radius:28px;border:2px solid rgba(17,16,13,.07);animation:opFloat 13s ease-in-out infinite alternate .6s"></span>
-      <span style="left:16%;bottom:9%;width:74px;height:74px;border-radius:20px;border:2px solid rgba(17,16,13,.08);animation:opFloat 12s ease-in-out infinite alternate 1s"></span>
+  <div class="why-field" aria-hidden="true">
+    <div class="pl pl0">
+      <i style="left:6%;top:18%;width:96px;height:96px;border-radius:24px;border:2px solid rgba(17,16,13,.08);--fdur:8s"></i>
+      <i style="right:9%;top:60%;width:120px;height:120px;border-radius:28px;border:2px solid rgba(17,16,13,.07);--fdur:9s;animation-delay:-3s"></i>
+      <i style="left:15%;bottom:9%;width:74px;height:74px;border-radius:20px;border:2px solid rgba(17,16,13,.08);--fdur:7.5s;animation-delay:-1.5s"></i>
     </div>
-    <div id="opL1">
-      <span style="left:11%;top:66%;width:58px;height:58px;border-radius:16px;border:2px solid rgba(242,239,233,.18);animation:opFloat 9s ease-in-out infinite alternate .3s"></span>
-      <span style="right:14%;top:20%;width:66px;height:66px;border-radius:18px;border:2px solid rgba(242,239,233,.16);animation:opFloat 10s ease-in-out infinite alternate .9s"></span>
-      <span style="left:48%;top:8%;width:44px;height:44px;border-radius:13px;background:rgba(17,16,13,.05);animation:opFloat 8.5s ease-in-out infinite alternate .5s"></span>
-      <span style="left:43%;bottom:11%;width:50px;height:50px;border-radius:14px;border:2px solid rgba(242,239,233,.16);animation:opFloat 11s ease-in-out infinite alternate 1.3s"></span>
+    <div class="pl pl1">
+      <i style="left:11%;top:64%;width:58px;height:58px;border-radius:16px;border:2px solid rgba(242,239,233,.18);--fdur:6.5s;animation-delay:-2s"></i>
+      <i style="right:14%;top:20%;width:66px;height:66px;border-radius:18px;border:2px solid rgba(242,239,233,.16);--fdur:7s;animation-delay:-4s"></i>
+      <i style="left:48%;top:8%;width:44px;height:44px;border-radius:13px;background:rgba(17,16,13,.05);--fdur:6s;animation-delay:-1s"></i>
+      <i style="left:43%;bottom:11%;width:50px;height:50px;border-radius:14px;border:2px solid rgba(242,239,233,.16);--fdur:7.5s;animation-delay:-5s"></i>
     </div>
-    <div id="opL2">
-      <span style="left:22%;top:30%;width:30px;height:30px;border-radius:9px;background:rgba(242,226,5,.5);animation:opFloat 7s ease-in-out infinite alternate .2s"></span>
-      <span style="right:24%;bottom:24%;width:26px;height:26px;border-radius:8px;background:rgba(242,226,5,.42);animation:opFloat 6.5s ease-in-out infinite alternate .7s"></span>
-      <span style="right:30%;top:14%;width:20px;height:20px;border-radius:6px;background:rgba(242,239,233,.5);animation:opFloat 7.6s ease-in-out infinite alternate 1.1s"></span>
+    <div class="pl pl2">
+      <i style="left:22%;top:30%;width:30px;height:30px;border-radius:9px;background:rgba(242,226,5,.5);--fdur:5.5s;animation-delay:-1.2s"></i>
+      <i style="right:24%;bottom:24%;width:26px;height:26px;border-radius:8px;background:rgba(242,226,5,.42);--fdur:5s;animation-delay:-3.5s"></i>
+      <i style="right:30%;top:14%;width:20px;height:20px;border-radius:6px;background:rgba(242,239,233,.5);--fdur:6s;animation-delay:-2.4s"></i>
     </div>
   </div>
-  <div class="wrap op-wrap">
-    <p class="op-eyebrow mono reveal">Why cobbld</p>
-    <h2 class="op-head reveal">Software built just for how you work, the kind only <span class="op-em">big companies</span> used to be able to afford.</h2>
-    <p class="op-sub reveal">We build it, run it, and keep it improving. No enterprise budget, no year-long rollout, just the systems that quietly do the work.</p>
 
-    <div class="op-stage-wrap reveal" id="opStageWrap">
-      <div class="op-stage" id="opStage">
-        <div class="op-row" data-i="0"><span class="op-tag">web</span><span class="op-label">Builds the website</span></div>
-        <div class="op-row" data-i="1"><span class="op-tag">dev</span><span class="op-label">Builds your tools</span></div>
-        <div class="op-row" data-i="2"><span class="op-tag">ops</span><span class="op-label">Keeps it running</span></div>
-        <div class="op-row" data-i="3"><span class="op-tag">plan</span><span class="op-label">Plans what&rsquo;s next</span></div>
-        <div class="op-block" id="opBlock">
-          <div class="op-mark"><span></span><span></span><span></span></div>
-          <span class="op-bname">cobbld</span>
-          <span class="op-bsub mono">one partner</span>
+  <div class="wrap">
+    <div class="why">
+      <p class="why-eyebrow mono reveal">Why cobbld</p>
+      <h2 class="why-head reveal">Software built just for how you work. The kind only <em>big companies</em> used to be able to afford.</h2>
+      <p class="why-sub reveal">We build it, run it, and keep it improving. No enterprise budget, no year-long rollout, just the systems that quietly do the work.</p>
+
+      <!-- merge stage: the team a big company hires, cobbling into one partner -->
+      <div class="why-stagewrap">
+        <div class="why-stage">
+          <div class="why-row" style="--x:8px;--y:0px;--w:236px;--dx:134px;--dy:84px;--i:0"><span class="rtag">web</span><span class="rlabel">Builds the website</span></div>
+          <div class="why-row" style="--x:8px;--y:56px;--w:236px;--dx:134px;--dy:28px;--i:1"><span class="rtag">dev</span><span class="rlabel">Builds your tools</span></div>
+          <div class="why-row" style="--x:8px;--y:112px;--w:236px;--dx:134px;--dy:-28px;--i:2"><span class="rtag">ops</span><span class="rlabel">Keeps it running</span></div>
+          <div class="why-row" style="--x:8px;--y:168px;--w:236px;--dx:134px;--dy:-84px;--i:3"><span class="rtag">plan</span><span class="rlabel">Plans what's next</span></div>
+          <div class="why-block">
+            <span class="wb-mark" aria-hidden="true">
+              <span style="left:2px;top:22px;background:#f2efe9"></span>
+              <span style="left:27px;top:33px;background:#ff5b1e;opacity:.6"></span>
+              <span style="left:27px;top:8px;background:#ff5b1e"></span>
+            </span>
+            <span class="wb-name">cobbld</span>
+            <span class="wb-tag">one partner</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="op-controls reveal">
-      <button id="opToggle" class="op-btn" type="button">Cobble into one</button>
-      <span class="op-caption mono" id="opCaption">What used to take a team</span>
-    </div>
+      <div class="why-controls">
+        <button type="button" class="btn why-toggle">Cobble into one</button>
+        <span class="why-caption" aria-live="polite">What used to take a team</span>
+      </div>
 
-    <div class="op-facets" id="opFacets">
-      <div class="op-facet"><span class="op-bullet" style="background:var(--ink)"></span><span class="op-fh">Live in weeks</span><span class="op-fp">A first build that ships fast, not a year-long rollout.</span></div>
-      <div class="op-facet"><span class="op-bullet" style="background:var(--acid)"></span><span class="op-fh">One monthly retainer</span><span class="op-fp">Priced for a small business, not an enterprise.</span></div>
-      <div class="op-facet"><span class="op-bullet" style="background:var(--bone)"></span><span class="op-fh">We stay on</span><span class="op-fp">We run it and keep improving it as you grow.</span></div>
-    </div>
+      <div class="why-facets">
+        <div class="why-facet" style="--i:0"><span class="fbullet" style="background:var(--ink)"></span><span class="flabel">Live in weeks</span><span class="fline">A first build that ships fast, not a year-long rollout.</span></div>
+        <div class="why-facet" style="--i:1"><span class="fbullet" style="background:var(--acid)"></span><span class="flabel">One monthly retainer</span><span class="fline">Priced for a small business, not an enterprise.</span></div>
+        <div class="why-facet" style="--i:2"><span class="fbullet" style="background:var(--bone)"></span><span class="flabel">We stay on</span><span class="fline">We run it and keep improving it as you grow.</span></div>
+      </div>
 
-    <a class="op-cta reveal" href="#cta"><span class="u">Start your first build</span> <span aria-hidden="true">&rarr;</span></a>
+      <a class="why-cta" href="#cta"><span class="u">Start your first build</span><span class="arr" aria-hidden="true">→</span></a>
+    </div>
   </div>
 </section>
 
@@ -737,6 +798,7 @@
         <div class="foot-col">
           <h5 class="mono">Explore</h5>
           <a href="#leak">Where to start</a>
+          <a href="#thesis">Why cobbld</a>
           <a href="#how">How it works</a>
           <!-- Work tab hidden until we have real projects to show. See NOTES.md.
           <a href="/work.html">Work</a> -->
@@ -793,17 +855,40 @@
 
   /* ---------- hero intro ----------
      The Cobble hero assembly (headline snap, square-field build-in, underline
-     keystone and gentle hover) is CSS-driven now: it self-runs on load from the
-     .cobble class on #hero, and is fully disabled under prefers-reduced-motion.
-     The only JS bit is tagging the nav logo's two tangerine squares so they can
-     cobble into place beside the ink one. */
+     keystone and gentle hover) is CSS-driven. With JS on it starts paused (held
+     on its first frame) and only plays once #hero gets .go — added a short beat
+     after the web fonts have loaded, so the animation lands when the page is
+     actually in front of the visitor rather than firing during the first paint.
+     This also lets the headline animate in its real typeface (no mid-run reflow).
+     The whole thing is disabled under prefers-reduced-motion. */
   (function(){
     var navBrand = document.querySelector(".nav .brand");
-    if (!navBrand) return;
-    var sq = navBrand.querySelectorAll("rect");
-    if (sq[1]) sq[1].classList.add("sq2");
-    if (sq[2]) sq[2].classList.add("sq3");
-    navBrand.classList.add("mark-go");
+    if (navBrand) {
+      var sq = navBrand.querySelectorAll("rect");
+      if (sq[1]) sq[1].classList.add("sq2");
+      if (sq[2]) sq[2].classList.add("sq3");
+      navBrand.classList.add("mark-go");
+    }
+
+    var hero = document.getElementById("hero");
+    if (!hero) return;
+    if (reduce) { hero.classList.add("go"); return; }
+
+    var HOLD = 420; // beat to wait after fonts settle before the assembly plays
+    var played = false;
+    function play(){
+      if (played) return;
+      played = true;
+      requestAnimationFrame(function(){ hero.classList.add("go"); });
+    }
+    function arm(){ setTimeout(play, HOLD); }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(arm);
+      setTimeout(arm, 1200); // fallback if font loading stalls
+    } else {
+      arm();
+    }
   })();
 
   /* ===== STASHED: build console (terminal) logic — parked for a future dedicated page.
@@ -1321,32 +1406,71 @@
     setInterval(function(){ if(!hover){ active=(active+1)%3; apply(); } }, 2600);
   })();
 
-  /* ---------- why cobbld: one-partner merge + parallax ---------- */
+  /* ---------- why cobbld: cobble the team into one ----------
+     The stage lives in a fixed 520x220 space scaled to fit. We play the merge
+     once the band scrolls into view (show the four roles, then collapse them
+     into one partner block and fade the facets in); the button replays it
+     either way. Under reduced motion we land on the merged state with no
+     movement, and the parallax field only runs on fine pointers. */
   (function(){
-    var stage=document.getElementById("opStage"); if(!stage) return;
-    var reduceM=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var wrap=document.getElementById("opStageWrap"), block=document.getElementById("opBlock");
-    var rows=[].slice.call(stage.querySelectorAll(".op-row"));
-    var toggle=document.getElementById("opToggle"), caption=document.getElementById("opCaption"), facets=document.getElementById("opFacets");
-    var GEO=[{x:8,y:0},{x:8,y:56},{x:8,y:112},{x:8,y:168}], W=236,H=44, BX=260,BY=106;
-    rows.forEach(function(rw,i){ rw.style.left=GEO[i].x+"px"; rw.style.top=GEO[i].y+"px"; });
-    var collapsed=false, acted=false;
-    function fit(){ var cw=wrap.clientWidth; if(!cw) return; var s=Math.min(1, cw/520); stage.style.transform="scale("+s+")"; wrap.style.height=(220*s)+"px"; }
-    function expand(){ rows.forEach(function(rw){ rw.style.transform="none"; rw.style.opacity="1"; rw.style.transitionDelay="0s"; }); block.style.transform="scale(.94)"; block.style.opacity=".66"; block.style.boxShadow="0 12px 30px -20px rgba(17,16,13,.5)"; }
-    function collapse(){ rows.forEach(function(rw,i){ var dx=BX-(GEO[i].x+W/2), dy=BY-(GEO[i].y+H/2); rw.style.transform="translate("+dx+"px,"+dy+"px) scale(.3)"; rw.style.opacity="0"; rw.style.transitionDelay=(i*0.05)+"s"; }); block.style.transform="translateX(-132px) scale(1.08)"; block.style.opacity="1"; block.style.boxShadow="0 26px 56px -22px rgba(17,16,13,.78)"; }
-    function set(v){ collapsed=v; if(v) collapse(); else expand(); toggle.textContent=v?"Show the team":"Cobble into one"; caption.textContent=v?"One partner, in weeks":"What used to take a team"; facets.classList.toggle("on",v); }
-    fit(); requestAnimationFrame(fit); window.addEventListener("resize", fit); window.addEventListener("load", fit); expand();
-    toggle.addEventListener("click", function(){ acted=true; set(!collapsed); });
-    if(reduceM){ set(true); }
-    else if("IntersectionObserver" in window){
-      var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ io.disconnect(); fit(); setTimeout(function(){ if(!acted) set(true); }, 1100); } }); }, {threshold:.4});
-      io.observe(stage);
-    } else { setTimeout(function(){ if(!acted) set(true); }, 1400); }
-    /* parallax */
-    if(!reduceM){
-      var L=[[document.getElementById("opL0"),0.012],[document.getElementById("opL1"),0.026],[document.getElementById("opL2"),0.05]];
-      L.forEach(function(p){ if(p[0]) p[0].style.transition="transform .5s var(--ease)"; });
-      window.addEventListener("mousemove", function(e){ var cx=window.innerWidth/2, cy=window.innerHeight/2, dx=e.clientX-cx, dy=e.clientY-cy; L.forEach(function(p){ if(p[0]) p[0].style.transform="translate("+(dx*p[1]).toFixed(1)+"px,"+(dy*p[1]).toFixed(1)+"px)"; }); });
+    var why = document.querySelector(".why");
+    if(!why) return;
+    var stageWrap = why.querySelector(".why-stagewrap");
+    var stage = why.querySelector(".why-stage");
+    var btn = why.querySelector(".why-toggle");
+    var caption = why.querySelector(".why-caption");
+    var merged = false, timer;
+
+    function setMerged(on){
+      merged = on;
+      why.classList.toggle("is-merged", on);
+      if(btn) btn.textContent = on ? "Show the team" : "Cobble into one";
+      if(caption) caption.textContent = on ? "One partner, in weeks" : "What used to take a team";
+    }
+    function fit(){
+      if(!stageWrap || !stage) return;
+      var cw = stageWrap.clientWidth;
+      if(!cw) return; /* skip a zero-width measure so the stage never locks at scale(0) */
+      var s = Math.min(1, cw / 520);
+      stage.style.transform = "scale(" + s + ")";
+      stageWrap.style.height = (220 * s) + "px";
+    }
+    fit();
+    requestAnimationFrame(fit);
+    window.addEventListener("load", fit);
+    window.addEventListener("resize", fit, {passive:true});
+
+    if(btn){ btn.addEventListener("click", function(){ clearTimeout(timer); setMerged(!merged); }); }
+
+    if(reduce){
+      why.classList.add("instant");
+      setMerged(true);
+    } else {
+      var played = false;
+      function play(){ if(played) return; played = true; timer = setTimeout(function(){ setMerged(true); }, 1100); }
+      if("IntersectionObserver" in window){
+        var io3 = new IntersectionObserver(function(ents){
+          ents.forEach(function(en){ if(en.isIntersecting){ play(); io3.disconnect(); } });
+        }, {threshold:0.35});
+        io3.observe(why);
+      } else { play(); }
+
+      if(fine){
+        var field = why.querySelector(".why-field");
+        var layers = field ? [
+          [field.querySelector(".pl0"), 0.012],
+          [field.querySelector(".pl1"), 0.026],
+          [field.querySelector(".pl2"), 0.05]
+        ] : [];
+        if(layers.length){
+          window.addEventListener("mousemove", function(e){
+            var dx = e.clientX - window.innerWidth/2, dy = e.clientY - window.innerHeight/2;
+            layers.forEach(function(p){
+              if(p[0]) p[0].style.transform = "translate(" + (dx*p[1]).toFixed(1) + "px," + (dy*p[1]).toFixed(1) + "px)";
+            });
+          }, {passive:true});
+        }
+      }
     }
   })();
 
