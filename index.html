@@ -433,6 +433,10 @@
   .foot-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding-top:1.8rem;font-size:.78rem;color:rgba(242,239,233,.5)}
   .foot-bottom .mark{color:var(--tang);display:inline-flex;align-items:center}
   .foot-bottom .mark-logo{width:15px;height:15px;display:block}
+  /* retro easter egg: a hidden "cobbld 98" link tucked into the colophon */
+  .foot-98{color:inherit;text-decoration:none;transition:color .25s var(--ease)}
+  .foot-98::before{content:"·";margin:0 .55ch;opacity:.55}
+  .foot-98:hover{color:var(--tang)}
 
   /* ---------- reveal ---------- */
   .reveal{opacity:0;transform:translateY(34px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
@@ -877,7 +881,7 @@
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 cobbld. Built for small businesses.</span>
+      <span>© 2026 cobbld. Built for small businesses.<a class="foot-98" href="cobbld98.html" title="cobbld 98, a retro desktop">cobbld 98</a></span>
       <span class="mono"><span class="mark"><svg class="mark-logo" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="9" width="9" height="9" rx="2" fill="#f2efe9"/><rect x="11" y="14" width="9" height="9" rx="2" fill="#ff5b1e" opacity="0.55"/><rect x="11" y="3" width="9" height="9" rx="2" fill="#ff5b1e" opacity="0.85"/></svg></span> Cobble together.</span>
     </div>
   </div>

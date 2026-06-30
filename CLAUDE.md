@@ -28,6 +28,7 @@ key, swap the `access_key` value. To switch providers (e.g. Formspree), change
 .
 ├── index.html        # Home page (the live site root)
 ├── work.html         # Work page: example/demo systems cobbld builds
+├── cobbld98.html     # "cobbld 98" retro-desktop easter egg (bundled React, see below)
 ├── favicon.svg       # Logo mark (three offset rounded squares = "cobble together")
 ├── CLAUDE.md         # This file
 ├── .gitignore        # Ignores local .claude/ tooling
@@ -43,6 +44,34 @@ The **live site is `index.html` + `work.html` at the repo root.** `mockups/` is 
 record of the design directions that were explored; `mockups/street.html` is an
 older snapshot of the chosen design and has since diverged from `index.html` (do
 not treat it as canonical).
+
+### `cobbld98.html` (the "cobbld 98" easter egg)
+
+A novelty retro Windows-98 desktop (Start menu, Paint, a terminal, Minesweeper, a
+demo Contact app, etc.). It is **not** hand-built like the rest of the site: it is
+a **compiled, self-extracting React bundle** (one ~0.5 MB file whose assets are
+base64-inlined and rebuilt into blob URLs at load) that **pulls React/ReactDOM/
+Babel from unpkg.com at runtime**, so it needs a network connection and does NOT
+render offline via `file://`. Do not try to make it follow the vanilla
+single-file convention; treat it as a dropped-in artifact.
+
+The app's source IS readable inside the `<script type="__bundler/template">` JSON
+blob (authored JSX/JS that Babel compiles in-browser, not minified), but it is
+stored JSON-escaped (quotes as `\"`, closing-tag slashes as `/`), so edit it
+with a small script, not by hand. A few cobbld customizations are layered on top of
+the exported bundle and must be **re-applied if the bundle is ever re-exported**:
+
+1. Outer `<head>`: title, description, favicon, `theme-color`, `noindex`.
+2. A post-swap re-brand snippet in the loader (the bundle replaces `<html>` on
+   boot, so the tab title and icon are re-applied there).
+3. In the template: a `goHome` handler plus a "Back to cobbld.com" entry in the
+   Start menu and on the shutdown screen (this is the way back to the main site).
+
+It is **noindex and intentionally left out of `sitemap.xml`** (same as `work.html`).
+The entry point is a deliberately quiet "cobbld 98" link tucked into the footer
+colophon (the `.foot-98` link) of both `index.html` and `work.html`, opening in the
+same tab. Visitors return via the desktop itself (Start menu, "Back to cobbld.com",
+also offered on the shutdown screen).
 
 ## Design system ("Street")
 

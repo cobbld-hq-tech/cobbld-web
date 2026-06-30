@@ -3,5 +3,7 @@ Allow: /
 
 # work.html is intentionally excluded from search (noindex) until there
 # are real projects to show, so it is left out of the sitemap below.
+# cobbld98.html (the retro "cobbld 98" easter egg) is likewise noindex and
+# kept out of the sitemap on purpose.
 
 Sitemap: https://cobbld.com/sitemap.xml
