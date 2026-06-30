@@ -66,12 +66,18 @@ the exported bundle and must be **re-applied if the bundle is ever re-exported**
    boot, so the tab title and icon are re-applied there).
 3. In the template: a `goHome` handler plus a "Back to cobbld.com" entry in the
    Start menu and on the shutdown screen (this is the way back to the main site).
+4. A rename-handler scope fix: the icon-rename `<input>` inside the
+   `<sc-for as="i">` desktop-icon loop originally referenced root-scope handlers by
+   bare name (`{{ selectAll }}`, `{{ onRenameCommit }}`, etc.), which throw
+   "not defined" in the loop scope. Those bindings are now exposed on each icon
+   item in `desktopIconObj` and the input references them as `{{ i.selectAll }}`
+   and so on, so renaming works instead of erroring.
 
 It is **noindex and intentionally left out of `sitemap.xml`** (same as `work.html`).
-The entry point is a deliberately quiet "cobbld 98" link tucked into the footer
-colophon (the `.foot-98` link) of both `index.html` and `work.html`, opening in the
-same tab. Visitors return via the desktop itself (Start menu, "Back to cobbld.com",
-also offered on the shutdown screen).
+The entry point is a "cobbld 98" link in the footer "Explore" column of both
+`index.html` and `work.html`, opening in the same tab. Visitors return via the
+desktop itself (Start menu, "Back to cobbld.com", also offered on the shutdown
+screen).
 
 ## Design system ("Street")
 
