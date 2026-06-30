@@ -66,12 +66,16 @@ the exported bundle and must be **re-applied if the bundle is ever re-exported**
    boot, so the tab title and icon are re-applied there).
 3. In the template: a `goHome` handler plus a "Back to cobbld.com" entry in the
    Start menu and on the shutdown screen (this is the way back to the main site).
-4. A rename-handler scope fix: the icon-rename `<input>` inside the
-   `<sc-for as="i">` desktop-icon loop originally referenced root-scope handlers by
-   bare name (`{{ selectAll }}`, `{{ onRenameCommit }}`, etc.), which throw
-   "not defined" in the loop scope. Those bindings are now exposed on each icon
-   item in `desktopIconObj` and the input references them as `{{ i.selectAll }}`
-   and so on, so renaming works instead of erroring.
+4. Icon-renaming is removed. The desktop-icon rename `<input>` (inside the
+   `<sc-for as="i">` loop, opened by the context-menu "Rename" action) bound its
+   `onfocus`/`onblur`/`onkeydown` handlers in a way this `<sc-for>` + `<sc-if>`
+   runtime mis-scopes, so focusing/blurring the field threw visible
+   `ReferenceError`s and the rename never committed (broken in the original
+   export; reproduces only in a real browser, not headless, so it cannot be
+   verified locally). The rename `<input>`, its per-item bindings in
+   `desktopIconObj`, and the "Rename" context-menu action were removed; the
+   `startRename`/`onRenameCommit` methods remain defined but unused. If you
+   re-export and want renaming back, it needs a real fix, not just re-adding it.
 
 It is **noindex and intentionally left out of `sitemap.xml`** (same as `work.html`).
 The entry point is a "cobbld 98" link in the footer "Explore" column of both
