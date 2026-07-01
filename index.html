@@ -347,7 +347,7 @@
   #how .wrap{position:relative;z-index:1}
   #how .sec-head{font-size:clamp(1.6rem,min(5vw,5.8vh),3.2rem)}
   .how-bg{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-  @keyframes howAssemble{0%{opacity:0;transform:scale(.3) rotate(-8deg)}16%{opacity:1;transform:scale(1) rotate(0deg)}80%{opacity:1;transform:scale(1) rotate(0deg)}100%{opacity:0;transform:scale(.3) rotate(6deg)}}
+  @keyframes howAssemble{0%{opacity:0;transform:scale(.2) rotate(-10deg)}9%{opacity:1;transform:scale(1.06) rotate(0deg)}16%{transform:scale(1) rotate(0deg)}44%{opacity:1;transform:scale(1) rotate(0deg)}58%{opacity:0;transform:scale(.2) rotate(9deg)}100%{opacity:0;transform:scale(.2) rotate(9deg)}}
   .how-eyebrow{font-size:.74rem;color:var(--tang);margin-bottom:1rem}
   .how-sub{font-size:clamp(1.02rem,1.5vw,1.2rem);font-weight:500;color:var(--ink-soft);line-height:1.5;max-width:50ch;margin-top:.8rem}
   .timeline{position:relative;margin-top:clamp(1.2rem,2.6vh,2.2rem)}
@@ -1445,14 +1445,27 @@
     var reduceM=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var bg=document.getElementById("howBg");
     if(bg){
-      var defs=[[6,18,46,"t"],[11,26,28,"i"],[4,33,22,"a"],[16,12,34,"o"],[88,16,42,"o"],[92,26,26,"t"],[84,34,30,"a"],[78,12,38,"i"],[70,80,40,"t"],[64,88,24,"a"],[58,74,30,"o"],[14,84,44,"o"],[20,92,26,"t"],[8,76,22,"a"],[44,8,28,"i"],[50,90,32,"o"]];
-      defs.forEach(function(d,i){
-        var s=document.createElement("span"), k=d[3], sz=d[2];
-        s.style.cssText="position:absolute;left:"+d[0]+"%;top:"+d[1]+"%;width:"+sz+"px;height:"+sz+"px;border-radius:"+Math.round(sz*0.28)+"px;"+
-          (k==="t"?"background:rgba(255,91,30,.16);":k==="a"?"background:rgba(242,226,5,.55);":k==="i"?"background:rgba(17,16,13,.07);":"background:transparent;border:2px solid rgba(17,16,13,.14);")+
-          (reduceM?"":"animation:howAssemble 6s ease-in-out infinite "+(i*0.22).toFixed(2)+"s;");
+      /* a dense field of cobbles that pop in and out on their own clocks. we lay a
+         jittered grid and keep more toward the edges so the timeline copy stays clear,
+         then give each square a short, varied cycle and a negative delay so the field
+         is already alive (no synchronized load-in flash). */
+      var cols=11, rows=7, kinds=["t","t","t","i","i","o","o","o","a"];
+      for(var r=0;r<rows;r++){ for(var c=0;c<cols;c++){
+        var nx=(c+0.5)/cols, ny=(r+0.5)/rows;
+        var edge=Math.max(Math.abs(nx-0.5),Math.abs(ny-0.5))*2; /* 0 center ... 1 edge */
+        if(Math.random() > 0.30+0.62*edge) continue;            /* denser at the edges */
+        var s=document.createElement("span");
+        var left=(nx+(Math.random()-0.5)*0.9/cols)*100;
+        var top=(ny+(Math.random()-0.5)*0.9/rows)*100;
+        var sz=Math.round(14+Math.random()*30);                 /* 14 - 44px */
+        var k=kinds[(Math.random()*kinds.length)|0];
+        var dur=(3.3+Math.random()*2.2).toFixed(2);             /* 3.3 - 5.5s, calmer still */
+        var off=(Math.random()*dur).toFixed(2);                 /* start mid-cycle */
+        s.style.cssText="position:absolute;left:"+left.toFixed(2)+"%;top:"+top.toFixed(2)+"%;width:"+sz+"px;height:"+sz+"px;border-radius:"+Math.round(sz*0.28)+"px;"+
+          (k==="t"?"background:rgba(255,91,30,.16);":k==="a"?"background:rgba(242,226,5,.5);":k==="i"?"background:rgba(17,16,13,.07);":"background:transparent;border:2px solid rgba(17,16,13,.14);")+
+          (reduceM?"":"animation:howAssemble "+dur+"s ease-in-out infinite -"+off+"s;");
         bg.appendChild(s);
-      });
+      }}
     }
     var steps=[].slice.call(tl.querySelectorAll(".tl-step"));
     var nodes=steps.map(function(s){return s.querySelector(".tl-node");});
